@@ -1,16 +1,18 @@
-from feedparser.util import FeedParserDict
-from mangadownloader.sources.base_source import BaseSource, Chapter, MangaMetadata
+"""
+Source file for MangaSee
+"""
+
+import json
+import re
 import feedparser
 from bs4 import BeautifulSoup
 import requests
-import re
-import json
-import feedparser
+from .base_source import BaseSource, Chapter, MangaMetadata
 
 
 class MangaSeeSource(BaseSource):
     def __init__(self, url: str) -> None:
-        self.url = url
+        BaseSource.__init__(self, url)
         self.id = self.url_to_id(url)
         self.scripts: str | None = None
 
@@ -27,9 +29,9 @@ class MangaSeeSource(BaseSource):
 
         title: str = metadata_json["name"]
         authors: list[str] = metadata_json["author"]
-        genres: list[str] = metadata_json["genre"]
+        # genres: list[str] = metadata_json["genre"]
 
-        self.metadata = MangaMetadata(title, tuple(authors), self.url)
+        self.metadata = MangaMetadata(title, authors, self.url)
 
         return self.metadata
 
@@ -37,14 +39,13 @@ class MangaSeeSource(BaseSource):
         if self.chapters:
             return self.chapters
 
-        self.get_metadata()
         feed = feedparser.parse(
             f"https://mangasee123.com/rss/{self.id}.xml", agent=self.USER_AGENT
         )
 
         self.chapters = []
         for c in feed["entries"]:
-            chapter_title = str(c["title"]).lstrip(self.metadata.title).strip()
+            chapter_title = str(c["title"]).lstrip(self.get_metadata().title).strip()
             self.chapters.append(Chapter(chapter_title, c["link"]))
 
         self.chapters.reverse()
@@ -84,6 +85,10 @@ class MangaSeeSource(BaseSource):
 
         return new_chapter
 
+    @classmethod
+    def check_url(cls, url: str) -> bool:
+        return bool(re.match(r"https://mangasee123.com/manga/.*", url))
+
     def _get_scripts(self) -> str:
         if self.scripts:
             return self.scripts
@@ -97,12 +102,10 @@ class MangaSeeSource(BaseSource):
         # e.g. https://mangasee123.com/manga/Kaguya-Wants-To-Be-Confessed-To
         # to Kaguya-Wants-To-Be-Confessed-To
         *_, last_item = filter(None, url.split("/"))
-        # TODO: switch to regex for better reliability in case they add weird tags to the end like tracking
+        # TODO: switch to regex for better reliability
+        # in case they add weird tags to the end like tracking
         return last_item
 
 
-if __name__ == "__main__":
-    kag = MangaSeeSource(
-        "https://mangasee123.com/manga/Kaguya-Wants-To-Be-Confessed-To/"
-    )
-    print(kag.get_chapter_image_list(kag.get_chapter_list()[0]))
+def get_class() -> type[BaseSource]:
+    return MangaSeeSource

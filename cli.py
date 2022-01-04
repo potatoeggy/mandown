@@ -1,20 +1,20 @@
+#!/usr/bin/env python3
+
 import typer
+from mangadownloader import mangadownloader as md
 
 app = typer.Typer()
 
 
 @app.command()
-def hello(name: str) -> None:
-    typer.echo(f"Hello {name}")
+def download(
+    url: str,
+    dest_folder: str,
+    start_chapter: int | None = None,
+    end_chapter: int | None = None,
+) -> None:
+    md.download(url, dest_folder, start_chapter, end_chapter)
 
 
 if __name__ == "__main__":
-    # app()
-
-    import mangadownloader
-    from mangadownloader.sources.source_mangasee import MangaSeeSource
-
-    kag = MangaSeeSource("https://mangasee123.com/manga/Grand-Blue")
-    chapters = kag.get_chapter_list()
-    first_chap = kag.get_chapter_image_list(chapters[0])
-    mangadownloader.download_chapter(first_chap, "/media/kag")
+    app()
