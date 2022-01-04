@@ -24,10 +24,10 @@ def download(urls: list[str] | str, dest_folder: str) -> None:
         dest_file = os.path.join(dest_folder, name)
 
         print(f"    ({i+1}/{len(urls)}) DL {url} -> {dest_file}")
-        response = requests.get(url, stream=True)
+        response = requests.get(url)
+        response.raise_for_status()
         with open(dest_file, "wb") as file:
-            for char in response:
-                file.write(char)
+            file.write(response.content)
 
 
 def download_chapter(chapter: Chapter, dest_folder: str) -> None:
