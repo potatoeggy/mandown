@@ -8,6 +8,9 @@ license = "AGPLv3"
 [tool.poetry.dependencies]
 python = "^3.10"
 typer = "^0.4.0"
+feedparser = "^6.0.8"
+beautifulsoup4 = "^4.10.0"
+requests = "^2.27.0"
 
 [tool.poetry.dev-dependencies]
 
