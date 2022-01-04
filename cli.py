@@ -10,10 +10,10 @@ app = typer.Typer()
 def download(
     url: str,
     dest_folder: str,
-    start_chapter: int | None = None,
-    end_chapter: int | None = None,
+    start: int | None = None,
+    end: int | None = None,
 ) -> None:
-    md.download(url, dest_folder, start_chapter, end_chapter)
+    md.download(url, dest_folder, start, end)
 
 
 if __name__ == "__main__":
