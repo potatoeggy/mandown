@@ -12,8 +12,9 @@ def download(
     dest_folder: str,
     start: int | None = None,
     end: int | None = None,
+    maxthreads: int = 1,
 ) -> None:
-    md.download(url, dest_folder, start, end)
+    md.download(url, dest_folder, start, end, maxthreads)
 
 
 if __name__ == "__main__":

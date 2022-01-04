@@ -20,6 +20,7 @@ def download(
     dest_folder: str = os.getcwd(),
     start_chapter: int | None = None,
     end_chapter: int | None = None,
+    maxthreads: int = 1,
 ) -> None:
     """
     Download from a URL chapters start_chapter to end_chapter.
@@ -49,5 +50,5 @@ def download(
             f"Downloading {chapter.title} ({i+1}/{len(source.get_chapter_list())})..."
         )
         images = source.get_chapter_image_list(chapter)
-        iohandler.download_chapter(images, target_path)
+        iohandler.download_chapter(images, target_path, maxthreads)
     print("Done.")
