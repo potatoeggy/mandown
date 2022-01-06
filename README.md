@@ -1,6 +1,6 @@
-# mangadownloader
+# mandown
 
-Python library and CLI application to download books from various sources
+Python library and command line application to download books from various sources including manga
 
 Currently only supports MangaSee.
 
@@ -15,7 +15,7 @@ Currently only supports MangaSee.
 ## Usage
 
 ```
-python cli.py URL DESTINATION_FOLDER
+mandown URL DESTINATION_FOLDER
 ```
 
 Run `python cli.py --help` for more info.
@@ -23,9 +23,9 @@ Run `python cli.py --help` for more info.
 ## Library usage
 
 ```python
-from mangadownloader import mangadownloader as md
+from mandown import mandown
 
-md.download(url_to_manga, destination_folder, start_chapter=None, end_chapter=None)
+md.download(url_to_manga, destination_folder, start_chapter=None, end_chapter=None, maxthreads=4)
 
 manga = md.query(url_to_manga)
 print(manga.metadata, manga.chapters)

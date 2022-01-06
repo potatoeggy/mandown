@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import typer
-from mangadownloader import mangadownloader as md
+from mandown import mandown as md
 
 app = typer.Typer()
 

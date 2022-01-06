@@ -1,6 +1,6 @@
 import os
-from mangadownloader import sources, iohandler
-from mangadownloader.sources.base_source import BaseSource
+from mandown import sources, iohandler
+from mandown.sources.base_source import BaseSource
 
 
 def query(url: str) -> BaseSource:
