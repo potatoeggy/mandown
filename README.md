@@ -1,5 +1,14 @@
 # mandown
 
+<p align="center">
+    <img src="https://img.shields.io/pypi/v/mandown" />
+    <img src="https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag" />
+    <img src="https://img.shields.io/github/issues/potatoeggy/mandown" />
+    <img src="https://img.shields.io/github/forks/potatoeggy/mandown" />
+    <img src="https://img.shields.io/github/stars/potatoeggy/mandown" />
+    <img src="https://img.shields.io/github/license/potatoeggy/mandown" />
+</p>
+
 Python library and command line application to download books from various sources including manga
 
 Currently only supports MangaSee.
