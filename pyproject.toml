@@ -10,7 +10,7 @@ documentation = "https://github.com/potatoeggy/mandown"
 keywords = ["manga", "downloader", "download"]
 
 [tool.poetry.scripts]
-mandown = "mandown:cli"
+mandown = "mandown.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.8"

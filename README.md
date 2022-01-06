@@ -13,13 +13,21 @@ Python library and command line application to download books from various sourc
 
 Currently only supports MangaSee.
 
-## Dependencies
+## Installation
 
-- python = "^3.8"
-- typer = "^0.4.0"
-- feedparser = "^6.0.8"
-- beautifulsoup4 = "^4.10.0"
-- requests = "^2.27.0"
+Install the package from PyPI:
+
+```
+pip install mandown
+```
+
+Or, to build from source:
+
+```
+git clone https://github.com/potatoeggy/mandown.git
+poetry install
+poetry build
+```
 
 ## Usage
 

@@ -17,5 +17,9 @@ def download(
     md.download(url, dest_folder, start, end, maxthreads)
 
 
-if __name__ == "__main__":
+def main():
     app()
+
+
+if __name__ == "__main__":
+    main()
