@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "mangadownloader"
+name = "mandown"
 version = "0.1.0"
-description = "Command line application and library to download books from various sources"
+description = "Command line application and library to download manga from various sources"
 authors = ["Daniel Chen <danielchen04@hotmail.ca>"]
 license = "AGPLv3"
 
 [tool.poetry.scripts]
-mangadownloader = "mangadownloader:cli"
+mandown = "mandown:cli"
 
 [tool.poetry.dependencies]
 python = "^3.9"
