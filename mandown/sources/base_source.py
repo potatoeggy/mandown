@@ -48,7 +48,8 @@ class BaseSource:
 
     def __init__(self, url: str):
         """
-        An object representing a manga from a specific source
+        An object representing a manga from a specific source.
+        Properties `metadata` and `chapters` will be lazily populated on first access.
         """
         self.url = url
 

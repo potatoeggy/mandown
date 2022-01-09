@@ -1,50 +1,33 @@
 import os
 
 from mandown import iohandler, sources
-from mandown.sources.base_source import BaseSource
+from mandown.sources.base_source import BaseSource, Chapter
 
 
 def query(url: str) -> BaseSource:
     """
-    Return the metadata and chapter list for a URL.
+    Return the source file for a URL.
     """
-    source: BaseSource = sources.get_class_for(url)(url)
-    print("Found story:")
-    print(source)
-    return source
+    return sources.get_class_for(url)(url)
 
 
-def download(
-    url: str,
-    dest_folder: str,
-    start_chapter: int | None = None,
-    end_chapter: int | None = None,
-    maxthreads: int = 1,
-) -> None:
+def download_chapter(chapter: Chapter, dest_folder: str, maxthreads: int = 1) -> None:
     """
-    Download from a URL chapters start_chapter to end_chapter.
-    Defaults to the first chapter and last chapter, respectively
-    in the working directory.
+    Download the images of a chapter to a destination folder.
+    Raises ValueError if the folder does not exist.
     """
+    if not chapter.images:
+        raise ValueError("No images available to download")
+
     if not os.path.isdir(dest_folder):
-        raise ValueError(f"{dest_folder} is not a valid folder path.")
+        raise ValueError(f"Folder path {dest_folder} does not exist")
 
-    source: BaseSource = query(url)
+    download_folder = os.path.join(dest_folder, chapter.title)
+    if os.path.isdir(download_folder):
+        print("WARN: chapter folder already exists, proceeding anyway")
+    else:
+        os.mkdir(download_folder)
 
-    # starting to think that immutability is much better than whatever
-    # the heck is going on here
-    target_path = os.path.join(dest_folder, source.metadata.title)
-    if not os.path.isdir(target_path):
-        os.mkdir(target_path)
-
-    # if they are undefined
-    start_chapter = start_chapter or 1
-    end_chapter = end_chapter or len(source.chapters)
-
-    # zero-index
-    start_chapter -= 1
-
-    for i, chapter in enumerate(source.chapters[start_chapter:end_chapter]):
-        print(f"Downloading {chapter.title} ({i+1}/{len(source.chapters)})...")
-        iohandler.download_chapter(chapter, target_path, maxthreads)
-    print("Done.")
+    iohandler.download(
+        chapter.images, os.path.join(dest_folder, chapter.title), maxthreads
+    )
