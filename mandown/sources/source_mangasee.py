@@ -4,9 +4,12 @@ Source file for MangaSee
 
 import json
 import re
+from typing import Optional
+
 import feedparser
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
+
 from .base_source import BaseSource, Chapter, MangaMetadata
 
 
@@ -14,15 +17,12 @@ class MangaSeeSource(BaseSource):
     def __init__(self, url: str) -> None:
         BaseSource.__init__(self, url)
         self.id = self.url_to_id(url)
-        self.scripts: str | None = None
+        self._scripts: Optional[str] = None
 
-    def get_metadata(self) -> MangaMetadata:
+    def fetch_metadata(self) -> MangaMetadata:
         # all of the metadata is available in the <script type="application/ld+json"> element
         # so are the chapters
-        if self.metadata:
-            return self.metadata
-
-        soup = BeautifulSoup(self._get_scripts(), features="lxml")
+        soup = BeautifulSoup(self._get_scripts(), "html.parser")
         metadata_json: dict = json.loads(
             soup.find("script", type="application/ld+json").next_element
         )["mainEntity"]
@@ -31,33 +31,23 @@ class MangaSeeSource(BaseSource):
         authors: list[str] = metadata_json["author"]
         # genres: list[str] = metadata_json["genre"]
 
-        self.metadata = MangaMetadata(title, authors, self.url)
+        return MangaMetadata(title, authors, self.url)
 
-        return self.metadata
-
-    def get_chapter_list(self) -> list[Chapter]:
-        if self.chapters:
-            return self.chapters
-
+    def fetch_chapter_list(self) -> list[Chapter]:
         feed = feedparser.parse(
             f"https://mangasee123.com/rss/{self.id}.xml", agent=self.USER_AGENT
         )
 
-        self.chapters = []
+        chapters = []
         for c in feed["entries"]:
-            chapter_title = str(c["title"]).lstrip(self.get_metadata().title).strip()
-            self.chapters.append(Chapter(chapter_title, c["link"]))
+            chapter_title = str(c["title"]).lstrip(self.metadata.title).strip()
+            chapters.append(Chapter(self, chapter_title, c["link"]))
 
-        self.chapters.reverse()
-        return self.chapters
+        chapters.reverse()
+        return chapters
 
-    def get_chapter_image_list(self, chapter: Chapter) -> Chapter:
-        if chapter.images:
-            return chapter
-
-        self.get_chapter_list()
-
-        soup = BeautifulSoup(requests.get(chapter.url).text, features="lxml")
+    def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
+        soup = BeautifulSoup(requests.get(chapter.url).text, "html.parser")
         full_js = str(
             soup.find("script", type="application/ld+json")
             .find_next("script")
@@ -81,20 +71,18 @@ class MangaSeeSource(BaseSource):
             f"https://{domain}/manga/{self.id}/{'0' * pad_zero}{chapter_number}-{i:03}.png"
             for i in range(1, num_pages + 1)
         ]
-        new_chapter = Chapter(chapter.title, chapter.url, image_list)
+        return image_list
 
-        return new_chapter
-
-    @classmethod
-    def check_url(cls, url: str) -> bool:
+    @staticmethod
+    def check_url(url: str) -> bool:
         return bool(re.match(r"https://mangasee123.com/manga/.*", url))
 
     def _get_scripts(self) -> str:
-        if self.scripts:
-            return self.scripts
+        if self._scripts:
+            return self._scripts
 
-        self.scripts = requests.get(self.url).text
-        return self.scripts
+        self._scripts = requests.get(self.url).text
+        return self._scripts
 
     @classmethod
     def url_to_id(cls, url: str) -> str:
