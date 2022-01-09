@@ -1,8 +1,8 @@
 import sys
 import types
 
-from .base_source import BaseSource
 from . import source_mangasee
+from .base_source import BaseSource
 
 __class_list: list[type[BaseSource]] = []
 

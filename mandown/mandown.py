@@ -1,5 +1,6 @@
 import os
-from mandown import sources, iohandler
+
+from mandown import iohandler, sources
 from mandown.sources.base_source import BaseSource
 
 

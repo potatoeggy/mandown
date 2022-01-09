@@ -1,6 +1,6 @@
+import textwrap
 from dataclasses import InitVar, dataclass, field
 from typing import Callable, Final, Optional
-import textwrap
 
 
 class SourceNotOverriddenError(Exception):
@@ -16,7 +16,7 @@ class MangaMetadata:
 
 @dataclass
 class Chapter:
-    # wtf - quotes are used to prevent syntax error
+    # quotes are used to prevent syntax error
     # pylint: disable=used-before-assignment
     source: InitVar["BaseSource"]  # type: ignore
     title: str

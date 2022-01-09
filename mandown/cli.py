@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 import os
+
 import typer
+
 from mandown import mandown as md
 
 app = typer.Typer()

@@ -1,9 +1,11 @@
 """
 Handles source management and identification
 """
-import os
 import multiprocessing as mp
+import os
+
 import requests
+
 from mandown.sources.base_source import Chapter
 
 
