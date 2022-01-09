@@ -18,7 +18,7 @@ Currently only supports MangaSee.
 Install the package from PyPI:
 
 ```
-pip install mandown
+pip3 install mandown
 ```
 
 Or, to build from source:
@@ -27,23 +27,25 @@ Or, to build from source:
 git clone https://github.com/potatoeggy/mandown.git
 poetry install
 poetry build
+pip3 install dist/mandown*.whl
 ```
 
 ## Usage
 
 ```
-mandown URL DESTINATION_FOLDER
+mandown <URL>
 ```
 
-Run `python cli.py --help` for more info.
+Run `mandown --help` for more info.
 
 ## Library usage
 
 ```python
+import os
 from mandown import mandown
 
-md.download(url_to_manga, destination_folder, start_chapter=None, end_chapter=None, maxthreads=4)
-
-manga = md.query(url_to_manga)
+manga = mandown.query(url_to_manga)
 print(manga.metadata, manga.chapters)
+for c in manga.chapters:
+    mandown.download_chapter(c, dest_folder=os.getcwd(), maxthreads=4)
 ```
