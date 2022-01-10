@@ -14,6 +14,8 @@ from .base_source import BaseSource, Chapter, MangaMetadata
 
 
 class MangaSeeSource(BaseSource):
+    name = "MangaSee"
+
     def __init__(self, url: str) -> None:
         BaseSource.__init__(self, url)
         self.id = self.url_to_id(url)

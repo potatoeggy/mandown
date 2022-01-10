@@ -39,6 +39,8 @@ class Chapter:
 
 
 class BaseSource:
+    name = "Source name goes here"
+
     _metadata: Optional[MangaMetadata] = None
     _chapters: list[Chapter] = []
     USER_AGENT: Final = (

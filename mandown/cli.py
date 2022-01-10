@@ -35,7 +35,14 @@ def download(
     if not os.path.isdir(dest):
         raise ValueError(f"{dest} is not a valid folder path.")
 
-    source: BaseSource = md.query(url)
+    typer.echo(f"Searching sources for {url}")
+    try:
+        source: BaseSource = md.query(url, populate=True)
+        typer.secho(f'Found item from source "{source.name}"', fg=typer.colors.GREEN)
+        typer.secho(source)
+    except ValueError as err:
+        typer.secho("Could not match URL with available sources.", fg=typer.colors.RED)
+        raise typer.Exit(1) from err
 
     # starting to think that immutability is much better than whatever
     # the heck is going on here
@@ -50,10 +57,18 @@ def download(
     # zero-index
     start_chapter -= 1
 
-    for i, chapter in enumerate(source.chapters[start_chapter:end_chapter]):
-        print(f"Downloading {chapter.title} ({i+1}/{len(source.chapters)})...")
-        md.download_chapter(chapter, target_path, maxthreads)
-    print("Done.")
+    chapter_range = source.chapters[start_chapter:end_chapter]
+    for i, chapter in enumerate(chapter_range):
+        with typer.progressbar(
+            md.download_chapter(chapter, target_path, maxthreads),
+            length=len(chapter.images),
+            label=f"{chapter.title} ({i+1}/{len(chapter_range)})",
+        ) as progress:
+            for u in progress:
+                pass
+    typer.secho(
+        f"Successfully downloaded {len(chapter_range)} chapters.", fg=typer.colors.GREEN
+    )
 
 
 def main() -> None:
