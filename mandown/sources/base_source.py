@@ -41,7 +41,6 @@ class Chapter:
 class BaseSource:
     _metadata: Optional[MangaMetadata] = None
     _chapters: list[Chapter] = []
-    _images: list[list[str]] = []
     USER_AGENT: Final = (
         "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0"
     )
