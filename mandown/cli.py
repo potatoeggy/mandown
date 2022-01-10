@@ -64,7 +64,7 @@ def download(
             length=len(chapter.images),
             label=f"{chapter.title} ({i+1}/{len(chapter_range)})",
         ) as progress:
-            for u in progress:
+            for _ in progress:
                 pass
     typer.secho(
         f"Successfully downloaded {len(chapter_range)} chapters.", fg=typer.colors.GREEN
