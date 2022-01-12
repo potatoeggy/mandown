@@ -1,6 +1,7 @@
 """
 Source file for MangaSee
 """
+# pylint: disable=invalid-name
 
 import json
 import re
@@ -17,7 +18,7 @@ class MangaSeeSource(BaseSource):
     name = "MangaSee"
 
     def __init__(self, url: str) -> None:
-        BaseSource.__init__(self, url)
+        super().__init__(url)
         self.id = self.url_to_id(url)
         self._scripts: Optional[str] = None
 

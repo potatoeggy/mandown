@@ -40,6 +40,9 @@ def download_chapter(
         os.mkdir(download_folder)
 
     for i in iohandler.download(
-        chapter.images, os.path.join(dest_folder, chapter.title), maxthreads
+        chapter.images,
+        os.path.join(dest_folder, chapter.title),
+        chapter.headers,
+        maxthreads,
     ):
         yield i
