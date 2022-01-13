@@ -3,15 +3,15 @@
 <p align="center">
     <a href="https://pypi.org/project/mandown"><img src="https://img.shields.io/pypi/v/mandown" /></a>
     <a href="https://github.com/potatoeggy/mandown/releases/latest"><img src="https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag" /></a>
-    <a href="https://github.com/potatoeggy/mandown/issues"><img src="https://img.shields.io/github/issues/potatoeggy/mandown" /></a>
     <a href="/LICENSE"><img src="https://img.shields.io/github/license/potatoeggy/mandown" /></a>
-    <img src="https://img.shields.io/github/forks/potatoeggy/mandown" /></a>
-    <img src="https://img.shields.io/github/stars/potatoeggy/mandown" />
 </p>
 
-Python library and command line application to download books from various sources including manga
+Python library and command line application to download comics from various sources
 
-Currently only supports MangaSee.
+## Supported sites
+
+- https://mangasee123.com
+- https://readmanganato.com
 
 ## Installation
 
