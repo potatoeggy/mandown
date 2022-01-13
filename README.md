@@ -11,7 +11,7 @@ Python library and command line application to download comics from various sour
 ## Supported sites
 
 - https://mangasee123.com
-- https://readmanganato.com
+- https://manganato.com
 
 ## Installation
 
