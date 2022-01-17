@@ -24,7 +24,7 @@ def download(
         None, help="The last chapter to download [default: last found]"
     ),
     maxthreads: int = typer.Option(
-        1, help="The maximum number of images to download in parallel."
+        4, help="The maximum number of images to download in parallel."
     ),
 ) -> None:
     """
