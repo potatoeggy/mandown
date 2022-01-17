@@ -21,7 +21,7 @@ class Chapter:
     source: InitVar["BaseSource"]  # type: ignore
     title: str
     url: str
-    headers: Optional[dict[str, str]]
+    headers: Optional[dict[str, str]] = None
 
     _image_fetcher: Callable[
         ["Chapter"], list[str]  # type: ignore # pylint: disable=undefined-variable
