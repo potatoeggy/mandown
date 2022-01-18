@@ -1,5 +1,5 @@
 """
-Source file for MangaSee
+Source file for mangasee123.com
 """
 # pylint: disable=invalid-name
 
