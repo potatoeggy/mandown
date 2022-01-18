@@ -8,7 +8,7 @@ from mandown import iohandler, sources
 from mandown.sources.base_source import BaseSource, Chapter
 
 
-def query(url: str, populate: bool = False, populate_sort: bool = True) -> BaseSource:
+def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSource:
     """
     Return the source file for a URL.
     """
