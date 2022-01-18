@@ -47,7 +47,7 @@ class MangaNatoSource(BaseSource):
         return chapters
 
     def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
-        soup = BeautifulSoup(requests.get(chapter.url).text, "html.parser")
+        soup = BeautifulSoup(requests.get(chapter.identifier).text, "html.parser")
         images = []
         for i in soup.find_all("img"):
             if not i["src"].startswith("https://readmanganato.com"):

@@ -20,7 +20,7 @@ class Chapter:
     # pylint: disable=used-before-assignment
     source: InitVar["BaseSource"]  # type: ignore
     title: str
-    url: str
+    identifier: str
     headers: Optional[dict[str, str]] = None
 
     _image_fetcher: Callable[
@@ -37,6 +37,19 @@ class Chapter:
             return self._images
         self._images = self._image_fetcher(self)
         return self._images
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    def __str__(self) -> str:
+        return textwrap.dedent(
+            f"""\
+        title: {self.title}
+        id/url: {self.identifier}
+        images: {self._images}
+        headers: {self.headers}\
+        """
+        )
 
 
 class BaseSource:

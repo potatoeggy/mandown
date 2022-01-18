@@ -2,7 +2,7 @@
 import sys
 import types
 
-from . import source_manganato, source_mangasee, source_webtoons
+from . import source_mangadex, source_manganato, source_mangasee, source_webtoons
 from .base_source import BaseSource
 
 __class_list: list[type[BaseSource]] = []
