@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import importlib.metadata
 import os
 from typing import Optional
 
@@ -9,6 +10,11 @@ from mandown import mandown as md
 from mandown.sources.base_source import BaseSource
 
 app = typer.Typer()
+
+
+def version_callback() -> None:
+    typer.echo(f"mandown {importlib.metadata.version('mandown')}")
+    raise typer.Exit()
 
 
 @app.command()
@@ -26,12 +32,22 @@ def download(
     maxthreads: int = typer.Option(
         4, help="The maximum number of images to download in parallel."
     ),
+    version: Optional[bool] = typer.Option(
+        None,
+        "--version",
+        callback=version_callback,
+        is_eager=True,
+        help="Display the current version of mandown",
+    ),
 ) -> None:
     """
     Download from a URL chapters start_chapter to end_chapter.
     Defaults to the first chapter and last chapter, respectively
     in the working directory.
     """
+    if version:
+        return
+
     if not os.path.isdir(dest):
         raise ValueError(f"{dest} is not a valid folder path.")
 
