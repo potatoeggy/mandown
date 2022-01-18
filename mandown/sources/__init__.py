@@ -1,7 +1,8 @@
+# pylint: disable=invalid-name
 import sys
 import types
 
-from . import source_manganato, source_mangasee
+from . import source_manganato, source_mangasee, source_webtoons
 from .base_source import BaseSource
 
 __class_list: list[type[BaseSource]] = []

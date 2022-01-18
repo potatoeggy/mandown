@@ -12,6 +12,7 @@ Python library and command line application to download comics from various sour
 
 - https://mangasee123.com
 - https://manganato.com
+- https://webtoons.com
 
 ## Installation
 

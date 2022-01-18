@@ -1,16 +1,20 @@
 """
 Handles downloading files
 """
+# pylint: disable=invalid-name
 import multiprocessing as mp
 import os
-from typing import Iterable
+import urllib.parse
+from typing import Iterable, Optional
 
 import requests
 
 
-def async_download(data: tuple[str, str, dict[str, str]]) -> None:
-    url, dest_folder, headers = data
-    name = url.split("/")[-1]
+def async_download(
+    data: tuple[str, str, Optional[str], Optional[dict[str, str]]]
+) -> None:
+    url, dest_folder, filename, headers = data
+    name = filename or url.split("/")[-1]
     dest_file = os.path.join(dest_folder, name)
 
     response = requests.get(url, headers=headers)
@@ -35,8 +39,11 @@ def download(
     if not os.path.isdir(dest_folder):
         raise ValueError(f"Folder path {dest_folder} does not exist")
 
-    map_pool = list(map(lambda url: (url, dest_folder, headers), urls))
+    map_pool: list[tuple[str, str, str, Optional[dict[str, str]]]] = []
+    for i, u in enumerate(urls):
+        _, ext = os.path.splitext(urllib.parse.urlparse(u).path)
+        map_pool.append((u, dest_folder, f"{str(i + 1)}{ext}", headers))
 
     with mp.Pool(maxthreads) as pool:
-        for i in pool.imap_unordered(async_download, map_pool):
-            yield i
+        for c in pool.imap_unordered(async_download, map_pool):
+            yield c
