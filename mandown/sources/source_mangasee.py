@@ -50,7 +50,7 @@ class MangaSeeSource(BaseSource):
         return chapters
 
     def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
-        soup = BeautifulSoup(requests.get(chapter.identifier).text, "html.parser")
+        soup = BeautifulSoup(requests.get(chapter.url).text, "html.parser")
         full_js = str(
             soup.find("script", type="application/ld+json")
             .find_next("script")

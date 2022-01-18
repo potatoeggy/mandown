@@ -35,7 +35,14 @@ class MangaDexSource(BaseSource):
         ).json()
 
         metadata = r["data"]
-        title: str = metadata["attributes"]["title"]["en"]
+
+        # use english if possible, otherwise use the first language that appears
+        lang_code = (
+            "en"
+            if "en" in metadata["attributes"]["title"]
+            else next(iter(metadata["attributes"]["title"]))
+        )
+        title: str = metadata["attributes"]["title"][lang_code]
         authors: list[str] = []
         for d in metadata["relationships"]:
             if d["type"] == "author":
@@ -51,15 +58,21 @@ class MangaDexSource(BaseSource):
 
         chapters: list[Chapter] = []
         for c in r["data"]:
-            chapters.append(Chapter(self, c["attributes"]["title"], c["id"]))
+            chapters.append(
+                Chapter(
+                    self,
+                    c["attributes"]["title"],
+                    f"https://mangadex.org/chapter/{c['id']}",
+                )
+            )
         return chapters
 
     def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
-        r = self._get(
-            f"https://api.mangadex.org/at-home/server/{chapter.identifier}"
-        ).json()
+        *_, chapter_id = chapter.url.split("/")
+        r = self._get(f"https://api.mangadex.org/at-home/server/{chapter_id}").json()
         base_url = r["baseUrl"]
         chapter_hash = r["chapter"]["hash"]
+
         images: list[str] = []
         for p in r["chapter"]["data"]:
             images.append(f"{base_url}/data/{chapter_hash}/{p}")
