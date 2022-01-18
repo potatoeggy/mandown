@@ -1,11 +1,14 @@
+# pylint: disable=invalid-name
 import os
 from typing import Iterable
+
+from natsort import natsorted
 
 from mandown import iohandler, sources
 from mandown.sources.base_source import BaseSource, Chapter
 
 
-def query(url: str, populate: bool = False) -> BaseSource:
+def query(url: str, populate: bool = False, populate_sort: bool = True) -> BaseSource:
     """
     Return the source file for a URL.
     """
@@ -16,7 +19,11 @@ def query(url: str, populate: bool = False) -> BaseSource:
         if source.metadata:
             pass
         if source.chapters:
-            pass
+            if populate_sort:
+                titles = list(map(lambda c: c.title, source.chapters))
+                if titles != natsorted(titles):
+                    for i, c in enumerate(source.chapters):
+                        c.title = f"{i+1}. {c.title}"
     return source
 
 
