@@ -12,9 +12,10 @@ from mandown.sources.base_source import BaseSource
 app = typer.Typer()
 
 
-def version_callback() -> None:
-    typer.echo(f"mandown {importlib.metadata.version('mandown')}")
-    raise typer.Exit()
+def version_callback(value: bool) -> None:
+    if value:
+        typer.echo(f"mandown {importlib.metadata.version('mandown')}")
+        raise typer.Exit()
 
 
 @app.command()
