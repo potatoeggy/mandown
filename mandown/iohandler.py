@@ -45,5 +45,4 @@ def download(
         map_pool.append((u, dest_folder, f"{str(i + 1)}{ext}", headers))
 
     with mp.Pool(maxthreads) as pool:
-        for c in pool.imap_unordered(async_download, map_pool):
-            yield c
+        yield from pool.imap_unordered(async_download, map_pool)
