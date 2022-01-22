@@ -40,9 +40,10 @@ def download(
         raise ValueError(f"Folder path {dest_folder} does not exist")
 
     map_pool: list[tuple[str, str, str, Optional[dict[str, str]]]] = []
+    padding = f"0{len(str(len(urls)))}"
     for i, u in enumerate(urls):
         _, ext = os.path.splitext(urllib.parse.urlparse(u).path)
-        map_pool.append((u, dest_folder, f"{str(i + 1)}{ext}", headers))
+        map_pool.append((u, dest_folder, f"{i+1:{padding}}{ext}", headers))
 
     with mp.Pool(maxthreads) as pool:
         yield from pool.imap_unordered(async_download, map_pool)
