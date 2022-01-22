@@ -7,7 +7,7 @@ import os
 import urllib.parse
 from typing import Iterable, Optional
 
-import requests
+import httpx
 
 
 def async_download(
@@ -17,7 +17,7 @@ def async_download(
     name = filename or url.split("/")[-1]
     dest_file = os.path.join(dest_folder, name)
 
-    response = requests.get(url, headers=headers)
+    response = httpx.get(url, headers=headers)
     response.raise_for_status()
     with open(dest_file, "wb") as file:
         file.write(response.content)
