@@ -10,6 +10,7 @@ import textwrap
 import unicodedata
 from pathlib import Path
 from typing import Optional
+import zipfile
 
 from natsort import natsorted
 
@@ -45,7 +46,7 @@ class Converter:
 
         self.folder_path = Path(os.path.realpath(folder_path))
         self.metadata = metadata or MangaMetadata(
-            title=os.path.basename(self.folder_path), authors=[], url=""
+            title=os.path.basename(self.folder_path), authors=[], url="", cover_art=""
         )
 
         # self.chapters is found either by traversing the path (natsort) or by being fed
@@ -59,7 +60,7 @@ class Converter:
         padding = f"0{len(str(len(working_chapters)))}"
 
         # TODO: make cleaner this is ridiculous
-        self.chapters = [
+        self.chapters: list[tuple[str, str, str, list[str]]] = [
             (
                 title,
                 sanitised,
@@ -67,9 +68,10 @@ class Converter:
                 list(
                     filter(
                         lambda s: any(
-                            s.lower().endswith(i) for i in ACCEPTED_IMAGE_EXTENSIONS
+                            str(s).lower().endswith(i)
+                            for i in ACCEPTED_IMAGE_EXTENSIONS
                         ),
-                        os.listdir(self.folder_path / sanitised),
+                        natsorted(os.listdir(self.folder_path / sanitised)),  # type: ignore
                     )
                 ),
             )
@@ -129,9 +131,28 @@ class Converter:
                         self.folder_path / path / i,
                         oebps / "Images" / slug / f"{index:{padding}}{Path(i).suffix}",
                     )
-                print("Generated chapter " + slug)
 
-            shutil.copytree(root, Path(self.folder_path.stem))
+            if (self.folder_path / "cover.jpg").is_file():
+                shutil.copyfile(
+                    self.folder_path / "cover.jpg", oebps / "Images" / "cover.jpg"
+                )
+
+            # compress and move epub
+            dest_file = (
+                self.folder_path.parent
+                / f"{self.metadata.title} - {' & '.join(self.metadata.authors)}.epub"
+            )
+
+            with zipfile.ZipFile(dest_file, "w", zipfile.ZIP_DEFLATED) as file:  # type: ignore
+                file.writestr("mimetype", "application/epub+zip", zipfile.ZIP_STORED)  # type: ignore
+                for dirpath, _, filenames in os.walk(root):  # from kcc
+                    for name in filenames:
+                        if (Path(dirpath) / name).is_file():
+                            file.write(
+                                Path(dirpath) / name,  # type: ignore
+                                Path(dirpath.lstrip(str(root))) / name,
+                                zipfile.ZIP_DEFLATED,
+                            )
 
     def to_pdf(self) -> None:
         pass
@@ -168,10 +189,6 @@ class EpubGenerator:
 
     @staticmethod
     def create_skeleton(root: Path) -> None:
-        with open(root / "mimetype", "w", encoding="utf-8") as file:
-            # TODO: do not compress this
-            file.write("application/epub+zip")
-
         os.mkdir(root / "META-INF")
         with open(root / "META-INF" / "container.xml", "w", encoding="utf-8") as file:
             file.write(
@@ -342,8 +359,3 @@ class EpubGenerator:
             </html>\
             """
         )
-
-
-if __name__ == "__main__":
-    comic = Converter("/media/cbz/RAW_Oshi no Ko")
-    comic.to_epub()
