@@ -21,6 +21,7 @@ def async_download(
     response.raise_for_status()
     with open(dest_file, "wb") as file:
         file.write(response.content)
+    # TODO: test for file type (jpg/png) and rename as appropriate
 
 
 def download(

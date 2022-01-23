@@ -13,7 +13,7 @@ from typing import Optional
 
 from natsort import natsorted
 
-from sources.base_source import MangaMetadata
+from mandown.sources.base_source import MangaMetadata
 
 ACCEPTED_IMAGE_EXTENSIONS = {
     ".gif": "gif",
@@ -169,6 +169,7 @@ class EpubGenerator:
     @staticmethod
     def create_skeleton(root: Path) -> None:
         with open(root / "mimetype", "w", encoding="utf-8") as file:
+            # TODO: do not compress this
             file.write("application/epub+zip")
 
         os.mkdir(root / "META-INF")
@@ -230,7 +231,7 @@ class EpubGenerator:
             <?xml version="1.0" encoding="UTF-8"?>
             <ncx version="2005-1" xml:lang="en-US" xmlns="http://www.daisy.org/z3986/2005/ncx/">
             <head>
-            <meta name="dtb:uid" content="urn:uuid:091199c0-7564-4143-a871-bc0e4acfcb1e"/>
+            <meta name="dtb:uid" content="urn:uuid:bafec70e-0286-49d3-b1e2-9e9f297c8cfe"/>
             <meta name="dtb:depth" content="1"/>
             <meta name="dtb:totalPageCount" content="0"/>
             <meta name="dtb:maxPageNumber" content="0"/>
@@ -289,7 +290,7 @@ class EpubGenerator:
             <meta property="dcterms:modified">{time_now}Z</meta>
             <meta name="cover" content="cover"/>
             <meta property="rendition:orientation">portrait</meta>
-            <meta property="rendition:spread">portrait</meta>
+            <meta property="rendition:spread">both</meta>
             <meta property="rendition:layout">pre-paginated</meta>
             </metadata>
             <manifest>
