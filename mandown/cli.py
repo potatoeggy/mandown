@@ -2,9 +2,11 @@
 
 import importlib.metadata
 import os
+from pathlib import Path
 from typing import Optional
 
 import typer
+import requests
 
 from mandown import mandown as md
 from mandown.sources.base_source import BaseSource
@@ -73,6 +75,10 @@ def download(
 
     # zero-index
     start_chapter -= 1
+
+    # get cover art
+    with open(Path(target_path) / "cover.jpg", "w+b") as file:
+        file.write(requests.get(source.metadata.cover_art).content)
 
     chapter_range = source.chapters[start_chapter:end_chapter]
     for i, chapter in enumerate(chapter_range):
