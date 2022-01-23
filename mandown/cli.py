@@ -77,7 +77,7 @@ def download(
     chapter_range = source.chapters[start_chapter:end_chapter]
     for i, chapter in enumerate(chapter_range):
         with typer.progressbar(
-            md.download_chapter(chapter, target_path, maxthreads),
+            md.download_chapter_progress(chapter, target_path, maxthreads),
             length=len(chapter.images),
             label=f"{chapter.title} ({i+1}/{len(chapter_range)})",
         ) as progress:

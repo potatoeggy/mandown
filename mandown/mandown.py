@@ -2,6 +2,8 @@
 import os
 from typing import Iterable
 
+from natsort import natsorted
+
 from mandown import iohandler, sources
 from mandown.sources.base_source import BaseSource, Chapter
 
@@ -19,7 +21,7 @@ def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSo
         if source.chapters:
             if populate_sort:
                 titles = list(map(lambda c: c.title, source.chapters))
-                if titles != sorted(titles):
+                if titles != natsorted(titles):
                     padding = f"0{len(str(len(source.chapters)))}"
                     for i, c in enumerate(source.chapters):
                         c.title = f"{i+1:{padding}}. {c.title}"
