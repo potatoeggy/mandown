@@ -44,13 +44,16 @@ class MangaDexSource(BaseSource):
         )
         title: str = metadata["attributes"]["title"][lang_code]
         authors: list[str] = []
+        cover_art = ""
         for d in metadata["relationships"]:
             if d["type"] == "author":
                 authors.append(d["attributes"]["name"])
             elif d["type"] == "cover_art":
-                pass
+                cover_art = d["attributes"]["fileName"]
 
-        return MangaMetadata(title, authors, f"https://mangadex.org/title/{self.id}")
+        return MangaMetadata(
+            title, authors, f"https://mangadex.org/title/{self.id}", cover_art
+        )
 
     def fetch_chapter_list(self) -> list[Chapter]:
         # for some reason *sometimes* it goes all name/service not found

@@ -40,11 +40,13 @@ class WebtoonsSource(BaseSource):
         authors: list[str] = feed["entries"][0].author.split("/")
         authors = list(map(lambda s: s.strip(), authors))
         title: str = feed["channel"]["title"]
+        cover_art: str = feed["channel"]["image"]["href"]
 
         return MangaMetadata(
             title,
             authors,
             f"https://www.webtoons.com/{self._title_path}/list?title_no={self._title_no}",
+            cover_art,
         )
 
     def fetch_chapter_list(self) -> list[Chapter]:

@@ -13,6 +13,7 @@ class MangaMetadata:
     title: str
     authors: list[str]
     url: str
+    cover_art: str
 
 
 @dataclass
