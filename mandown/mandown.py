@@ -2,6 +2,8 @@
 import os
 from typing import Iterable
 
+from natsort import natsorted
+
 from mandown import iohandler, sources
 from mandown.sources.base_source import BaseSource, Chapter
 
@@ -19,19 +21,19 @@ def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSo
         if source.chapters:
             if populate_sort:
                 titles = list(map(lambda c: c.title, source.chapters))
-                if titles != sorted(titles):
+                if titles != natsorted(titles):
                     padding = f"0{len(str(len(source.chapters)))}"
                     for i, c in enumerate(source.chapters):
                         c.title = f"{i+1:{padding}}. {c.title}"
     return source
 
 
-def download_chapter(
+def download_chapter_progress(
     chapter: Chapter, dest_folder: str, maxthreads: int = 1
 ) -> Iterable[None]:
     """
     Download the images of a chapter to a destination folder.
-    Returns an iterable that increments whenever an item has finished
+    Returns a generator that increments whenever an item has finished
     downloading.
     Raises ValueError if the folder does not exist.
     """
@@ -47,7 +49,16 @@ def download_chapter(
 
     yield from iohandler.download(
         chapter.images,
-        os.path.join(dest_folder, chapter.title),
+        os.path.join(dest_folder, chapter.title_sanitised),
         chapter.headers,
         maxthreads,
     )
+
+
+def download_chapter(chapter: Chapter, dest_folder: str, maxthreads: int = 1) -> None:
+    """
+    Download the images of a chapter to a destination folder.
+    Raises ValueError if the folder does not exist.
+    """
+    for _ in download_chapter_progress(chapter, dest_folder, maxthreads):
+        pass

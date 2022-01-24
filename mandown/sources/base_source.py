@@ -1,6 +1,7 @@
 import textwrap
 from dataclasses import InitVar, dataclass, field
 from typing import Callable, Final, Optional
+import re
 
 
 class SourceNotOverriddenError(Exception):
@@ -12,6 +13,7 @@ class MangaMetadata:
     title: str
     authors: list[str]
     url: str
+    cover_art: str
 
 
 @dataclass
@@ -30,6 +32,8 @@ class Chapter:
 
     def __post_init__(self, source: "BaseSource") -> None:  # type: ignore
         self._image_fetcher = source.fetch_chapter_image_list
+        # get rid of all forbidden chars in filenames
+        self.title_sanitised = re.sub(r"[\\\/:*?<>|]", "_", self.title)
 
     @property
     def images(self) -> list[str]:

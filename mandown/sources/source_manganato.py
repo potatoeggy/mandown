@@ -33,7 +33,10 @@ class MangaNatoSource(BaseSource):
             elif el["href"].startswith("https://manganato.com/genre"):
                 genres.append(el.next_element)
 
-        return MangaMetadata(title, authors, self.url)
+        cover_img = next(iter(soup.select("span.info-image > img.img-loading")))
+        cover_art: str = cover_img["src"]
+
+        return MangaMetadata(title, authors, self.url, cover_art)
 
     def fetch_chapter_list(self) -> list[Chapter]:
         soup = BeautifulSoup(self._get_scripts(), "html.parser")

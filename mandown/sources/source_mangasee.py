@@ -33,8 +33,9 @@ class MangaSeeSource(BaseSource):
         title: str = metadata_json["name"]
         authors: list[str] = metadata_json["author"]
         # genres: list[str] = metadata_json["genre"]
+        cover_art = f"https://cover.nep.li/cover/{self.id}.jpg"
 
-        return MangaMetadata(title, authors, self.url)
+        return MangaMetadata(title, authors, self.url, cover_art)
 
     def fetch_chapter_list(self) -> list[Chapter]:
         feed = feedparser.parse(

@@ -2,8 +2,10 @@
 Handles downloading files
 """
 # pylint: disable=invalid-name
+import imghdr
 import multiprocessing as mp
 import os
+from pathlib import Path
 import urllib.parse
 from typing import Iterable, Optional
 
@@ -21,6 +23,12 @@ def async_download(
     response.raise_for_status()
     with open(dest_file, "wb") as file:
         file.write(response.content)
+
+    # if the file extension is lying
+    # rename it so epubcheck doesn't yell at us
+    ext = imghdr.what(dest_file)
+    if ext is not None:
+        os.rename(dest_file, Path(dest_file).with_suffix(f".{ext}"))
 
 
 def download(
