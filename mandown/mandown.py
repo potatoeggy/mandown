@@ -53,7 +53,7 @@ def download_chapter_progress(
     if only_needed:
         for f in os.listdir(download_folder):
             name = Path(f).stem
-            if name == name.ljust(padding, "0"):
+            if name == name.rjust(padding, "0"):
                 try:
                     skip_images.add(int(name))
                 except ValueError:
@@ -64,7 +64,7 @@ def download_chapter_progress(
         # zip will crash if fed an empty array
         processed_chapter_images, filestems = zip(
             *(
-                (link, str(i).ljust(padding, "0"))
+                (link, str(i).rjust(padding, "0"))
                 for i, link in enumerate(chapter.images, start=1)
                 if i not in skip_images
             )
@@ -72,7 +72,7 @@ def download_chapter_progress(
 
         yield from iohandler.download(
             processed_chapter_images,
-            os.path.join(dest_folder, chapter.title_sanitised),
+            os.path.join(dest_folder, download_folder),
             chapter.headers,
             maxthreads,
             filestems,

@@ -13,6 +13,8 @@ class MangaMetadata:
     title: str
     authors: list[str]
     url: str
+    genres: list[str]
+    description: str
     cover_art: str
 
 

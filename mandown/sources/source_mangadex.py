@@ -19,6 +19,7 @@ class MangaDexSource(BaseSource):
     def __init__(self, url: str) -> None:
         super().__init__(url)
         self._soup: Optional[BeautifulSoup] = None
+        self.lang_code = ""
 
         # https://api.mangadex.org/manga/de4b3c43-5243-4399-9fc3-68a3c0747138
         self.id = self.url.split("/")[4]
@@ -31,36 +32,58 @@ class MangaDexSource(BaseSource):
     def fetch_metadata(self) -> MangaMetadata:
         # TODO: support non-English downloads
         r = self._get(
-            f"https://api.mangadex.org/manga/{self.id}?includes[]=author&includes[]=cover_art"
+            f"https://api.mangadex.org/manga/{self.id}"
+            "?includes[]=author&includes[]=cover_art&includes[]=artist"
         ).json()
 
         metadata = r["data"]
 
         # use english if possible, otherwise use the first language that appears
-        lang_code = (
+        self.lang_code = (
             "en"
             if "en" in metadata["attributes"]["title"]
             else next(iter(metadata["attributes"]["title"]))
         )
-        title: str = metadata["attributes"]["title"][lang_code]
+        title: str = metadata["attributes"]["title"][self.lang_code]
+        description: str = metadata["attributes"]["description"][self.lang_code]
+
         authors: list[str] = []
         cover_art = ""
         for d in metadata["relationships"]:
             if d["type"] == "author" or d["type"] == "artist":
                 authors.append(d["attributes"]["name"])
             elif d["type"] == "cover_art":
-                cover_art = d["attributes"]["fileName"]
+                # pylint: disable=line-too-long
+                cover_art = (
+                    "https://uploads.mangadex.org/covers/"
+                    f"{self.id}/{d['attributes']['fileName']}"
+                )
+
+        genres: list[str] = []
+        for d in metadata["attributes"]["tags"]:
+            if d["attributes"]["group"] == "genre":
+                genres.append(d["attributes"]["name"][self.lang_code])
 
         return MangaMetadata(
-            title, authors, f"https://mangadex.org/title/{self.id}", cover_art
+            title,
+            authors,
+            f"https://mangadex.org/title/{self.id}",
+            genres,
+            description,
+            cover_art,
         )
 
     def fetch_chapter_list(self) -> list[Chapter]:
         # for some reason *sometimes* it goes all name/service not found
-        r: dict = self._get(f"https://api.mangadex.org/chapter?manga={self.id}").json()
+        r: dict = self._get(
+            f"https://api.mangadex.org/manga/{self.id}/"
+            f"feed?limit=500&translatedLanguage[]={self.lang_code}"
+            "&order[volume]=desc&order[chapter]=desc"
+        ).json()
 
         chapters: list[Chapter] = []
         for c in r["data"]:
+            print(c["attributes"]["title"])
             chapters.append(
                 Chapter(
                     self,
