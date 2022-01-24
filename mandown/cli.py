@@ -4,7 +4,7 @@ from enum import Enum
 import importlib.metadata
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Iterable, Optional
 
 import typer
 import requests
@@ -92,6 +92,7 @@ def download(
         file.write(requests.get(source.metadata.cover_art).content)
 
     chapter_range = source.chapters[start_chapter:end_chapter]
+    typer.echo("Downloading...")
     for i, chapter in enumerate(chapter_range):
         # TODO: add file path sanitising
         with typer.progressbar(
@@ -111,15 +112,22 @@ def download(
         formatted_chapters = [(c.title, c.title_sanitised) for c in chapter_range]
         converter = Converter(target_path, source.metadata, formatted_chapters)
 
+        convert_func: Callable[[str], Iterable] = lambda i: None
         match convert.value:
             case ConvertFormats.EPUB:
-                converter.to_epub(dest)
+                convert_func = converter.to_epub_progress
             case ConvertFormats.CBZ:
-                converter.to_cbz(dest)
+                convert_func = converter.to_cbz_progress
             case ConvertFormats.MOBI:
                 raise ValueError("MOBI conversion is not yet supported.")
             case ConvertFormats.PDF:
                 raise ValueError("PDF conversion is not yet supported.")
+
+        with typer.progressbar(
+            length=converter.max_operations[convert.value], label="Converting"
+        ) as progress:
+            for i in convert_func(dest):
+                progress.update(1, i)
 
         dest_file = dest / Path(source.metadata.title).with_suffix(f".{convert.value}")
         typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)

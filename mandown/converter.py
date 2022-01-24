@@ -79,10 +79,17 @@ class Converter:
             for i, (title, sanitised) in enumerate(working_chapters)
         ]
 
+        # useful for progress bars
+        self.max_operations: dict[str, int] = {
+            "epub": len(self.chapters) * 2,
+            "cbz": len(self.chapters),
+        }
+
     def to_cbz_progress(self, dest_folder: str) -> Iterator:
         dest_file = Path(dest_folder) / f"{self.metadata.title}.cbz"
         with zipfile.ZipFile(dest_file, "w", zipfile.ZIP_DEFLATED) as file:  # type: ignore
             for dirpath, _, filenames in os.walk(self.folder_path):  # from kcc
+                yield "Compressing"
                 for name in filenames:
                     if (Path(dirpath) / name).is_file():
                         file.write(
@@ -119,6 +126,7 @@ class Converter:
                 )
 
             for _, path, slug, images in self.chapters:
+                yield "Building"
                 os.mkdir(oebps / "Text" / slug)
                 os.mkdir(oebps / "Images" / slug)
                 padding = f"0{len(str(len(images)))}"
@@ -145,11 +153,12 @@ class Converter:
                 )
 
             # compress and move epub
-            dest_file = dest_folder / f"{self.metadata.title}.epub"
+            dest_file = Path(dest_folder) / f"{self.metadata.title}.epub"
 
             with zipfile.ZipFile(dest_file, "w", zipfile.ZIP_DEFLATED) as file:  # type: ignore
                 file.writestr("mimetype", "application/epub+zip", zipfile.ZIP_STORED)  # type: ignore
                 for dirpath, _, filenames in os.walk(root):  # from kcc
+                    yield "Compressing"
                     for name in filenames:
                         if (Path(dirpath) / name).is_file():
                             file.write(
