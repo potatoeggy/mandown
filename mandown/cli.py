@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from enum import Enum
 import importlib.metadata
 import os
 from pathlib import Path
@@ -8,10 +9,19 @@ from typing import Optional
 import typer
 import requests
 
-from mandown import mandown as md
+from mandown import mandown
 from mandown.sources.base_source import BaseSource
+from mandown.converter import Converter
 
 app = typer.Typer()
+
+
+class ConvertFormats(str, Enum):
+    CBZ = "cbz"
+    EPUB = "epub"
+    MOBI = "mobi"
+    PDF = "pdf"
+    FOLDER = "folder"
 
 
 def version_callback(value: bool) -> None:
@@ -23,6 +33,7 @@ def version_callback(value: bool) -> None:
 @app.command()
 def download(
     url: str,
+    convert: ConvertFormats = ConvertFormats.FOLDER,
     dest: str = typer.Option(
         os.getcwd(), help="The destination folder to download to."
     ),
@@ -56,7 +67,7 @@ def download(
 
     typer.echo(f"Searching sources for {url}")
     try:
-        source: BaseSource = md.query(url, populate=True)
+        source: BaseSource = mandown.query(url, populate=True)
         typer.secho(f'Found item from source "{source.name}"', fg=typer.colors.GREEN)
         typer.secho(source)
     except ValueError as err:
@@ -82,8 +93,9 @@ def download(
 
     chapter_range = source.chapters[start_chapter:end_chapter]
     for i, chapter in enumerate(chapter_range):
+        # TODO: add file path sanitising
         with typer.progressbar(
-            md.download_chapter_progress(chapter, target_path, maxthreads),
+            mandown.download_chapter_progress(chapter, target_path, maxthreads),
             length=len(chapter.images),
             label=f"{chapter.title} ({i+1}/{len(chapter_range)})",
         ) as progress:
@@ -92,6 +104,25 @@ def download(
     typer.secho(
         f"Successfully downloaded {len(chapter_range)} chapters.", fg=typer.colors.GREEN
     )
+
+    if convert.value != ConvertFormats.FOLDER:
+        typer.echo(f"Converting to {convert.value}...")
+
+        formatted_chapters = [(c.title, c.title_sanitised) for c in chapter_range]
+        converter = Converter(target_path, source.metadata, formatted_chapters)
+
+        match convert.value:
+            case ConvertFormats.EPUB:
+                converter.to_epub()
+            case ConvertFormats.CBZ:
+                converter.to_cbz()
+            case ConvertFormats.MOBI:
+                raise ValueError("MOBI conversion is not yet supported.")
+            case ConvertFormats.PDF:
+                raise ValueError("PDF conversion is not yet supported.")
+
+        dest_file = dest / Path(source.metadata.title).with_suffix(f".{convert.value}")
+        typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
 
 
 def main() -> None:

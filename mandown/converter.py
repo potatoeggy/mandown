@@ -41,6 +41,7 @@ class Converter:
         If the chapter list or metadata are not provided, they will
         be guessed from the directory structure.
         """
+        # TODO: improve code readability
         if not Path(folder_path).is_dir():
             raise ValueError(f"{folder_path} is not a directory.")
 
@@ -85,7 +86,7 @@ class Converter:
             self.folder_path,
         )
 
-        cbz_path = Path(zip_path).stem + ".cbz"
+        cbz_path = Path(zip_path).with_suffix(".cbz")
         os.rename(zip_path, cbz_path)
 
     def to_epub(self) -> None:
@@ -138,10 +139,7 @@ class Converter:
                 )
 
             # compress and move epub
-            dest_file = (
-                self.folder_path.parent
-                / f"{self.metadata.title} - {' & '.join(self.metadata.authors)}.epub"
-            )
+            dest_file = self.folder_path.parent / f"{self.metadata.title}.epub"
 
             with zipfile.ZipFile(dest_file, "w", zipfile.ZIP_DEFLATED) as file:  # type: ignore
                 file.writestr("mimetype", "application/epub+zip", zipfile.ZIP_STORED)  # type: ignore
