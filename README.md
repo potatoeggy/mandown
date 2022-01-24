@@ -2,6 +2,7 @@
 
 <a href="https://www.codefactor.io/repository/github/potatoeggy/mandown"><img src="https://www.codefactor.io/repository/github/potatoeggy/mandown/badge" alt="CodeFactor" /></a>
 <a href="https://pypi.org/project/mandown"><img src="https://img.shields.io/pypi/v/mandown" /></a>
+<a href="https://aur.archlinux.org/packages/mandown-git"><img src="https://img.shields.io/aur/version/mandown-git" /></a>
 <a href="https://github.com/potatoeggy/mandown/releases/latest"><img src="https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag" /></a>
 <a href="/LICENSE"><img src="https://img.shields.io/github/license/potatoeggy/mandown" /></a>
 
