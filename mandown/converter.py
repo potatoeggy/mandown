@@ -46,7 +46,12 @@ class Converter:
 
         self.folder_path = Path(os.path.realpath(folder_path))
         self.metadata = metadata or MangaMetadata(
-            title=os.path.basename(self.folder_path), authors=[], url="", cover_art=""
+            title=os.path.basename(self.folder_path),
+            authors=[],
+            url="",
+            genres=[],
+            description="",
+            cover_art="",
         )
 
         # self.chapters is found either by traversing the path (natsort) or by being fed
@@ -319,6 +324,17 @@ class EpubGenerator:
                 f'<dc:creator id="id-{i}">{name}</dc:creator>'
                 for i, name in enumerate(metadata.authors)
             )}
+            <dc:description>{
+                (chr(10) + " "*12).join(
+                    metadata.description.split(chr(10))
+                )
+            }</dc:description>
+            {
+                (chr(10) + " "*12).join(
+                    f"<dc:subject>{genre}</dc:subject>"
+                    for genre in metadata.genres
+                )
+            }
             <meta property="dcterms:modified">{time_now}Z</meta>
             <meta name="cover" content="cover"/>
             <meta property="rendition:orientation">portrait</meta>
