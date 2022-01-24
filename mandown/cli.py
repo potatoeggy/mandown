@@ -94,7 +94,6 @@ def download(
     chapter_range = source.chapters[start_chapter:end_chapter]
     typer.echo("Downloading...")
     for i, chapter in enumerate(chapter_range):
-        # TODO: add file path sanitising
         with typer.progressbar(
             mandown.download_chapter_progress(chapter, target_path, maxthreads),
             length=len(chapter.images),

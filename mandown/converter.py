@@ -41,7 +41,6 @@ class Converter:
         If the chapter list or metadata are not provided, they will
         be guessed from the directory structure.
         """
-        # TODO: improve code readability
         if not Path(folder_path).is_dir():
             raise ValueError(f"{folder_path} is not a directory.")
 
@@ -60,7 +59,6 @@ class Converter:
 
         padding = f"0{len(str(len(working_chapters)))}"
 
-        # TODO: make cleaner this is ridiculous
         self.chapters: list[tuple[str, str, str, list[str]]] = [
             (
                 title,
@@ -155,14 +153,14 @@ class Converter:
             # compress and move epub
             dest_file = Path(dest_folder) / f"{self.metadata.title}.epub"
 
-            with zipfile.ZipFile(dest_file, "w", zipfile.ZIP_DEFLATED) as file:  # type: ignore
-                file.writestr("mimetype", "application/epub+zip", zipfile.ZIP_STORED)  # type: ignore
+            with zipfile.ZipFile(dest_file, "w", zipfile.ZIP_DEFLATED) as zipout:
+                zipout.writestr("mimetype", "application/epub+zip", zipfile.ZIP_STORED)
                 for dirpath, _, filenames in os.walk(root):  # from kcc
                     yield "Compressing"
                     for name in filenames:
                         if (Path(dirpath) / name).is_file():
-                            file.write(
-                                Path(dirpath) / name,  # type: ignore
+                            zipout.write(
+                                Path(dirpath) / name,
                                 Path(dirpath.lstrip(str(root))) / name,
                                 zipfile.ZIP_DEFLATED,
                             )

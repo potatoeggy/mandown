@@ -7,7 +7,7 @@ import multiprocessing as mp
 import os
 from pathlib import Path
 import urllib.parse
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Sequence
 
 import requests
 
@@ -32,10 +32,11 @@ def async_download(
 
 
 def download(
-    urls: list[str] | str,
+    urls: Sequence[str] | str,
     dest_folder: str,
     headers: dict[str, str] = None,
     maxthreads: int = 1,
+    filestems: Sequence[str] | str | None = None,
 ) -> Iterable[None]:
     """
     Download one or multiple URLs to a destination folder.
@@ -44,14 +45,21 @@ def download(
     if isinstance(urls, str):
         urls = [urls]
 
+    if isinstance(filestems, str):
+        filestems = [filestems]
+
     if not os.path.isdir(dest_folder):
         raise ValueError(f"Folder path {dest_folder} does not exist")
 
     map_pool: list[tuple[str, str, str, Optional[dict[str, str]]]] = []
     padding = f"0{len(str(len(urls)))}"
-    for i, u in enumerate(urls):
+    if filestems is None:
+        filestems = [f"{i+1:{padding}}" for i in range(len(urls))]
+
+    for u, stem in zip(urls, filestems, strict=True):
         _, ext = os.path.splitext(urllib.parse.urlparse(u).path)
-        map_pool.append((u, dest_folder, f"{i+1:{padding}}{ext}", headers))
+
+        map_pool.append((u, dest_folder, f"{stem}{ext}", headers))
 
     with mp.Pool(maxthreads) as pool:
         yield from pool.imap_unordered(async_download, map_pool)

@@ -48,28 +48,35 @@ def download_chapter_progress(
     if not os.path.isdir(download_folder):
         os.mkdir(download_folder)
 
-    skip_images: list[int] = []
+    padding = len(str(len(chapter.images)))
+    skip_images: set[int] = set()
     if only_needed:
-        padding = len(str(len(chapter.images)))
         for f in os.listdir(download_folder):
             name = Path(f).stem
             if name == name.ljust(padding, "0"):
                 try:
-                    skip_images.append(int(name))
+                    skip_images.add(int(name))
                 except ValueError:
                     # expected if it's not an image
                     pass
 
-    processed_chapter_images = [
-        link for i, link in enumerate(chapter.images) if i not in skip_images
-    ]
+    if len(skip_images) != len(chapter.images):
+        # zip will crash if fed an empty array
+        processed_chapter_images, filestems = zip(
+            *(
+                (link, str(i).ljust(padding, "0"))
+                for i, link in enumerate(chapter.images, start=1)
+                if i not in skip_images
+            )
+        )
 
-    yield from iohandler.download(
-        processed_chapter_images,
-        os.path.join(dest_folder, chapter.title_sanitised),
-        chapter.headers,
-        maxthreads,
-    )
+        yield from iohandler.download(
+            processed_chapter_images,
+            os.path.join(dest_folder, chapter.title_sanitised),
+            chapter.headers,
+            maxthreads,
+            filestems,
+        )
 
 
 def download_chapter(
