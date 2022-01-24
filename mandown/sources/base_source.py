@@ -123,6 +123,8 @@ class BaseSource:
             title: {self.metadata.title}
             authors: {self.metadata.authors}
             url: {self.metadata.url}
+            genres: {self.metadata.genres}
+            description: {self.metadata.description}
             chapters: {len(self.chapters)}\
         """
         )

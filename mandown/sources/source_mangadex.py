@@ -83,7 +83,6 @@ class MangaDexSource(BaseSource):
 
         chapters: list[Chapter] = []
         for c in r["data"]:
-            print(c["attributes"]["title"])
             chapters.append(
                 Chapter(
                     self,
