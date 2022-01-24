@@ -31,8 +31,11 @@ class MangaSeeSource(BaseSource):
         )["mainEntity"]
 
         title: str = metadata_json["name"]
-        authors: list[str] = metadata_json["author"]
-        # genres: list[str] = metadata_json["genre"]
+
+        authors_html = soup.select('a[href^="/search/?author"]')
+        authors: list[str] = [a.next_element for a in authors_html]
+
+        genres: list[str] = metadata_json["genre"]
         cover_art = f"https://cover.nep.li/cover/{self.id}.jpg"
 
         return MangaMetadata(title, authors, self.url, cover_art)

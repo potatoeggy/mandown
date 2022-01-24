@@ -46,7 +46,7 @@ class MangaDexSource(BaseSource):
         authors: list[str] = []
         cover_art = ""
         for d in metadata["relationships"]:
-            if d["type"] == "author":
+            if d["type"] == "author" or d["type"] == "artist":
                 authors.append(d["attributes"]["name"])
             elif d["type"] == "cover_art":
                 cover_art = d["attributes"]["fileName"]
