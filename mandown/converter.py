@@ -9,7 +9,7 @@ import tempfile
 import textwrap
 import unicodedata
 from pathlib import Path
-from typing import Optional
+from typing import Iterator, Optional
 import zipfile
 
 from natsort import natsorted
@@ -79,17 +79,23 @@ class Converter:
             for i, (title, sanitised) in enumerate(working_chapters)
         ]
 
-    def to_cbz(self) -> None:
-        zip_path = shutil.make_archive(
-            self.metadata.title,
-            "zip",
-            self.folder_path,
-        )
+    def to_cbz_progress(self, dest_folder: str) -> Iterator:
+        dest_file = Path(dest_folder) / f"{self.metadata.title}.cbz"
+        with zipfile.ZipFile(dest_file, "w", zipfile.ZIP_DEFLATED) as file:  # type: ignore
+            for dirpath, _, filenames in os.walk(self.folder_path):  # from kcc
+                for name in filenames:
+                    if (Path(dirpath) / name).is_file():
+                        file.write(
+                            Path(dirpath) / name,  # type: ignore
+                            Path(dirpath.lstrip(str(self.folder_path))) / name,
+                            zipfile.ZIP_DEFLATED,
+                        )
 
-        cbz_path = Path(zip_path).with_suffix(".cbz")
-        os.rename(zip_path, cbz_path)
+    def to_cbz(self, dest_folder: str) -> None:
+        for _ in self.to_cbz_progress(dest_folder):
+            pass
 
-    def to_epub(self) -> None:
+    def to_epub_progress(self, dest_folder: str) -> Iterator:
         # taken from KCC generated epub file structure
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -139,7 +145,7 @@ class Converter:
                 )
 
             # compress and move epub
-            dest_file = self.folder_path.parent / f"{self.metadata.title}.epub"
+            dest_file = dest_folder / f"{self.metadata.title}.epub"
 
             with zipfile.ZipFile(dest_file, "w", zipfile.ZIP_DEFLATED) as file:  # type: ignore
                 file.writestr("mimetype", "application/epub+zip", zipfile.ZIP_STORED)  # type: ignore
@@ -151,6 +157,10 @@ class Converter:
                                 Path(dirpath.lstrip(str(root))) / name,
                                 zipfile.ZIP_DEFLATED,
                             )
+
+    def to_epub(self, dest_folder: str) -> None:
+        for _ in self.to_epub_progress(dest_folder):
+            pass
 
     def to_pdf(self) -> None:
         pass

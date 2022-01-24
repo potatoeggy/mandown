@@ -113,9 +113,9 @@ def download(
 
         match convert.value:
             case ConvertFormats.EPUB:
-                converter.to_epub()
+                converter.to_epub(dest)
             case ConvertFormats.CBZ:
-                converter.to_cbz()
+                converter.to_cbz(dest)
             case ConvertFormats.MOBI:
                 raise ValueError("MOBI conversion is not yet supported.")
             case ConvertFormats.PDF:
