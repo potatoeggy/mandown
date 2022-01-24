@@ -9,3 +9,4 @@ repos:
     rev: 21.12b0
     hooks:
       - id: black
+        args: [--target-version, py310]
