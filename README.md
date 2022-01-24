@@ -5,7 +5,7 @@
 <a href="https://github.com/potatoeggy/mandown/releases/latest"><img src="https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag" /></a>
 <a href="/LICENSE"><img src="https://img.shields.io/github/license/potatoeggy/mandown" /></a>
 
-Python library and command line application to download comics from various sources
+Python library and command line application to download comics from various sources and convert them to CBZ/EPUB.
 
 ## Supported sites
 
@@ -35,6 +35,10 @@ pip3 install dist/mandown*.whl
 
 ```
 mandown <URL>
+```
+To convert the download contents to CBZ/EPUB, append the `--convert` option.
+```
+mandown <URL> --convert EPUB
 ```
 
 Run `mandown --help` for more info.
