@@ -1,5 +1,6 @@
 # pylint: disable=invalid-name
 import os
+from pathlib import Path
 from typing import Iterable
 
 from natsort import natsorted
@@ -29,7 +30,7 @@ def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSo
 
 
 def download_chapter_progress(
-    chapter: Chapter, dest_folder: str, maxthreads: int = 1
+    chapter: Chapter, dest_folder: str, maxthreads: int = 1, only_needed: bool = True
 ) -> Iterable[None]:
     """
     Download the images of a chapter to a destination folder.
@@ -47,18 +48,36 @@ def download_chapter_progress(
     if not os.path.isdir(download_folder):
         os.mkdir(download_folder)
 
+    skip_images: list[int] = []
+    if only_needed:
+        padding = len(str(len(chapter.images)))
+        for f in os.listdir(download_folder):
+            name = Path(f).stem
+            if name == name.ljust(padding, "0"):
+                try:
+                    skip_images.append(int(name))
+                except ValueError:
+                    # expected if it's not an image
+                    pass
+
+    processed_chapter_images = [
+        link for i, link in enumerate(chapter.images) if i not in skip_images
+    ]
+
     yield from iohandler.download(
-        chapter.images,
+        processed_chapter_images,
         os.path.join(dest_folder, chapter.title_sanitised),
         chapter.headers,
         maxthreads,
     )
 
 
-def download_chapter(chapter: Chapter, dest_folder: str, maxthreads: int = 1) -> None:
+def download_chapter(
+    chapter: Chapter, dest_folder: str, maxthreads: int = 1, only_needed: bool = True
+) -> None:
     """
     Download the images of a chapter to a destination folder.
     Raises ValueError if the folder does not exist.
     """
-    for _ in download_chapter_progress(chapter, dest_folder, maxthreads):
+    for _ in download_chapter_progress(chapter, dest_folder, maxthreads, only_needed):
         pass
