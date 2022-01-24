@@ -41,11 +41,14 @@ class WebtoonsSource(BaseSource):
         authors = list(map(lambda s: s.strip(), authors))
         title: str = feed["channel"]["title"]
         cover_art: str = feed["channel"]["image"]["href"]
+        description: str = feed["channel"]["description"].strip()
 
         return MangaMetadata(
             title,
             authors,
             f"https://www.webtoons.com/{self._title_path}/list?title_no={self._title_no}",
+            ["Webtoons.com does not support genres"],
+            description,
             cover_art,
         )
 

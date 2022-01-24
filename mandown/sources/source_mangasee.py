@@ -36,9 +36,13 @@ class MangaSeeSource(BaseSource):
         authors: list[str] = [a.next_element for a in authors_html]
 
         genres: list[str] = metadata_json["genre"]
+
+        description_html = soup.select_one("div.top-5.Content")
+        description: str = str(description_html.next_element).strip()
+
         cover_art = f"https://cover.nep.li/cover/{self.id}.jpg"
 
-        return MangaMetadata(title, authors, self.url, cover_art)
+        return MangaMetadata(title, authors, self.url, genres, description, cover_art)
 
     def fetch_chapter_list(self) -> list[Chapter]:
         feed = feedparser.parse(
