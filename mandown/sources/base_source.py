@@ -124,9 +124,10 @@ class BaseSource:
             authors: {self.metadata.authors}
             url: {self.metadata.url}
             genres: {self.metadata.genres}
-            description: {self.metadata.description}
+            description:
+                {(chr(10) + " "*16).join(self.metadata.description.split(chr(10)))}
             chapters: {len(self.chapters)}\
-        """
+            """
         )
 
 
