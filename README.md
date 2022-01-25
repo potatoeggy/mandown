@@ -14,6 +14,7 @@ Python library and command line application to download comics from various sour
 - https://manganato.com
 - https://webtoons.com
 - https://mangadex.org
+- https://mangakakalot.com
 
 ## Installation
 
@@ -39,7 +40,9 @@ pip3 install dist/mandown*.whl
 ```
 mandown <URL>
 ```
+
 To convert the download contents to CBZ/EPUB, append the `--convert` option.
+
 ```
 mandown <URL> --convert EPUB
 ```
