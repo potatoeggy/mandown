@@ -25,6 +25,8 @@ pip3 install mandown
 
 Or, to build from source:
 
+Mandown depends on [poetry](https://github.com/python-poetry/poetry) for building.
+
 ```
 git clone https://github.com/potatoeggy/mandown.git
 poetry install
