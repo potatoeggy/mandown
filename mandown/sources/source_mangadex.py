@@ -15,6 +15,7 @@ from .base_source import BaseSource, Chapter, MangaMetadata
 
 class MangaDexSource(BaseSource):
     name = "MangaDex"
+    domains = ["https://mangadex.org"]
 
     def __init__(self, url: str) -> None:
         super().__init__(url)

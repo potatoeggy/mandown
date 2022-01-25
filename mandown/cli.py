@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 
-from enum import Enum
 import importlib.metadata
 import os
+from enum import Enum
 from pathlib import Path
 from typing import Callable, Iterable, Optional
 
-import typer
 import requests
+import typer
 
+import mandown.sources
 from mandown import mandown
-from mandown.sources.base_source import BaseSource
 from mandown.converter import Converter
+from mandown.sources.base_source import BaseSource
 
 app = typer.Typer()
 
@@ -30,6 +31,14 @@ def version_callback(value: bool) -> None:
         raise typer.Exit()
 
 
+def supported_sites_callback(value: bool) -> None:
+    if value:
+        for source in mandown.sources.get_all_classes():
+            typer.echo(f"{source.name}: {', '.join(source.domains)}")
+        raise typer.Exit()
+
+
+# pylint: disable=unused-argument
 @app.command()
 def download(
     url: str,
@@ -44,7 +53,7 @@ def download(
         None, help="The last chapter to download [default: last found]"
     ),
     maxthreads: int = typer.Option(
-        4, help="The maximum number of images to download in parallel."
+        4, help="The maximum number of images to download in parallel"
     ),
     version: Optional[bool] = typer.Option(
         None,
@@ -53,15 +62,19 @@ def download(
         is_eager=True,
         help="Display the current version of mandown",
     ),
+    supported_sites: Optional[bool] = typer.Option(
+        None,
+        "--supported-sites",
+        callback=supported_sites_callback,
+        is_eager=True,
+        help="Output a list of domains supported by mandown",
+    ),
 ) -> None:
     """
     Download from a URL chapters start_chapter to end_chapter.
     Defaults to the first chapter and last chapter, respectively
     in the working directory.
     """
-    if version:
-        return
-
     if not os.path.isdir(dest):
         raise ValueError(f"{dest} is not a valid folder path.")
 

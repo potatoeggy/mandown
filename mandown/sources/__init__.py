@@ -30,3 +30,10 @@ def get_class_for(url: str) -> type[BaseSource]:
         if c.check_url(url):
             return c
     raise ValueError("No sources found matched the URL query.")
+
+
+def get_all_classes() -> list[type[BaseSource]]:
+    """
+    Return all imported source module classes. Best used for manual poking.
+    """
+    return __class_list

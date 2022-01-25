@@ -60,6 +60,7 @@ class Chapter:
 
 class BaseSource:
     name = "Source name goes here"
+    domains = ["Source domains goes here"]
 
     _metadata: Optional[MangaMetadata] = None
     _chapters: list[Chapter] = []

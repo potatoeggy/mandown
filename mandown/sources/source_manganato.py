@@ -14,6 +14,7 @@ from .base_source import BaseSource, Chapter, MangaMetadata
 
 class MangaNatoSource(BaseSource):
     name = "MangaNato"
+    domains = ["https://manganato.com", "https://readmanganato.com"]
     headers = {"Referer": "https://readmanganato.com/"}
 
     def __init__(self, url: str) -> None:

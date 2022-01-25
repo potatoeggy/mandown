@@ -16,6 +16,7 @@ from .base_source import BaseSource, Chapter, MangaMetadata
 
 class MangaSeeSource(BaseSource):
     name = "MangaSee"
+    domains = ["https://mangasee123.com"]
 
     def __init__(self, url: str) -> None:
         super().__init__(url)
@@ -101,8 +102,6 @@ class MangaSeeSource(BaseSource):
         # e.g. https://mangasee123.com/manga/Kaguya-Wants-To-Be-Confessed-To
         # to Kaguya-Wants-To-Be-Confessed-To
         *_, last_item = filter(None, url.split("/"))
-        # TODO: switch to regex for better reliability
-        # in case they add weird tags to the end like tracking
         return last_item
 
 

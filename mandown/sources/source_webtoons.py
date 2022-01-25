@@ -15,6 +15,7 @@ from .base_source import BaseSource, Chapter, MangaMetadata
 
 class WebtoonsSource(BaseSource):
     name = "Webtoons"
+    domains = ["https://webtoons.com"]
     headers = {"Referer": "https://webtoons.com/"}
 
     def __init__(self, url: str) -> None:
