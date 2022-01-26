@@ -42,22 +42,31 @@ def supported_sites_callback(value: bool) -> None:
 @app.command()
 def download(
     url: str,
-    convert: ConvertFormats = ConvertFormats.FOLDER,
-    dest: str = typer.Option(
+    dest: str = typer.Argument(
         os.getcwd(), help="The destination folder to download to."
     ),
+    convert: ConvertFormats = typer.Option(
+        "folder", "--convert", "-c", help="The format to download the comic as"
+    ),
     start: Optional[int] = typer.Option(
-        None, help="The first chapter to download [default: first found]"
+        None,
+        "--start",
+        "-s",
+        help="The first chapter to download [default: first found]",
     ),
     end: Optional[int] = typer.Option(
-        None, help="The last chapter to download [default: last found]"
+        None, "--end", "-e", help="The last chapter to download [default: last found]"
     ),
     maxthreads: int = typer.Option(
-        4, help="The maximum number of images to download in parallel"
+        4,
+        "--threads",
+        "-t",
+        help="The maximum number of images to download in parallel",
     ),
     version: Optional[bool] = typer.Option(
         None,
         "--version",
+        "-v",
         callback=version_callback,
         is_eager=True,
         help="Display the current version of mandown",
