@@ -44,10 +44,14 @@ mandown <URL>
 To convert the download contents to CBZ/EPUB, append the `--convert` option.
 
 ```
-mandown <URL> --convert EPUB
+mandown <URL> --convert epub
 ```
 
-To only
+To convert an existing folder without downloading anything except metadata (like a stripped-down version of https://github.com/ciromattia/kcc), use the `--from` option.
+
+```
+mandown <URL> --convert epub --from /path/to/comic
+```
 
 Run `mandown --help` for more info.
 
