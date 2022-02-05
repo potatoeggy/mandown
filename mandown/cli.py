@@ -12,7 +12,7 @@ import typer
 import mandown.sources
 from mandown import mandown
 from mandown.converter import Converter
-from mandown.postprocessing import Ops, Processor
+from mandown.processing import Ops, Processor
 from mandown.sources.base_source import BaseSource, Chapter
 
 app = typer.Typer()
