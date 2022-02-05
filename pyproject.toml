@@ -20,9 +20,13 @@ beautifulsoup4 = "^4.10.0"
 requests = "^2.27.0"
 natsort = "^8.0.2"
 lxml = "^4.7.1"
+Pillow = {version = "^9.0.1", optional = true}
 
 [tool.poetry.dev-dependencies]
 types-requests = "^2.26.3"
+
+[tool.poetry.extras]
+postprocessing = ["Pillow"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
