@@ -4,7 +4,7 @@ import importlib.metadata
 import os
 from enum import Enum
 from pathlib import Path
-from typing import Callable, Iterable, Optional
+from typing import Callable, Iterable, List, Optional
 
 import requests
 import typer
@@ -12,7 +12,8 @@ import typer
 import mandown.sources
 from mandown import mandown
 from mandown.converter import Converter
-from mandown.sources.base_source import BaseSource
+from mandown.postprocessing import Ops, Processor
+from mandown.sources.base_source import BaseSource, Chapter
 
 app = typer.Typer()
 
@@ -68,6 +69,13 @@ def download(
         "-t",
         help="The maximum number of images to download in parallel",
     ),
+    processing_options: Optional[List[Ops]] = typer.Option(
+        [],
+        "--processing-options",
+        "-p",
+        help="Image processing options (in-place)",
+        case_sensitive=True,
+    ),
     version: Optional[bool] = typer.Option(
         None,
         "--version",
@@ -92,6 +100,7 @@ def download(
     if not os.path.isdir(dest):
         raise ValueError(f"{dest} is not a valid folder path.")
 
+    # get metadata
     typer.echo(f"Searching sources for {url}")
     try:
         source: BaseSource = mandown.query(url, populate=True)
@@ -107,17 +116,17 @@ def download(
     if not os.path.isdir(target_path):
         os.mkdir(target_path)
 
-    # if they are undefined
+    # get processing range
     start_chapter = start or 1
     end_chapter = end or len(source.chapters)
 
     # zero-index
     start_chapter -= 1
 
-    chapter_range = []
-    if (
-        from_folder is None
-    ):  # yikes these should be split into their own functions sometime
+    # download
+    chapter_range: list[Chapter] = []
+    if from_folder is None:
+        # yikes these should be split into their own functions sometime
         # get cover art
         with open(Path(target_path) / "cover.jpg", "w+b") as file:
             file.write(requests.get(source.metadata.cover_art).content)
@@ -139,7 +148,7 @@ def download(
     else:
         if convert.value == ConvertFormats.FOLDER:
             typer.secho(
-                "A convert format was not specified but is required for conversion.",
+                "A convert format must be specified when --from is used.",
                 fg=typer.colors.RED,
             )
             raise typer.Exit(1)
@@ -150,6 +159,31 @@ def download(
             )
         target_path = str(from_folder)
 
+    # process
+    if processing_options and Ops.NO_POSTPROCESSING not in processing_options:
+        typer.secho(f"Applying processing options: {', '.join(processing_options)}")
+        process_folder_paths = (
+            [
+                path
+                for path in os.listdir(target_path)
+                if (Path(target_path) / path).is_dir()
+            ]
+            if from_folder
+            else [c.title_sanitised for c in chapter_range]
+        )
+        total_files = sum(
+            len(os.listdir(Path(target_path) / path)) for path in process_folder_paths
+        )
+        with typer.progressbar(length=total_files, label="Processing") as progress:
+            for folder in process_folder_paths:
+                abs_path = Path(target_path) / folder
+                for image_path in abs_path.iterdir():
+                    if image_path.is_file():
+                        processor = Processor(image_path.absolute())
+                        processor.process(processing_options)
+                        progress.update(1)
+
+    # convert
     if convert.value != ConvertFormats.FOLDER:
         typer.echo(f"Converting to {convert.value}...")
 
