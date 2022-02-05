@@ -148,7 +148,7 @@ def download(
     else:
         if convert.value == ConvertFormats.FOLDER:
             typer.secho(
-                "A convert format must be specified when --from is used.",
+                "A convert format must be specified when --convert is used.",
                 fg=typer.colors.RED,
             )
             raise typer.Exit(1)
