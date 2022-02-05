@@ -38,7 +38,7 @@ class MangaSeeSource(BaseSource):
         genres: list[str] = metadata_json["genre"]
 
         description_html = soup.select_one("div.top-5.Content")
-        description: str = str(description_html.next_element).strip()
+        description = str(description_html.next_element).strip()
 
         cover_art = f"https://cover.nep.li/cover/{self.id}.jpg"
 
@@ -74,7 +74,7 @@ class MangaSeeSource(BaseSource):
 
         domain: str = json.loads(full_js[index_start:index_end])
         num_pages = int(chapter_details["Page"])
-        chapter_number: str = chapter.title.split()[-1]
+        chapter_number = chapter.title.split()[-1]
         # pad to 4 excluding decimal places
         pad_zero = max(4 - len(str(int(float(chapter_number)))), 0)
 

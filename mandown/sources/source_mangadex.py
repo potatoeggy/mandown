@@ -36,7 +36,7 @@ class MangaDexSource(BaseSource):
             "?includes[]=author&includes[]=cover_art&includes[]=artist"
         ).json()
 
-        metadata = r["data"]
+        metadata: dict = r["data"]
 
         # use english if possible, otherwise use the first language that appears
         self.lang_code = (
@@ -75,7 +75,7 @@ class MangaDexSource(BaseSource):
 
     def fetch_chapter_list(self) -> list[Chapter]:
         # for some reason *sometimes* it goes all name/service not found
-        r: dict = self._get(
+        r = self._get(
             f"https://api.mangadex.org/manga/{self.id}/"
             f"feed?limit=500&translatedLanguage[]={self.lang_code}"
             "&order[volume]=desc&order[chapter]=desc"
