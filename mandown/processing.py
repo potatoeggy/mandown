@@ -19,6 +19,7 @@ class Processor:
     def __init__(self, image_path: Path | str) -> None:
         self.image_path = Path(image_path)
         self.image = Image.open(self.image_path)
+        self.modified = False
 
     def write(self, filename: Path | str | None = None) -> None:
         """Save the processed image manually"""
@@ -45,9 +46,12 @@ class Processor:
             except OSError as err:
                 raise OSError(f"Error in {self.image_path}") from err
 
-        self.write(filename)
+        if self.modified:
+            # only write to disk if something has actually changed
+            self.write(filename)
 
     def rotate_double_pages(self) -> None:
         width, height = self.image.size
         if width > height:
-            self.image.rotate(90)
+            self.image = self.image.rotate(90, expand=1)
+            self.modified = True
