@@ -7,14 +7,12 @@ import multiprocessing as mp
 import os
 from pathlib import Path
 import urllib.parse
-from typing import Iterable, Optional, Sequence
+from typing import Iterable, Sequence
 
 import requests
 
 
-def async_download(
-    data: tuple[str, str, Optional[str], Optional[dict[str, str]]]
-) -> None:
+def async_download(data: tuple[str, str, str | None, dict[str, str] | None]) -> None:
     url, dest_folder, filename, headers = data
     name = filename or url.split("/")[-1]
     dest_file = os.path.join(dest_folder, name)
@@ -51,7 +49,7 @@ def download(
     if not os.path.isdir(dest_folder):
         raise ValueError(f"Folder path {dest_folder} does not exist")
 
-    map_pool: list[tuple[str, str, str, Optional[dict[str, str]]]] = []
+    map_pool: list[tuple[str, str, str, dict[str, str] | None]] = []
     padding = f"0{len(str(len(urls)))}"
     if filestems is None:
         filestems = [f"{i+1:{padding}}" for i in range(len(urls))]

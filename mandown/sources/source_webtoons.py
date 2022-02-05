@@ -4,7 +4,6 @@ Source file for webtoons.com
 # pylint: disable=invalid-name
 
 import re
-from typing import Optional
 
 import feedparser
 import requests
@@ -20,16 +19,16 @@ class WebtoonsSource(BaseSource):
 
     def __init__(self, url: str) -> None:
         super().__init__(url)
-        self._soup: Optional[BeautifulSoup] = None
+        self._soup: BeautifulSoup | None = None
 
         title_no_index = url.index("?title_no=") + len("?title_no=")
-        title_no_end_index: Optional[int] = url.find("&", title_no_index)
+        title_no_end_index: int | None = url.find("&", title_no_index)
         if title_no_end_index == -1:
             title_no_end_index = None
 
-        self._title_no: int = int(url[title_no_index:title_no_end_index])
+        self._title_no = int(url[title_no_index:title_no_end_index])
 
-        self._title_path: str = "/".join(url.split("/")[3:6])
+        self._title_path = "/".join(url.split("/")[3:6])
 
     def fetch_metadata(self) -> MangaMetadata:
         feed = feedparser.parse(
@@ -55,7 +54,7 @@ class WebtoonsSource(BaseSource):
 
     def fetch_chapter_list(self) -> list[Chapter]:
         soup = self._get_soup()
-        titles: list[str] = [
+        titles = [
             str(e.next_element) for e in soup.select("p.sub_title > span.ellipsis")
         ]
 

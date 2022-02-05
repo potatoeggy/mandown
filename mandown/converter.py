@@ -9,7 +9,7 @@ import tempfile
 import textwrap
 import unicodedata
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Iterator
 import zipfile
 
 from natsort import natsorted
@@ -29,8 +29,8 @@ class Converter:
     def __init__(
         self,
         folder_path: str,
-        metadata: Optional[MangaMetadata] = None,
-        chapter_list: Optional[list[tuple[str, str]]] = None,
+        metadata: MangaMetadata | None = None,
+        chapter_list: list[tuple[str, str]] | None = None,
     ) -> None:
         """
         Get the file path of a comic and identify its metadata.

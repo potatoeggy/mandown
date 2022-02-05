@@ -1,6 +1,6 @@
 import textwrap
 from dataclasses import InitVar, dataclass, field
-from typing import Callable, Final, Optional
+from typing import Callable, Final
 import re
 
 
@@ -25,7 +25,7 @@ class Chapter:
     source: InitVar["BaseSource"]  # type: ignore
     title: str
     url: str
-    headers: Optional[dict[str, str]] = None
+    headers: dict[str, str] | None = None
 
     _image_fetcher: Callable[
         ["Chapter"], list[str]  # type: ignore # pylint: disable=undefined-variable
@@ -62,7 +62,7 @@ class BaseSource:
     name = "Source name goes here"
     domains = ["Source domains goes here"]
 
-    _metadata: Optional[MangaMetadata] = None
+    _metadata: MangaMetadata | None = None
     _chapters: list[Chapter] = []
     USER_AGENT: Final = (
         "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0"

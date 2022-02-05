@@ -5,7 +5,6 @@ Source file for mangadex.org
 
 import re
 import time
-from typing import Optional
 
 import requests
 from bs4 import BeautifulSoup
@@ -19,7 +18,7 @@ class MangaDexSource(BaseSource):
 
     def __init__(self, url: str) -> None:
         super().__init__(url)
-        self._soup: Optional[BeautifulSoup] = None
+        self._soup: BeautifulSoup | None = None
         self.lang_code = ""
 
         # https://api.mangadex.org/manga/de4b3c43-5243-4399-9fc3-68a3c0747138

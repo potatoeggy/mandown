@@ -4,7 +4,6 @@ Source file for mangakakalot.com
 # pylint: disable=invalid-name
 
 import re
-from typing import Optional
 
 import requests
 from bs4 import BeautifulSoup
@@ -20,7 +19,7 @@ class MangaNatoSource(BaseSource):
     def __init__(self, url: str) -> None:
         super().__init__(url)
         self.id = self.url_to_id(url)
-        self._scripts: Optional[str] = None
+        self._scripts: str | None = None
 
     def fetch_metadata(self) -> MangaMetadata:
         soup = BeautifulSoup(self._get_scripts(), "html.parser")

@@ -5,7 +5,6 @@ Source file for mangasee123.com
 
 import json
 import re
-from typing import Optional
 
 import feedparser
 import requests
@@ -21,7 +20,7 @@ class MangaSeeSource(BaseSource):
     def __init__(self, url: str) -> None:
         super().__init__(url)
         self.id = self.url_to_id(url)
-        self._scripts: Optional[str] = None
+        self._scripts: str | None = None
 
     def fetch_metadata(self) -> MangaMetadata:
         # all of the metadata is available in the <script type="application/ld+json"> element
