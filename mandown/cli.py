@@ -39,6 +39,64 @@ def supported_sites_callback(value: bool) -> None:
         raise typer.Exit()
 
 
+@app.command()
+def process(
+    options: list[Ops],
+    folder_path: Path = typer.Argument(Path(os.getcwd())),
+    maxthreads: int = typer.Option(
+        4,
+        "--threads",
+        "-t",
+        help="The maximum number of images to process in parallel",
+    ),
+) -> None:
+    """
+    Process a folder of images recursively in-place.
+    """
+
+
+@app.command()
+def convert(
+    format: ConvertFormats,
+    folder_path: Path,
+    metadata_source: Optional[str] = typer.Option(
+        None, "--metadata-from", "-m", help="The source to embed metadata from"
+    ),
+    maxthreads: int = typer.Option(
+        4,
+        "--threads",
+        "-t",
+        help="The maximum number of images to process in parallel",
+    ),
+) -> None:
+    """
+    Convert a folder of images into a comic a la KCC. Optionally
+    embed metadata from an online source.
+    """
+    pass
+
+
+@app.callback()
+def callback(
+    version: Optional[bool] = typer.Option(
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
+        help="Display the current version of mandown",
+    ),
+    supported_sites: Optional[bool] = typer.Option(
+        None,
+        "--supported-sites",
+        callback=supported_sites_callback,
+        is_eager=True,
+        help="Output a list of domains supported by mandown",
+    ),
+) -> None:
+    pass
+
+
 # pylint: disable=unused-argument
 @app.command()
 def download(
@@ -75,21 +133,6 @@ def download(
         "-p",
         help="Image processing options (in-place)",
         case_sensitive=True,
-    ),
-    version: Optional[bool] = typer.Option(
-        None,
-        "--version",
-        "-v",
-        callback=version_callback,
-        is_eager=True,
-        help="Display the current version of mandown",
-    ),
-    supported_sites: Optional[bool] = typer.Option(
-        None,
-        "--supported-sites",
-        callback=supported_sites_callback,
-        is_eager=True,
-        help="Output a list of domains supported by mandown",
     ),
 ) -> None:
     """
