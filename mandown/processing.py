@@ -4,7 +4,7 @@ from pathlib import Path
 from PIL import Image
 
 
-class Ops(str, Enum):
+class ProcessOps(str, Enum):
     """
     Constants for Processor.process
     """
@@ -26,14 +26,14 @@ class Processor:
         self.image.save(filename or self.image_path)
 
     def process(
-        self, operations: list[Ops], filename: Path | str | None = None
+        self, operations: list[ProcessOps], filename: Path | str | None = None
     ) -> None:
         """
         Perform the operations in `operations` on the image in sequence
         and save it to disk. If `filename` is not None, it will be saved
         with that filename instead.
         """
-        if Ops.NO_POSTPROCESSING in operations:
+        if ProcessOps.NO_POSTPROCESSING in operations:
             return
 
         for func in operations:

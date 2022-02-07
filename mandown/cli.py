@@ -9,11 +9,10 @@ from typing import Callable, Iterable, List, Optional
 import requests
 import typer
 
-import mandown.sources
 from mandown import mandown
 from mandown.converter import Converter
-from mandown.processing import Ops, Processor
-from mandown.sources.base_source import BaseSource, Chapter
+from mandown.processing import ProcessOps, Processor
+from mandown.sources.base_source import BaseSource, Chapter, MangaMetadata
 
 app = typer.Typer()
 
@@ -26,22 +25,67 @@ class ConvertFormats(str, Enum):
     FOLDER = "folder"
 
 
-def version_callback(value: bool) -> None:
-    if value:
-        typer.echo(f"mandown {importlib.metadata.version('mandown')}")
-        raise typer.Exit()
+# helper functions to repeat less code
+def cli_query(url: str) -> BaseSource | None:
+    typer.echo(f"Searching sources for {url}")
+    try:
+        source: BaseSource = mandown.query(url, populate=True)
+        typer.secho(f'Found item from source "{source.name}"', fg=typer.colors.GREEN)
+        typer.secho(source)
+    except ValueError as err:
+        typer.secho("Could not match URL with available sources.", fg=typer.colors.RED)
+        raise typer.Exit(1) from err
+
+    return source
 
 
-def supported_sites_callback(value: bool) -> None:
-    if value:
-        for source in mandown.sources.get_all_classes():
-            typer.echo(f"{source.name}: {', '.join(source.domains)}")
-        raise typer.Exit()
+def cli_convert(
+    folder_path: str,
+    target_format: ConvertFormats,
+    dest: Path = Path(os.getcwd()),
+    metadata: MangaMetadata | None = None,
+    chapter_list: list[tuple[str, str]] | None = None,
+) -> None:
+    converter = Converter(folder_path, metadata, chapter_list)
+    convert_func: Callable[[str], Iterable] = lambda i: None
+    match target_format:
+        case ConvertFormats.EPUB:
+            convert_func = converter.to_epub_progress
+        case ConvertFormats.CBZ:
+            convert_func = converter.to_cbz_progress
+        case _:
+            raise NotImplementedError(
+                f"{target_format} conversion has not been implemented yet!"
+            )
+    with typer.progressbar(
+        convert_func(dest),
+        length=converter.max_operations[target_format.value],
+        label="Converting",
+    ) as progress:
+        for _ in progress:
+            pass
+
+    dest_file = dest / Path(metadata.title).with_suffix(f".{target_format.value}")
+    typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
+
+
+def cli_process(folder_paths: list[Path], options: list[ProcessOps]) -> None:
+    # only goes down one folder level atm
+    if ProcessOps.NO_POSTPROCESSING not in options:
+        typer.secho(f"Applying processing options: {', '.join(options)}")
+        total_files = sum(len(os.listdir(path) for path in folder_paths))
+        with typer.progressbar(length=total_files, label="Processing") as progress:
+            for folder in folder_paths:
+                for image_path in folder.iterdir():
+                    if image_path.is_file():
+                        processor = Processor(image_path.absolute())
+                        processor.process(options)
+                        progress.update(1)
 
 
 @app.command()
 def process(
-    options: list[Ops],
+    options: list[ProcessOps],
     folder_path: Path = typer.Argument(Path(os.getcwd())),
     maxthreads: int = typer.Option(
         4,
@@ -53,14 +97,19 @@ def process(
     """
     Process a folder of images recursively in-place.
     """
+    image_paths = list(map(Path, filter(os.path.isdir, os.listdir(folder_path))))
+    cli_process(image_paths, options)
 
 
 @app.command()
 def convert(
-    format: ConvertFormats,
+    convert_to: ConvertFormats,
     folder_path: Path,
     metadata_source: Optional[str] = typer.Option(
         None, "--metadata-from", "-m", help="The source to embed metadata from"
+    ),
+    dest: Path = typer.Option(
+        os.getcwd(), "--dest", "-d", help="The folder to save the converted file to."
     ),
     maxthreads: int = typer.Option(
         4,
@@ -73,7 +122,8 @@ def convert(
     Convert a folder of images into a comic a la KCC. Optionally
     embed metadata from an online source.
     """
-    pass
+    metadata = cli_query(metadata_source).metadata if metadata_source else None
+    cli_convert(folder_path, convert_to, dest, metadata)
 
 
 @app.callback()
@@ -82,19 +132,24 @@ def callback(
         None,
         "--version",
         "-v",
-        callback=version_callback,
         is_eager=True,
         help="Display the current version of mandown",
     ),
     supported_sites: Optional[bool] = typer.Option(
         None,
         "--supported-sites",
-        callback=supported_sites_callback,
         is_eager=True,
         help="Output a list of domains supported by mandown",
     ),
 ) -> None:
-    pass
+    if version:
+        typer.echo(f"mandown {importlib.metadata.version('mandown')}")
+        raise typer.Exit()
+
+    if supported_sites:
+        for source in mandown.sources.get_all_classes():
+            typer.echo(f"{source.name}: {', '.join(source.domains)}")
+        raise typer.Exit()
 
 
 # pylint: disable=unused-argument
@@ -104,13 +159,8 @@ def download(
     dest: str = typer.Argument(
         os.getcwd(), help="The destination folder to download to."
     ),
-    convert: ConvertFormats = typer.Option(
+    convert_to: ConvertFormats = typer.Option(
         "folder", "--convert", "-c", help="The format to download the comic as"
-    ),
-    from_folder: Path = typer.Option(
-        None,
-        "--from",
-        help="The folder to assume the comic exists in to convert without downloading",
     ),
     start: Optional[int] = typer.Option(
         None,
@@ -127,7 +177,7 @@ def download(
         "-t",
         help="The maximum number of images to download in parallel",
     ),
-    processing_options: Optional[List[Ops]] = typer.Option(
+    processing_options: Optional[List[ProcessOps]] = typer.Option(
         [],
         "--processing-options",
         "-p",
@@ -144,14 +194,7 @@ def download(
         raise ValueError(f"{dest} is not a valid folder path.")
 
     # get metadata
-    typer.echo(f"Searching sources for {url}")
-    try:
-        source: BaseSource = mandown.query(url, populate=True)
-        typer.secho(f'Found item from source "{source.name}"', fg=typer.colors.GREEN)
-        typer.secho(source)
-    except ValueError as err:
-        typer.secho("Could not match URL with available sources.", fg=typer.colors.RED)
-        raise typer.Exit(1) from err
+    source = cli_query(url)
 
     # starting to think that immutability is much better than whatever
     # the heck is going on here
@@ -168,94 +211,33 @@ def download(
 
     # download
     chapter_range: list[Chapter] = []
-    if from_folder is None:
-        # yikes these should be split into their own functions sometime
-        # get cover art
-        with open(Path(target_path) / "cover.jpg", "w+b") as file:
-            file.write(requests.get(source.metadata.cover_art).content)
+    # yikes these should be split into their own functions sometime
+    # get cover art
+    with open(Path(target_path) / "cover.jpg", "w+b") as file:
+        file.write(requests.get(source.metadata.cover_art).content)
 
-        chapter_range = source.chapters[start_chapter:end_chapter]
-        typer.echo("Downloading...")
-        for i, chapter in enumerate(chapter_range):
-            with typer.progressbar(
-                mandown.download_chapter_progress(chapter, target_path, maxthreads),
-                length=len(chapter.images),
-                label=f"{chapter.title} ({i+1}/{len(chapter_range)})",
-            ) as progress:
-                for _ in progress:
-                    pass
-        typer.secho(
-            f"Successfully downloaded {len(chapter_range)} chapters.",
-            fg=typer.colors.GREEN,
-        )
-    else:
-        if convert.value == ConvertFormats.FOLDER:
-            typer.secho(
-                "A convert format must be specified when --convert is used.",
-                fg=typer.colors.RED,
-            )
-            raise typer.Exit(1)
-        if start or end:
-            typer.secho(
-                "WARNING: --start and --end have no effect when --from is used",
-                fg=typer.colors.BRIGHT_RED,
-            )
-        target_path = str(from_folder)
+    chapter_range = source.chapters[start_chapter:end_chapter]
+    typer.echo("Downloading...")
+    for i, chapter in enumerate(chapter_range):
+        with typer.progressbar(
+            mandown.download_chapter_progress(chapter, target_path, maxthreads),
+            length=len(chapter.images),
+            label=f"{chapter.title} ({i+1}/{len(chapter_range)})",
+        ) as progress:
+            for _ in progress:
+                pass
+    typer.secho(
+        f"Successfully downloaded {len(chapter_range)} chapters.",
+        fg=typer.colors.GREEN,
+    )
 
     # process
-    if processing_options and Ops.NO_POSTPROCESSING not in processing_options:
-        typer.secho(f"Applying processing options: {', '.join(processing_options)}")
-        process_folder_paths = (
-            [
-                path
-                for path in os.listdir(target_path)
-                if (Path(target_path) / path).is_dir()
-            ]
-            if from_folder
-            else [c.title_sanitised for c in chapter_range]
-        )
-        total_files = sum(
-            len(os.listdir(Path(target_path) / path)) for path in process_folder_paths
-        )
-        with typer.progressbar(length=total_files, label="Processing") as progress:
-            for folder in process_folder_paths:
-                abs_path = Path(target_path) / folder
-                for image_path in abs_path.iterdir():
-                    if image_path.is_file():
-                        processor = Processor(image_path.absolute())
-                        processor.process(processing_options)
-                        progress.update(1)
+    if processing_options:
+        image_paths = list(map(Path, filter(os.path.isdir, os.listdir(target_path))))
+        cli_process(image_paths, processing_options)
 
     # convert
-    if convert.value != ConvertFormats.FOLDER:
-        typer.echo(f"Converting to {convert.value}...")
-
-        formatted_chapters = [(c.title, c.title_sanitised) for c in chapter_range]
-        converter = Converter(
-            target_path,
-            source.metadata,
-            chapter_list=None if from_folder else formatted_chapters,
-        )
-
-        convert_func: Callable[[str], Iterable] = lambda i: None
-        match convert.value:
-            case ConvertFormats.EPUB:
-                convert_func = converter.to_epub_progress
-            case ConvertFormats.CBZ:
-                convert_func = converter.to_cbz_progress
-            case ConvertFormats.MOBI:
-                raise ValueError("MOBI conversion is not yet supported.")
-            case ConvertFormats.PDF:
-                raise ValueError("PDF conversion is not yet supported.")
-
-        with typer.progressbar(
-            length=converter.max_operations[convert.value], label="Converting"
-        ) as progress:
-            for i in convert_func(dest):
-                progress.update(1, i)
-
-        dest_file = dest / Path(source.metadata.title).with_suffix(f".{convert.value}")
-        typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
+    cli_convert(target_path, convert_to, dest, source.metadata, chapter_range)
 
 
 def main() -> None:
