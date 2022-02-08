@@ -66,7 +66,7 @@ def cli_convert(
         for _ in progress:
             pass
 
-    dest_file = dest / Path(metadata.title).with_suffix(f".{target_format.value}")
+    dest_file = (dest / Path(folder_path).stem).with_suffix(f".{target_format.value}")
     typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
 
 
