@@ -3,7 +3,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Iterable
 
-from PIL import Image
+from PIL import Image, ImageChops
 
 
 class ProcessOps(str, Enum):
@@ -18,16 +18,27 @@ class ProcessOps(str, Enum):
     NO_POSTPROCESSING = "none"
     """Disable image processing entirely."""
     TRIM_BORDERS = "trim_borders"
+    """Conservatively remove borders in images."""
 
 
 class Processor:
     def __init__(self, image_path: Path | str, right_to_left: bool = False) -> None:
         self.image_path = Path(image_path)
-        self.image = Image.open(self.image_path)
+        self._image = Image.open(self.image_path)
         self.modified = False
         self.right_to_left = right_to_left
 
+        # what if we need to process pending images in future operations?
         self.pending_images: list[tuple[Image.Image, Path]] = []
+
+    @property
+    def image(self) -> Image.Image:
+        return self._image
+
+    @image.setter
+    def image(self, image: Image.Image) -> None:
+        self._image = image
+        self.modified = True
 
     def write(self, filename: Path | str | None = None) -> None:
         """Save the processed image manually"""
@@ -65,7 +76,6 @@ class Processor:
         width, height = self.image.size
         if width > height:
             self.image = self.image.rotate(90, expand=1)
-            self.modified = True
 
     def split_double_pages(self) -> None:
         width, height = self.image.size
@@ -80,6 +90,14 @@ class Processor:
 
         new_image_path = self.image_path.with_stem(self.image_path.stem + ".5")
         self.pending_images.append((new_image, new_image_path))
+
+    def trim_borders(self) -> None:
+        bg = Image.new(self.image.mode, self.image.size, self.image.getpixel((0, 0)))
+        diff = ImageChops.difference(self.image, bg)
+        diff = ImageChops.add(diff, diff, 2.0, -100)
+        bbox = diff.getbbox()
+        if bbox:
+            self.image = self.image.crop(bbox)
 
 
 def async_process(data: tuple[Path | str, list[ProcessOps]]) -> None:
@@ -106,3 +124,8 @@ def process(
 ) -> None:
     for _ in process_progress(folder_paths, options, maxthreads):
         pass
+
+
+if __name__ == "__main__":
+    p = Processor("/media/cbz/Horimiya/Page. 1/05.jpeg")
+    p.trim_borders()
