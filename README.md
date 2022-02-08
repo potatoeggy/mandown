@@ -38,19 +38,19 @@ pip3 install dist/mandown*.whl
 ## Usage
 
 ```
-mandown <URL>
+mandown download <URL>
 ```
 
-To convert the download contents to CBZ/EPUB, append the `--convert` option.
+To convert the download contents to CBZ/EPUB, append the `--convert` option. To apply image processing to the downloaded images, append the `--process` option.
 
 ```
-mandown <URL> --convert epub
+mandown download <URL> --convert epub --process rotate_double_pages
 ```
 
-To convert an existing folder without downloading anything except metadata (like a stripped-down version of https://github.com/ciromattia/kcc), use the `--from` option.
+To convert an existing folder without downloading anything except metadata (like a stripped-down version of https://github.com/ciromattia/kcc), use the `convert` command.
 
 ```
-mandown <URL> --convert epub --from /path/to/comic
+mandown convert <FORMAT> <PATH_TO_FOLDER>
 ```
 
 Run `mandown --help` for more info.

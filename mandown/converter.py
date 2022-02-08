@@ -84,7 +84,7 @@ class Converter:
 
         # useful for progress bars
         self.max_operations: dict[str, int] = {
-            "epub": len(self.chapters) * 2,
+            "epub": len(self.chapters) * 3,
             "cbz": len(self.chapters),
         }
 
