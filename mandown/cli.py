@@ -11,7 +11,8 @@ import typer
 
 from mandown import mandown
 from mandown.converter import Converter
-from mandown.processing import ProcessOps, Processor
+from mandown import processing
+from mandown.processing import ProcessOps
 from mandown.sources.base_source import BaseSource, Chapter, MangaMetadata
 
 app = typer.Typer()
@@ -69,18 +70,25 @@ def cli_convert(
     typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
 
 
-def cli_process(folder_paths: list[Path], options: list[ProcessOps]) -> None:
+def cli_process(
+    folder_paths: list[Path], options: list[ProcessOps], maxthreads: int = 4
+) -> None:
     # only goes down one folder level atm
     if ProcessOps.NO_POSTPROCESSING not in options:
-        typer.secho(f"Applying processing options: {', '.join(options)}")
-        total_files = sum(len(os.listdir(path) for path in folder_paths))
-        with typer.progressbar(length=total_files, label="Processing") as progress:
-            for folder in folder_paths:
-                for image_path in folder.iterdir():
-                    if image_path.is_file():
-                        processor = Processor(image_path.absolute())
-                        processor.process(options)
-                        progress.update(1)
+        total_files = sum(len(os.listdir(path)) for path in folder_paths)
+        typer.secho(
+            f"Applying processing options: {', '.join(options)} to {total_files} images"
+        )
+
+        # TODO: move async/multiprocessing into iohandler or processing
+        # if processing probably rename iohandler to downloader
+        with typer.progressbar(
+            processing.process_progress(folder_paths, options, maxthreads),
+            length=total_files,
+            label="Processing",
+        ) as progress:
+            for _ in progress:
+                pass
 
 
 @app.command()
@@ -97,8 +105,8 @@ def process(
     """
     Process a folder of images recursively in-place.
     """
-    image_paths = list(map(Path, filter(os.path.isdir, os.listdir(folder_path))))
-    cli_process(image_paths, options)
+    image_paths = list(map(Path, filter(os.path.isdir, folder_path.iterdir())))
+    cli_process(image_paths, options, maxthreads)
 
 
 @app.command()
