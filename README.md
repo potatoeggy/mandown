@@ -10,6 +10,8 @@ Comic downloader and converter to CBZ and EPUB as a Python library and command l
 
 ## Supported sites
 
+To request a new site, please file a [new issue](https://github.com/potatoeggy/mandown/issues/new).
+
 - https://mangasee123.com
 - https://manganato.com
 - https://webtoons.com
