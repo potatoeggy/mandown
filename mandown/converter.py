@@ -264,7 +264,7 @@ class EpubGenerator:
             </head>
             <body style="">
             <div style="text-align:center;top:0.0%;">
-            <img src="../../Images/{chapter_slug}/{image_path}"/>
+            <img width="{width}" height="{height}" src="../../Images/{chapter_slug}/{image_path}"/>
             </div>
             </body>
             </html>\
