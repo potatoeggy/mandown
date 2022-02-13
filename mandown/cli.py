@@ -9,7 +9,7 @@ from typing import Callable, Iterable, List, Optional
 import requests
 import typer
 
-from mandown import mandown
+import mandown
 from mandown.converter import Converter
 from mandown import processing
 from mandown.processing import ProcessOps

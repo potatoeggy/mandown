@@ -61,7 +61,7 @@ Run `mandown --help` for more info.
 
 ```python
 import os
-from mandown import mandown
+import mandown
 
 manga = mandown.query(url_to_manga)
 print(manga.metadata, manga.chapters)
