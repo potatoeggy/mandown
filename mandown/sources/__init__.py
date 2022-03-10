@@ -7,6 +7,7 @@ from . import (
     source_mangakakalot,
     source_manganato,
     source_mangasee,
+    source_readcomiconline,
     source_webtoons,
 )
 from .base_source import BaseSource

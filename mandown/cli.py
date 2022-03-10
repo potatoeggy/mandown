@@ -245,13 +245,14 @@ def download(
         cli_process(image_paths, processing_options)
 
     # convert
-    cli_convert(
-        target_path,
-        convert_to,
-        dest,
-        source.metadata,
-        [(c.title, c.title_sanitised) for c in chapter_range],
-    )
+    if convert_to != ConvertFormats.FOLDER:
+        cli_convert(
+            target_path,
+            convert_to,
+            dest,
+            source.metadata,
+            [(c.title, c.title_sanitised) for c in chapter_range],
+        )
 
 
 def main() -> None:
