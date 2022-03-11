@@ -149,7 +149,10 @@ class Converter:
             with open(oebps / "content.opf", "w", encoding="utf-8") as file:
                 file.write(
                     EpubGenerator.generate_content_opf(
-                        self.metadata, self.chapters, self.cover
+                        self.metadata,
+                        self.chapters,
+                        PageProgression.LEFT_TO_RIGHT,
+                        self.cover,
                     )
                 )
 
