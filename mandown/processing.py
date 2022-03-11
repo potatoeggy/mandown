@@ -133,8 +133,3 @@ def process(
 ) -> None:
     for _ in process_progress(folder_paths, options, maxthreads):
         pass
-
-
-if __name__ == "__main__":
-    p = Processor("/media/cbz/Horimiya/Page. 1/05.jpeg")
-    p.trim_borders()
