@@ -3,7 +3,12 @@ from enum import Enum
 from pathlib import Path
 from typing import Iterable
 
-from PIL import Image, ImageChops
+try:
+    from PIL import Image, ImageChops
+
+    HAS_PILLOW = True
+except ImportError:
+    HAS_PILLOW = False
 
 
 class ProcessOps(str, Enum):
@@ -23,6 +28,10 @@ class ProcessOps(str, Enum):
 
 class Processor:
     def __init__(self, image_path: Path | str, right_to_left: bool = False) -> None:
+        if not HAS_PILLOW:
+            raise ImportError(
+                "Pillow was not found and is needed for processing. Is it installed?"
+            )
         self.image_path = Path(image_path)
         self._image = Image.open(self.image_path)
         self.modified = False
