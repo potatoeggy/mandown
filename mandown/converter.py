@@ -1,7 +1,9 @@
 """
 Converts a folder of images to EPUB/PDF/CBZ/MOBI
 """
+from dataclasses import dataclass
 import datetime
+from enum import Enum
 import os
 import re
 import shutil
@@ -28,12 +30,23 @@ ACCEPTED_IMAGE_EXTENSIONS = {
 KOBO_WIDTH, KOBO_HEIGHT = 1005, 1430
 
 
+class PageProgression(str, Enum):
+    LEFT_TO_RIGHT = "ltr"
+    RIGHT_TO_LEFT = "rtl"
+
+
+@dataclass
+class Options:
+    page_progression: PageProgression = PageProgression.LEFT_TO_RIGHT
+
+
 class Converter:
     def __init__(
         self,
         folder_path: str,
         metadata: MangaMetadata | None = None,
         chapter_list: list[tuple[str, str]] | None = None,
+        options: Options | None = None,
     ) -> None:
         """
         Get the file path of a comic and identify its metadata.
@@ -104,6 +117,7 @@ class Converter:
             "epub": len(self.chapters) * 3,
             "cbz": len(self.chapters),
         }
+        self.options = options or Options()
 
     def to_cbz_progress(self, dest_folder: str) -> Iterator:
         dest_file = Path(dest_folder) / f"{self.metadata.title}.cbz"
@@ -135,7 +149,10 @@ class Converter:
             with open(oebps / "content.opf", "w", encoding="utf-8") as file:
                 file.write(
                     EpubGenerator.generate_content_opf(
-                        self.metadata, self.chapters, self.cover
+                        self.metadata,
+                        self.chapters,
+                        PageProgression.LEFT_TO_RIGHT,
+                        self.cover,
                     )
                 )
 
@@ -305,6 +322,7 @@ class EpubGenerator:
     def generate_content_opf(
         metadata: MangaMetadata,
         chapters: list[tuple[str, str, str, list[str]]],
+        progression: PageProgression,
         cover: Path | None = None,
     ) -> str:
         """
@@ -375,7 +393,7 @@ class EpubGenerator:
             {cover_html}
             {(chr(10) + " "*12).join(item_ids)}
             </manifest>
-            <spine page-progression-direction="ltr" toc="ncx">
+            <spine page-progression-direction="{progression.value}" toc="ncx">
             {(chr(10) + " "*12).join(item_refs)}
             </spine>
             </package>\
