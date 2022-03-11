@@ -4,8 +4,8 @@
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Download from PyPI](https://img.shields.io/pypi/v/mandown)](https://pypi.org/project/mandown)
 [![Download from the AUR](https://img.shields.io/aur/version/mandown-git)](https://aur.archlinux.org/packages/mandown-git)
-[![Latest release](https://github.com/potatoeggy/mandown/releases/latest)](https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag)
-[![License](/LICENSE)](https://img.shields.io/github/license/potatoeggy/mandown)
+[![Latest release](https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag)](https://github.com/potatoeggy/mandown/releases/latest)
+[![License](https://img.shields.io/github/license/potatoeggy/mandown)](/LICENSE)
 
 Comic downloader and converter to CBZ and EPUB as a Python library and command line application.
 
