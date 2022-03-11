@@ -1,10 +1,11 @@
 # mandown
 
-<a href="https://www.codefactor.io/repository/github/potatoeggy/mandown"><img src="https://www.codefactor.io/repository/github/potatoeggy/mandown/badge" alt="CodeFactor" /></a>
-<a href="https://pypi.org/project/mandown"><img src="https://img.shields.io/pypi/v/mandown" /></a>
-<a href="https://aur.archlinux.org/packages/mandown-git"><img src="https://img.shields.io/aur/version/mandown-git" /></a>
-<a href="https://github.com/potatoeggy/mandown/releases/latest"><img src="https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag" /></a>
-<a href="/LICENSE"><img src="https://img.shields.io/github/license/potatoeggy/mandown" /></a>
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
+[![Download from PyPI](https://img.shields.io/pypi/v/mandown)](https://pypi.org/project/mandown)
+[![Download from the AUR](https://img.shields.io/aur/version/mandown-git)](https://aur.archlinux.org/packages/mandown-git)
+[![Latest release](https://github.com/potatoeggy/mandown/releases/latest)](https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag)
+[![License](/LICENSE)](https://img.shields.io/github/license/potatoeggy/mandown)
 
 Comic downloader and converter to CBZ and EPUB as a Python library and command line application.
 
