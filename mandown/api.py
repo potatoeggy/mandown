@@ -1,11 +1,13 @@
 # pylint: disable=invalid-name
+import multiprocessing as mp
 import os
 from pathlib import Path
 from typing import Iterable
 
 from natsort import natsorted
 
-from mandown import iohandler, sources
+from mandown import converter, iohandler, processing, sources
+from mandown.processing import ProcessOps
 from mandown.sources.base_source import BaseSource, Chapter
 
 
@@ -87,4 +89,24 @@ def download_chapter(
     Raises ValueError if the folder does not exist.
     """
     for _ in download_chapter_progress(chapter, dest_folder, maxthreads, only_needed):
+        pass
+
+
+def process_progress(
+    folder_paths: list[Path], options: list[ProcessOps], maxthreads: int = 4
+) -> Iterable[None]:
+    map_pool: list[tuple[Path | str, list[ProcessOps]]] = []
+    for folder in folder_paths:
+        for image_path in folder.iterdir():
+            if image_path.is_file():
+                map_pool.append((image_path.absolute(), options))
+
+    with mp.Pool(maxthreads) as pool:
+        yield from pool.imap_unordered(processing.async_process, map_pool)
+
+
+def process(
+    folder_paths: list[Path], options: list[ProcessOps], maxthreads: int = 4
+) -> None:
+    for _ in process_progress(folder_paths, options, maxthreads):
         pass
