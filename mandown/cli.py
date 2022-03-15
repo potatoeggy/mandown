@@ -11,7 +11,6 @@ import typer
 
 import mandown
 from mandown.converter import Converter
-from mandown import processing
 from mandown.processing import ProcessOps
 from mandown.sources.base_source import BaseSource, Chapter, MangaMetadata
 
@@ -83,7 +82,7 @@ def cli_process(
         # TODO: move async/multiprocessing into iohandler or processing
         # if processing probably rename iohandler to downloader
         with typer.progressbar(
-            processing.process_progress(folder_paths, options, maxthreads),
+            mandown.process_progress(folder_paths, options, maxthreads),
             length=total_files,
             label="Processing",
         ) as progress:

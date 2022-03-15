@@ -64,9 +64,16 @@ Run `mandown --help` for more info.
 ```python
 import os
 import mandown
+from mandown.converter import Converter
 
-manga = mandown.query(url_to_manga)
-print(manga.metadata, manga.chapters)
-for c in manga.chapters:
+comic = mandown.query(url_to_comic)
+print(comic.metadata, comic.chapters)
+for c in comic.chapters:
     mandown.download_chapter(c, dest_folder=os.getcwd(), maxthreads=4)
+
+folder_path = os.getcwd()
+mandown.process(folder_path, [ProcessOps.TRIM_BORDERS, ProcessOps.ROTATE_DOUBLE_PAGES])
+
+converter = Converter(folder_path, metadata=comic.metadata)
+converter.to_epub()
 ```
