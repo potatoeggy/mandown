@@ -134,7 +134,7 @@ def convert(
     cli_convert(folder_path, convert_to, dest, metadata)
 
 
-@app.callback()
+@app.callback(invoke_without_command=True, no_args_is_help=True)
 def callback(
     version: Optional[bool] = typer.Option(
         None,
