@@ -148,6 +148,12 @@ class Converter:
             pass
 
     def to_epub_progress(self, dest_folder: str) -> Iterator:
+        if len(self.chapters) == 0:
+            raise IOError(
+                f"{self.folder_path} must contain at least one folder for EPUB conversion"
+                " for chapter recognition. If there is only one chapter, move your"
+                f" images to a new folder in {self.folder_path} and rerun the command."
+            )
         # taken from KCC generated epub file structure
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
