@@ -53,6 +53,8 @@ def cli_convert(
             convert_func = converter.to_epub_progress
         case ConvertFormats.CBZ:
             convert_func = converter.to_cbz_progress
+        case ConvertFormats.PDF:
+            convert_func = converter.to_pdf_progress
         case _:
             raise NotImplementedError(
                 f"{target_format} conversion has not been implemented yet!"

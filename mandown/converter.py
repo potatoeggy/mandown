@@ -1,22 +1,32 @@
 """
 Converts a folder of images to EPUB/PDF/CBZ/MOBI
 """
-from dataclasses import dataclass
 import datetime
-from enum import Enum
 import os
 import re
 import shutil
 import tempfile
 import textwrap
 import unicodedata
+import zipfile
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 from typing import Iterator
-import zipfile
 
 from natsort import natsorted
 
+try:
+    from PIL import Image
+
+    HAS_PILLOW = True
+except ImportError:
+    HAS_PILLOW = False
+
 from mandown.sources.base_source import MangaMetadata
+
+PDF_IMAGE_MAX_INTERVAL = 200  # adjust for memory as necessary
+PDF_IMAGE_MIN_INTERVAL_FACTOR = 0.12
 
 ACCEPTED_IMAGE_EXTENSIONS = {
     ".gif": "gif",
@@ -59,13 +69,6 @@ class Converter:
         """
         if not Path(folder_path).is_dir():
             raise ValueError(f"{folder_path} is not a directory.")
-
-        if not any(p.is_dir() for p in Path(folder_path).iterdir()):
-            raise IOError(
-                f"{folder_path} must contain at least one folder for conversion"
-                " for chapter recognition. If there is only one chapter, move your"
-                f" images to a new folder in {folder_path} and rerun the command."
-            )
 
         self.folder_path = Path(os.path.realpath(folder_path))
         self.metadata = metadata or MangaMetadata(
@@ -112,10 +115,18 @@ class Converter:
         else:
             self.cover = None
 
+        num_files = len(list(Path.rglob(self.folder_path, "*")))
         # useful for progress bars
         self.max_operations: dict[str, int] = {
             "epub": len(self.chapters) * 3,
             "cbz": len(self.chapters),
+            "pdf": round(
+                num_files
+                / min(
+                    PDF_IMAGE_MAX_INTERVAL,
+                    num_files * PDF_IMAGE_MIN_INTERVAL_FACTOR,
+                )
+            ),
         }
         self.options = options or Options()
 
@@ -208,8 +219,50 @@ class Converter:
         for _ in self.to_epub_progress(dest_folder):
             pass
 
-    def to_pdf(self) -> None:
-        pass
+    def to_pdf_progress(self, dest_folder: str) -> Iterator:
+        if not HAS_PILLOW:
+            raise ImportError(
+                "Pillow could not be found and is required for PDF conversion."
+            )
+
+        images: list[Image.Image] = []
+        for f in Path.rglob(self.folder_path, "*"):
+            if f.suffix in ACCEPTED_IMAGE_EXTENSIONS:
+                images.append(Image.open(f))
+
+        if len(images) > 0:
+            interval = round(
+                min(
+                    PDF_IMAGE_MAX_INTERVAL,
+                    len(images) * PDF_IMAGE_MIN_INTERVAL_FACTOR,
+                )
+            )
+
+            for i in range(0, len(images), interval):
+                images[i].save(
+                    Path(dest_folder) / (self.metadata.title + ".pdf"),
+                    "PDF",
+                    resolution=100.0,
+                    save_all=True,
+                    append_images=images[i + 1 : i + interval]
+                    if len(images) > i + 1
+                    else None,
+                    title=self.metadata.title,
+                    author=""
+                    if len(self.metadata.authors) == 0
+                    else self.metadata.authors[0],
+                    append=i != 0,
+                    creator="mandown",
+                    producer="mandown",
+                )
+
+                for j in images[i : i + interval]:
+                    j.close()
+                yield
+
+    def to_pdf(self, dest_folder: str) -> None:
+        for _ in self.to_pdf_progress(dest_folder):
+            pass
 
     def to_mobi(self) -> None:
         pass

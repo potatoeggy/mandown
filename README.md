@@ -7,7 +7,7 @@
 [![Latest release](https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag)](https://github.com/potatoeggy/mandown/releases/latest)
 [![License](https://img.shields.io/github/license/potatoeggy/mandown)](/LICENSE)
 
-Comic downloader and converter to CBZ and EPUB as a Python library and command line application.
+Comic downloader and converter to CBZ, EPUB, and/or PDF as a Python library and command line application.
 
 ## Supported sites
 
