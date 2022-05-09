@@ -61,3 +61,14 @@ def download(
 
     with mp.Pool(maxthreads) as pool:
         yield from pool.imap_unordered(async_download, map_pool)
+
+
+class FileSystemComic:
+    def __init__(self, path: Path | str, create=True):
+        """
+        Attempt to open a new comic ready for writing.
+
+        @param `path`: File path to open
+        @param `create`: Create the file path if it does not exist.
+        """
+        self.path = Path(path)

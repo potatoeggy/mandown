@@ -110,3 +110,7 @@ def process(
 ) -> None:
     for _ in process_progress(folder_paths, options, maxthreads):
         pass
+
+
+def read_from(path: Path | str) -> iohandler.FileSystemComic:
+    return iohandler.FileSystemComic(path)
