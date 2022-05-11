@@ -47,7 +47,7 @@ class MangaMetadata:
             ),
             E.guide(E.reference(type="cover", title="Cover", href="cover")),
             nsmap=self.OPF_MAP["opf"],
-            version="2.0",
+            version="3.0",
         )
 
         return etree.tostring(
