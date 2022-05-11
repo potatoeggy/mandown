@@ -156,6 +156,20 @@ doc = ["mkdocs (>=1.1.2,<2.0.0)", "mkdocs-material (>=5.4.0,<6.0.0)", "markdown-
 test = ["shellingham (>=1.3.0,<2.0.0)", "pytest (>=4.4.0,<5.4.0)", "pytest-cov (>=2.10.0,<3.0.0)", "coverage (>=5.2,<6.0)", "pytest-xdist (>=1.32.0,<2.0.0)", "pytest-sugar (>=0.9.4,<0.10.0)", "mypy (==0.910)", "black (>=19.10b0,<20.0b0)", "isort (>=5.0.6,<6.0.0)"]
 
 [[package]]
+name = "types-lxml"
+version = "2022.4.10"
+description = "Type annotations for lxml striving for completeness"
+category = "dev"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+lxml = "*"
+
+[package.extras]
+extra = ["types-beautifulsoup4", "types-html5lib"]
+
+[[package]]
 name = "types-requests"
 version = "2.27.11"
 description = "Typing stubs for requests"
@@ -193,7 +207,7 @@ postprocessing = ["Pillow"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "9424e2f620300d024587221ca31c255eb77ad74ec5c39232d81af95b90c93e40"
+content-hash = "1826bb789568a91a34a15a7713d8a00d5afe5f0ba45108b7b05ee2d914ec64a5"
 
 [metadata.files]
 beautifulsoup4 = [
@@ -342,6 +356,10 @@ soupsieve = [
 typer = [
     {file = "typer-0.4.0-py3-none-any.whl", hash = "sha256:d81169725140423d072df464cad1ff25ee154ef381aaf5b8225352ea187ca338"},
     {file = "typer-0.4.0.tar.gz", hash = "sha256:63c3aeab0549750ffe40da79a1b524f60e08a2cbc3126c520ebf2eeaf507f5dd"},
+]
+types-lxml = [
+    {file = "types-lxml-2022.4.10.tar.gz", hash = "sha256:5005a8dfc90a3ee2569dc85fa2d5c6642c9885ba156d517b009bbb4ae5244289"},
+    {file = "types_lxml-2022.4.10-py3-none-any.whl", hash = "sha256:c5df01c0be6d1cc542c7f6e6d3af2d7ba0c50907a4a13ad217e7b95ab597c269"},
 ]
 types-requests = [
     {file = "types-requests-2.27.11.tar.gz", hash = "sha256:6a7ed24b21780af4a5b5e24c310b2cd885fb612df5fd95584d03d87e5f2a195a"},

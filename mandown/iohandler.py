@@ -5,8 +5,8 @@ Handles downloading files
 import imghdr
 import multiprocessing as mp
 import os
-from pathlib import Path
 import urllib.parse
+from pathlib import Path
 from typing import Iterable, Sequence
 
 import requests
@@ -64,7 +64,7 @@ def download(
 
 
 class FileSystemComic:
-    def __init__(self, path: Path | str, create=True):
+    def __init__(self, path: Path | str, create: bool = True):
         """
         Attempt to open a new comic ready for writing.
 
