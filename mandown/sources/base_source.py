@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Callable, Final
 
 from lxml import etree
-from lxml.builder import ElementMaker
+from lxml.builder import E, ElementMaker
 
 
 class SourceNotOverriddenError(Exception):
@@ -25,8 +25,7 @@ class MangaMetadata:
     description: str
     cover_art: str
 
-    def to_opf(self, /, pretty_print: bool = False) -> str:
-        E = ElementMaker()  # pylint: disable=invalid-name
+    def to_opf_tree(self) -> etree._Element:
         M = ElementMaker(  # pylint: disable=invalid-name
             namespace="http://purl.org/dc/elements/1.1/", nsmap=self.OPF_MAP
         )
@@ -50,8 +49,14 @@ class MangaMetadata:
             version="3.0",
         )
 
+        return package
+
+    def to_opf(self, /, pretty_print: bool = False) -> str:
         return etree.tostring(
-            package, xml_declaration=True, encoding="utf-8", pretty_print=pretty_print
+            self.to_opf_tree(),
+            xml_declaration=True,
+            encoding="utf-8",
+            pretty_print=pretty_print,
         ).decode("utf-8")
 
     @classmethod

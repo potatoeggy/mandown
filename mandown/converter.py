@@ -14,6 +14,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Iterator
 
+from lxml.builder import E, ElementMaker
 from natsort import natsorted
 
 try:
@@ -378,6 +379,26 @@ class EpubGenerator:
             </ncx>\
             """
         )
+
+    @staticmethod
+    def generate_content_opf_from_metadata(
+        metadata: MangaMetadata,
+        chapters: list[tuple[str, str, str, list[str]]],
+        progression: PageProgression,
+        cover: Path | None = None,
+    ) -> str:
+        package = metadata.to_opf_tree()
+        if cover:
+            cover_el = E.item(
+                id="cover", href=f"Images/{cover.name}", properties="cover-image"
+            )
+            cover_el.attrib[
+                "media-type"
+            ] = f"image/{ACCEPTED_IMAGE_EXTENSIONS[cover.suffix]}"
+        else:
+            cover_el = None
+
+        package.remove(package[1])
 
     @staticmethod
     def generate_content_opf(
