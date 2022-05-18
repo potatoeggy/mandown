@@ -90,7 +90,9 @@ class Converter:
 
         padding = f"0{len(str(len(working_chapters)))}"
 
-        self.chapters: list[tuple[str, str, str, list[str]]] = [
+        self.chapters: list[
+            tuple[str, str, str, list[str]]
+        ] = [  # i'll fix this later it's a monster
             (
                 title,
                 sanitised,

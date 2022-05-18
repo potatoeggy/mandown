@@ -38,7 +38,7 @@ class WebtoonsSource(BaseSource):
             f"https://www.webtoons.com/{self._title_path}/rss?title_no={self._title_no}"
         )
         authors: list[str] = feed["entries"][0].author.split("/")
-        authors = list(map(lambda s: s.strip(), authors))
+        authors = [s.strip() for s in authors]
         title: str = feed["channel"]["title"]
         cover_art: str = feed["channel"]["image"]["href"]
         description: str = feed["channel"]["description"].strip()

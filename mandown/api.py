@@ -23,7 +23,7 @@ def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSo
             pass
         if source.chapters:
             if populate_sort:
-                titles = list(map(lambda c: c.title, source.chapters))
+                titles = [c.title for c in source.chapters]
                 if titles != natsorted(titles):
                     padding = f"0{len(str(len(source.chapters)))}"
                     for i, c in enumerate(source.chapters):

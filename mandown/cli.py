@@ -106,7 +106,7 @@ def process(
     """
     Process a folder of images recursively in-place.
     """
-    image_paths = list(map(Path, filter(os.path.isdir, folder_path.iterdir())))
+    image_paths = [i for i in folder_path.iterdir() if i.is_dir()]
     cli_process(image_paths, options, maxthreads)
 
 
@@ -242,7 +242,7 @@ def download(
 
     # process
     if processing_options:
-        image_paths = list(map(Path, filter(os.path.isdir, os.listdir(target_path))))
+        image_paths = [Path(i) for i in os.listdir(target_path) if os.path.isdir(i)]
         cli_process(image_paths, processing_options)
 
     # convert
