@@ -5,11 +5,13 @@ Handles downloading files
 import imghdr
 import multiprocessing as mp
 import os
-from pathlib import Path
+import time
 import urllib.parse
+from pathlib import Path
 from typing import Iterable, Sequence
 
 import requests
+import undetected_chromedriver as uc
 
 
 def async_download(data: tuple[str, str, str | None, dict[str, str] | None]) -> None:
@@ -61,3 +63,17 @@ def download(
 
     with mp.Pool(maxthreads) as pool:
         yield from pool.imap_unordered(async_download, map_pool)
+
+
+class UndetectedDriver:
+    def __init__(self) -> None:
+        self.driver = uc.Chrome()
+        self.first_time = True
+
+    def get(self, url: str) -> str:
+        self.driver.get(url)
+        if self.first_time:
+            time.sleep(5)
+            self.first_time = False
+
+        return self.driver.find_element_by_tag_name("html").get_attribute("outerHTML")
