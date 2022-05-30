@@ -99,7 +99,7 @@ class FileSystemMetadataValidator(BaseModel):
         )
 
 
-class FileSystemComic:
+class FileSystemMetadata:
     def __init__(
         self,
         path: Path | str,
