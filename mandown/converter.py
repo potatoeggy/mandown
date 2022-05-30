@@ -24,7 +24,7 @@ try:
 except ImportError:
     HAS_PILLOW = False
 
-from mandown.sources.base_source import MangaMetadata
+from .sources.base_source import MangaMetadata
 
 PDF_IMAGE_MAX_INTERVAL = 200  # adjust for memory as necessary
 PDF_IMAGE_MIN_INTERVAL_FACTOR = 0.12

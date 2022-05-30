@@ -6,9 +6,9 @@ from typing import Iterable
 
 from natsort import natsorted
 
-from mandown import converter, iohandler, processing, sources
-from mandown.processing import ProcessOps
-from mandown.sources.base_source import BaseSource, Chapter
+from . import iohandler, processing, sources
+from .processing import ProcessOps
+from .sources.base_source import BaseSource, Chapter
 
 
 def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSource:

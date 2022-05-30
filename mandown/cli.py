@@ -10,9 +10,10 @@ import requests
 import typer
 
 import mandown
-from mandown.converter import Converter
-from mandown.processing import ProcessOps
-from mandown.sources.base_source import BaseSource, Chapter, MangaMetadata
+
+from .converter import Converter
+from .processing import ProcessOps
+from .sources.base_source import BaseSource, Chapter, MangaMetadata
 
 app = typer.Typer()
 

@@ -14,7 +14,7 @@ from typing import Iterable, Sequence
 import requests
 from pydantic import BaseModel
 
-from mandown.sources.base_source import Chapter, MangaMetadata
+from .sources.base_source import Chapter, MangaMetadata
 
 METADATA_PATH_NAME = "md-metadata.json"
 
