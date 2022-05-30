@@ -112,5 +112,5 @@ def process(
         pass
 
 
-def read_from(path: Path | str) -> iohandler.FileSystemComic:
+def open(path: Path | str) -> iohandler.FileSystemComic:
     return iohandler.FileSystemComic(path)
