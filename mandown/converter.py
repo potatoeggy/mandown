@@ -15,7 +15,6 @@ from pathlib import Path
 from typing import Iterator
 
 from lxml.builder import E, ElementMaker
-from natsort import natsorted
 
 try:
     from PIL import Image
@@ -84,7 +83,7 @@ class Converter:
         # self.chapters is found either by traversing the path (natsort) or by being fed
         working_chapters = chapter_list or []
         if not working_chapters:
-            for item in natsorted(os.listdir(self.folder_path)):
+            for item in os.listdir(self.folder_path):
                 item = str(item)  # get rid of type complaints
                 if (Path(self.folder_path) / item).is_dir():
                     working_chapters.append((item, item))
@@ -104,7 +103,7 @@ class Converter:
                             str(s).lower().endswith(i)
                             for i in ACCEPTED_IMAGE_EXTENSIONS
                         ),
-                        natsorted(os.listdir(self.folder_path / sanitised)),  # type: ignore
+                        os.listdir(self.folder_path / sanitised),  # type: ignore
                     )
                 ),
             )
