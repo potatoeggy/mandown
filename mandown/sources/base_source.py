@@ -1,6 +1,5 @@
 # pylint: disable=no-member
 
-import re
 import textwrap
 from dataclasses import InitVar, dataclass, field
 from pathlib import Path
@@ -8,6 +7,9 @@ from typing import Callable, Final
 
 from lxml import etree
 from lxml.builder import E, ElementMaker
+from slugify import slugify
+
+from mandown.sources.local_source import LocalSource
 
 
 class SourceNotOverriddenError(Exception):
@@ -24,6 +26,16 @@ class MangaMetadata:
     genres: list[str]
     description: str
     cover_art: str
+
+    def asdict(self) -> dict:
+        return {
+            "title": self.title,
+            "authors": self.authors,
+            "url": self.url,
+            "genres": self.genres,
+            "description": self.description,
+            "cover_art_url": self.cover_art,
+        }
 
     def to_opf_tree(self) -> etree._Element:
         M = ElementMaker(  # pylint: disable=invalid-name
@@ -112,7 +124,7 @@ class Chapter:
     def __post_init__(self, source: "BaseSource") -> None:  # type: ignore
         self._image_fetcher = source.fetch_chapter_image_list
         # get rid of all forbidden chars in filenames
-        self.title_sanitised = re.sub(r"[\\\/:*?<>|]", "_", self.title)
+        self.slug = slugify(self.title)
 
     @property
     def images(self) -> list[str]:
@@ -184,6 +196,18 @@ class BaseSource:
         order for that chapter.
         """
         raise SourceNotOverriddenError("Image URL getter not overridden")
+
+    def refresh_metadata(self) -> None:
+        """
+        Forcibly fetch and overwrite metadata
+        """
+        self._metadata = self.fetch_metadata()
+
+    def refresh_chapter_list(self) -> None:
+        """
+        Forcibly fetch and overwrite the chapter list
+        """
+        self._chapters = self.fetch_chapter_list()
 
     @staticmethod
     def check_url(url: str) -> bool:

@@ -8,7 +8,7 @@ from natsort import natsorted
 
 from . import iohandler, processing, sources
 from .processing import ProcessOps
-from .sources.base_source import BaseSource, Chapter
+from .sources.base_source import BaseSource, Chapter, LocalSource
 
 
 def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSource:
@@ -29,6 +29,14 @@ def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSo
                     for i, c in enumerate(source.chapters):
                         c.title = f"{i+1:{padding}}. {c.title}"
     return source
+
+
+def new_query(url: str) -> BaseSource:
+    source = query(url, populate_sort=False)
+    switch = LocalSource(
+        source.metadata.title, metadata=source.metadata, chapters=source.chapters
+    )
+    switch.save()
 
 
 def download_chapter_progress(
@@ -112,5 +120,5 @@ def process(
         pass
 
 
-def read_from(path: Path | str) -> iohandler.FileSystemMetadata:
-    return iohandler.FileSystemMetadata(path)
+def read_from(path: Path | str) -> LocalSource:
+    return LocalSource(path)

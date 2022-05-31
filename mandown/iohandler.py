@@ -2,9 +2,7 @@
 Handles downloading files
 """
 # pylint: disable=invalid-name
-import dataclasses
 import imghdr
-import json
 import multiprocessing as mp
 import os
 import urllib.parse
@@ -12,11 +10,6 @@ from pathlib import Path
 from typing import Iterable, Sequence
 
 import requests
-from pydantic import BaseModel
-
-from .sources.base_source import Chapter, MangaMetadata
-
-METADATA_PATH_NAME = "md-metadata.json"
 
 
 def async_download(data: tuple[str, str, str | None, dict[str, str] | None]) -> None:
@@ -68,82 +61,3 @@ def download(
 
     with mp.Pool(maxthreads) as pool:
         yield from pool.imap_unordered(async_download, map_pool)
-
-
-class FileSystemChapterValidator(BaseModel):
-    title: str
-    rel_path: str
-
-    def to_discrete(self) -> Chapter:
-        pass  # this doesn't work unless we refactor that too
-
-
-class FileSystemMetadataValidator(BaseModel):
-    title: str
-    authors: list[str]
-    url: str
-    genres: list[str]
-    description: str
-    cover_art_url: str
-    chapters: list[FileSystemChapterValidator]
-
-    def to_discrete(self) -> MangaMetadata:
-        # TODO: merge MangaMetadata and the FileSystemValidators
-        return MangaMetadata(
-            self.title,
-            self.authors,
-            self.url,
-            self.genres,
-            self.description,
-            self.cover_art_url,
-        )
-
-
-class FileSystemMetadata:
-    def __init__(
-        self,
-        path: Path | str,
-        *,
-        metadata: MangaMetadata | None = None,
-        chapters: list[Chapter] | None = None,
-    ):
-        """
-        Attempt to open a new comic ready for writing.
-
-        @param `path`: File path to open
-        @param `create`: Create the file path if it does not exist
-        @param `metadata`: Use existing metadata if available
-        @param `chapters`: Use existing chapter data if available
-        """
-        path = Path(path)
-        self.path = path
-
-        # create the folder, failing gracefully
-        # if the folder already exists
-        path.mkdir(exist_ok=True)
-
-        try:
-            self._populate_from_path(path)
-        except IOError:
-            pass  # expected if doesn't exist
-
-        if metadata is not None:
-            self.metadata = metadata
-
-        if chapters is not None:
-            self.chapters = chapters
-
-    def _populate_from_path(self, path: Path) -> None:
-        with open(path / METADATA_PATH_NAME, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-        validated_data = FileSystemMetadataValidator(**data)
-        self.metadata = validated_data.to_discrete()
-        self.chapters = [c.to_discrete() for c in validated_data.chapters]
-
-    def save(self) -> None:
-        data = dataclasses.asdict(self.metadata)
-        data["chapters"] = [dataclasses.asdict(c) for c in self.chapters]
-
-        with open(self.path / METADATA_PATH_NAME, "w", encoding="utf-8") as file:
-            json.dump(data, file)
