@@ -12,7 +12,7 @@ from .sources.base_source import BaseSource, Chapter
 from .sources.local_source import LocalSource
 
 
-def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSource:
+def query(url: str, populate: bool = True) -> BaseSource:
     """
     Return the source file for a URL.
     """
@@ -23,17 +23,12 @@ def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSo
         if source.metadata:
             pass
         if source.chapters:
-            if populate_sort:
-                titles = [c.title for c in source.chapters]
-                if titles != natsorted(titles):
-                    padding = f"0{len(str(len(source.chapters)))}"
-                    for i, c in enumerate(source.chapters):
-                        c.title = f"{i+1:{padding}}. {c.title}"
+            pass
     return source
 
 
 def new_query(url: str) -> BaseSource:
-    source = query(url, populate_sort=False)
+    source = query(url)
     switch = LocalSource(
         source.metadata.title, metadata=source.metadata, chapters=source.chapters
     )
