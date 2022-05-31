@@ -52,6 +52,7 @@ class LocalSource:
         source: BaseSource | None = None,
         metadata: MangaMetadata | None = None,
         chapters: list[Chapter] | None = None,
+        # TODO: generate image paths for each chapter
     ):
         """
         Attempt to open a new comic ready for writing.
@@ -62,6 +63,10 @@ class LocalSource:
         @param `metadata`: Use existing metadata if available (has priority over source)
         @param `chapters`: Use existing chapter data if available (has priority over source)
         """
+        self.source = None
+        self.metadata = None
+        self.chapters = None
+
         path = Path(path)
         self.path = path
 
@@ -71,8 +76,11 @@ class LocalSource:
 
         try:
             self._populate_from_path(path)
-        except IOError:
-            pass  # expected if doesn't exist
+        except IOError as err:
+            if source is metadata is chapters is None:
+                raise IOError(
+                    "Missing metadata file and no other metadata source specified."
+                ) from err
 
         if source is not None:
             self.metadata = source.metadata
@@ -84,27 +92,35 @@ class LocalSource:
         if chapters is not None:
             self.chapters = chapters
 
+        self.source = source or self.to_base_source()
+
     def _populate_from_path(self, path: Path) -> None:
         with open(path / METADATA_PATH_NAME, "r", encoding="utf-8") as file:
             data = json.load(file)
 
         try:
-            validated_data = MangaMetadata(**data)
+            validated_data = FileSystemMetadataValidator(**data)
             self.metadata = validated_data
-            self.chapters = [c.to_discrete() for c in data["chapters"]]
+            self.source = self.to_base_source()  # spaghet everywhere
+            self.chapters = [
+                c.to_discrete(self.source) for c in validated_data.chapters
+            ]
         except ValidationError as err:
             raise IOError("Improper metadata file") from err
-        except KeyError as err:
-            raise IOError("Missing chapter data") from err
 
     def save(self) -> None:
         data = dict(self.metadata.asdict())
-        data["chapters"] = [{"title": c.title, "slug": c.slug} for c in self.chapters]
+        data["chapters"] = [
+            {"title": c.title, "slug": c.slug, "url": c.url} for c in self.chapters
+        ]
 
         with open(self.path / METADATA_PATH_NAME, "w", encoding="utf-8") as file:
             json.dump(data, file)
 
     def to_base_source(self) -> BaseSource:
+        if self.source:
+            return self.source
+
         # god dammit
         source = get_class_for(self.metadata.url)(self.metadata.url)
         source._metadata = self.metadata

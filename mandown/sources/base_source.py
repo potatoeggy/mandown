@@ -25,7 +25,7 @@ class MangaMetadata:
             "url": self.url,
             "genres": self.genres,
             "description": self.description,
-            "cover_art_url": self.cover_art,
+            "cover_art": self.cover_art,
         }
 
 
@@ -54,9 +54,6 @@ class Chapter:
             return self._images
         self._images = self._image_fetcher(self)  # type: ignore
         return self._images
-
-    def __repr__(self) -> str:
-        return self.__str__()
 
     def __str__(self) -> str:
         return textwrap.dedent(
@@ -137,9 +134,6 @@ class BaseSource:
         Returns whether the url given matches that of the site and is processable
         """
         raise SourceNotOverriddenError("URL checker not overridden")
-
-    def __repr__(self) -> str:
-        return self.__str__()
 
     def __str__(self) -> str:
         return textwrap.dedent(
