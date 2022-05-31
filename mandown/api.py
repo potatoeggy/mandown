@@ -25,14 +25,6 @@ def query(url: str, populate: bool = True) -> BaseSource:
     return source
 
 
-def new_query(url: str) -> BaseSource:
-    source = query(url)
-    switch = LocalSource(
-        source.metadata.title, metadata=source.metadata, chapters=source.chapters
-    )
-    switch.save()
-
-
 def download_chapter_progress(
     chapter: Chapter, dest_folder: str, maxthreads: int = 1, only_needed: bool = True
 ) -> Iterable[None]:

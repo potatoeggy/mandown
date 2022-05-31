@@ -10,6 +10,7 @@ import requests
 import typer
 
 import mandown
+from mandown.sources.local_source import LocalSource
 
 from .converter import Converter
 from .processing import ProcessOps
@@ -43,12 +44,15 @@ def cli_query(url: str) -> BaseSource | None:
 def cli_convert(
     folder_path: str,
     target_format: ConvertFormats,
+    local_source: LocalSource,
     dest: Path = Path(os.getcwd()),
-    metadata: MangaMetadata | None = None,
-    chapter_list: list[tuple[str, str]] | None = None,
 ) -> None:
-    converter = Converter(folder_path, metadata, chapter_list)
-    convert_func: Callable[[str], Iterable] = lambda i: None
+    converter = Converter(
+        folder_path,
+        local_source.metadata,
+        [(c.title, c.slug) for c in local_source.chapters],
+    )
+    convert_func: Callable[[str], Iterable] = lambda _: None
     match target_format:
         case ConvertFormats.EPUB:
             convert_func = converter.to_epub_progress
@@ -204,8 +208,8 @@ def download(
     # starting to think that immutability is much better than whatever
     # the heck is going on here
     target_path = os.path.join(dest, source.metadata.title)
-    if not os.path.isdir(target_path):
-        os.mkdir(target_path)
+    local_source = LocalSource(target_path, source=source)
+    local_source.save()
 
     # get processing range
     start_chapter = start or 1
@@ -246,9 +250,8 @@ def download(
         cli_convert(
             target_path,
             convert_to,
+            local_source,
             dest,
-            source.metadata,
-            [(c.title, c.title_sanitised) for c in chapter_range],
         )
 
 
