@@ -8,7 +8,8 @@ from natsort import natsorted
 
 from . import iohandler, processing, sources
 from .processing import ProcessOps
-from .sources.base_source import BaseSource, Chapter, LocalSource
+from .sources.base_source import BaseSource, Chapter
+from .sources.local_source import LocalSource
 
 
 def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSource:

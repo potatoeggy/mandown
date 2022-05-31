@@ -17,10 +17,11 @@ METADATA_PATH_NAME = "md-metadata.json"
 
 class FileSystemChapterValidator(BaseModel):
     title: str
-    rel_path: str
+    url: str
+    slug: str
 
-    def to_discrete(self) -> Chapter:
-        pass  # this doesn't work unless we refactor that too
+    def to_discrete(self, source: BaseSource) -> Chapter:
+        return Chapter(source, self.title, self.url)
 
 
 class FileSystemMetadataValidator(BaseModel):
@@ -29,18 +30,17 @@ class FileSystemMetadataValidator(BaseModel):
     url: str
     genres: list[str]
     description: str
-    cover_art_url: str
+    cover_art: str
     chapters: list[FileSystemChapterValidator]
 
     def to_discrete(self) -> MangaMetadata:
-        # TODO: merge MangaMetadata and the FileSystemValidators
         return MangaMetadata(
             self.title,
             self.authors,
             self.url,
             self.genres,
             self.description,
-            self.cover_art_url,
+            self.cover_art,
         )
 
 
@@ -89,11 +89,13 @@ class LocalSource:
             data = json.load(file)
 
         try:
-            validated_data = FileSystemMetadataValidator(**data)
-            self.metadata = validated_data.to_discrete()
-            self.chapters = [c.to_discrete() for c in validated_data.chapters]
+            validated_data = MangaMetadata(**data)
+            self.metadata = validated_data
+            self.chapters = [c.to_discrete() for c in data["chapters"]]
         except ValidationError as err:
             raise IOError("Improper metadata file") from err
+        except KeyError as err:
+            raise IOError("Missing chapter data") from err
 
     def save(self) -> None:
         data = dict(self.metadata.asdict())
@@ -103,6 +105,7 @@ class LocalSource:
             json.dump(data, file)
 
     def to_base_source(self) -> BaseSource:
+        # god dammit
         source = get_class_for(self.metadata.url)(self.metadata.url)
         source._metadata = self.metadata
         source._chapters = self.chapters
