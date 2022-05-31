@@ -4,8 +4,6 @@ import os
 from pathlib import Path
 from typing import Iterable
 
-from natsort import natsorted
-
 from . import iohandler, processing, sources
 from .processing import ProcessOps
 from .sources.base_source import BaseSource, Chapter
