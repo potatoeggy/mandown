@@ -115,9 +115,6 @@ def process(
 def convert(
     convert_to: ConvertFormats,
     folder_path: Path,
-    metadata_source: Optional[str] = typer.Option(
-        None, "--metadata-from", "-m", help="The source to embed metadata from"
-    ),
     dest: Path = typer.Option(
         os.getcwd(), "--dest", "-d", help="The folder to save the converted file to."
     ),
@@ -129,11 +126,9 @@ def convert(
     ),
 ) -> None:
     """
-    Convert a folder of images into a comic a la KCC. Optionally
-    embed metadata from an online source.
+    Convert a folder of images into a comic a la KCC.
     """
-    metadata = cli_query(metadata_source).metadata if metadata_source else None
-    cli_convert(folder_path, convert_to, dest, metadata)
+    cli_convert(folder_path, convert_to, dest, None)
 
 
 @app.callback(invoke_without_command=True, no_args_is_help=True)
