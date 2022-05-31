@@ -44,15 +44,12 @@ def cli_query(url: str) -> BaseSource | None:
 def cli_convert(
     folder_path: str,
     target_format: ConvertFormats,
-    local_source: LocalSource,
     dest: Path = Path(os.getcwd()),
+    metadata: MangaMetadata | None = None,
+    chapter_list: list[tuple[str, str]] | None = None,
 ) -> None:
-    converter = Converter(
-        folder_path,
-        local_source.metadata,
-        [(c.title, c.slug) for c in local_source.chapters],
-    )
-    convert_func: Callable[[str], Iterable] = lambda _: None
+    converter = Converter(folder_path, metadata, chapter_list)
+    convert_func: Callable[[str], Iterable] = lambda i: None
     match target_format:
         case ConvertFormats.EPUB:
             convert_func = converter.to_epub_progress
@@ -132,7 +129,14 @@ def convert(
     """
     Convert a folder of images into a comic a la KCC.
     """
-    cli_convert(folder_path, convert_to, dest, None)
+    local_source = LocalSource(folder_path)
+    cli_convert(
+        folder_path,
+        convert_to,
+        dest,
+        local_source.metadata,
+        [(c.title, c.slug) for c in local_source.chapters],
+    )
 
 
 @app.callback(invoke_without_command=True, no_args_is_help=True)
@@ -250,8 +254,9 @@ def download(
         cli_convert(
             target_path,
             convert_to,
-            local_source,
             dest,
+            source.metadata,
+            [(c.title, c.slug) for c in chapter_range],
         )
 
 

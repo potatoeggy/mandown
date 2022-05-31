@@ -40,7 +40,7 @@ def download_chapter_progress(
     if not os.path.isdir(dest_folder):
         raise ValueError(f"Folder path {dest_folder} does not exist")
 
-    download_folder = os.path.join(dest_folder, chapter.title)
+    download_folder = os.path.join(dest_folder, chapter.slug)
     if not os.path.isdir(download_folder):
         os.mkdir(download_folder)
 
