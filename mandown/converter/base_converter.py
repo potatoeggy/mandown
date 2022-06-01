@@ -4,6 +4,14 @@ from typing import Iterable
 from ..comic import Comic
 from . import ConvertOptions
 
+ACCEPTED_IMAGE_EXTENSIONS = {
+    ".gif": "gif",
+    ".png": "png",
+    ".jpg": "jpeg",
+    ".jpeg": "jpeg",
+    ".jpe": "jpeg",
+}
+
 
 class BaseConverter:
     def __init__(self, comic: Comic, options: ConvertOptions | None = None) -> None:

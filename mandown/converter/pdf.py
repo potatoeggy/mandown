@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Iterable
 
-from .base_converter import BaseConverter
+from .base_converter import ACCEPTED_IMAGE_EXTENSIONS, BaseConverter
 
 try:
     from PIL import Image
@@ -10,14 +10,6 @@ try:
 except ImportError:
     HAS_PILLOW = False
 
-
-ACCEPTED_IMAGE_EXTENSIONS = {
-    ".gif": "gif",
-    ".png": "png",
-    ".jpg": "jpeg",
-    ".jpeg": "jpeg",
-    ".jpe": "jpeg",
-}
 
 PDF_IMAGE_MAX_INTERVAL = 200  # adjust for memory as necessary
 PDF_IMAGE_MIN_INTERVAL_FACTOR = 0.12

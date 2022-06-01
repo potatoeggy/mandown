@@ -3,7 +3,7 @@ import zipfile
 from pathlib import Path
 from typing import Iterable
 
-from .base_converter import BaseConverter
+from .base_converter import ACCEPTED_IMAGE_EXTENSIONS, BaseConverter
 
 
 class CbzConverter(BaseConverter):

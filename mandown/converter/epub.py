@@ -1,8 +1,14 @@
+# pylint: disable=no-member
+
 import tempfile
 from pathlib import Path
 from typing import Iterable
 
-from .base_converter import BaseConverter
+from lxml import etree
+from lxml.builder import E, ElementMaker
+
+from ..iohandler import NUM_LEFT_PAD_DIGITS
+from .base_converter import ACCEPTED_IMAGE_EXTENSIONS, BaseConverter
 
 STYLE_CSS = """
 @page {
@@ -24,6 +30,9 @@ CONTAINER_XML = """
 </rootfiles>
 </container>
 """.strip()
+
+OPF_MAP = {"opf": "http://www.idpf.org/2007/opf"}
+HTML_NS = "http://www.w3.org/1999/xhtml"
 
 
 class EpubConverter(BaseConverter):
@@ -55,6 +64,108 @@ class EpubConverter(BaseConverter):
 
         text_dir.mkdir(parents=True)
         image_dir.mkdir(parents=True)
+
+    def generate_image_html(
+        self,
+        tmpdir: Path,
+        chapter_slug: str,
+        image_path: Path,
+    ) -> None:
+        image_base = image_path.with_suffix("")
+        tree = E.html(
+            E.head(
+                E.title(image_base),
+                E.link(href="../style.css", type="text/css", rel="stylesheet"),
+            ),
+            E.body(
+                E.div(style="text-align:center;top:0.0%"),
+                E.img(
+                    width="auto",
+                    height="100%",
+                    src=f"../../Images/{chapter_slug}/{image_path}",
+                ),
+            ),
+        )
+
+        return etree.tostring(
+            tree,
+            xml_declaration=True,
+            encoding="utf-8",
+            pretty_print=True,
+        ).decode("utf-8")
+
+    def generate_toc_ncx(self) -> str:
+        nav_map: list[etree._Element] = []
+
+        for chap in self.comic.chapters:
+            nav_map.append(
+                E.navPoint(
+                    E.navLabel(
+                        E.text(chap.title),
+                    ),
+                    E.content(src=f"Text/{chap.slug}/{1:{NUM_LEFT_PAD_DIGITS}}.xhtml"),
+                    id=f"Text_{chap.slug}",
+                )
+            )
+
+        tree = E.ncx(
+            E.head(E.meta()),
+            E.docTitle(E.text(self.comic.metadata.title)),
+            E.navMap(*nav_map),
+        )
+
+        return etree.tostring(
+            tree,
+            xml_declaration=True,
+            encoding="utf-8",
+            pretty_print=True,
+        ).decode("utf-8")
+
+    def generate_content_opf(self, cover: Path | None = None) -> str:
+        M = ElementMaker(  # pylint: disable=invalid-name
+            namespace="http://purl.org/dc/elements/1.1/",
+            nsmap=OPF_MAP,
+        )
+
+        metadata = self.comic.metadata
+        els_genres = [M.subject(i) for i in metadata.genres]
+        els_authors = [M.creator(i) for i in metadata.authors]
+
+        if cover:
+            cover_el = E.item(
+                id="cover",
+                href=f"Images/{cover.name}",
+                properties="cover-image",
+            )
+            cover_el.attrib[
+                "media-type"
+            ] = f"image/{ACCEPTED_IMAGE_EXTENSIONS[cover.suffix]}"
+        else:
+            cover_el = None
+
+        package = E.package(
+            M.metadata(
+                M.title(self.title),
+                *els_authors,
+                M.contributor("mandown", role="bkp"),
+                M.description(metadata.description),
+                M.identifier(metadata.url, scheme="URL"),
+                M.language("eng"),
+                *els_genres,
+                M.meta(name="mandown:cover", content=self.cover_art),
+                # TODO: fix cover, incorporate it in
+                E.guide(E.reference(type="cover", title="Cover", href="cover")),
+                nsmap=OPF_MAP["opf"],
+                version="3.0",
+            )
+        )
+
+        return etree.tostring(
+            package,
+            xml_declaration=True,
+            encoding="utf-8",
+            pretty_print=True,
+        )
 
 
 def get_class() -> EpubConverter:
