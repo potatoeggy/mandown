@@ -27,8 +27,11 @@ def convert_progress(
     comic: Comic,
     folder_path: Path | str,
     convert_to: ConvertFormats,
-    dest_folder: Path | str,
+    dest_folder: Path | str | None = None,
 ) -> Iterable:
+    # default to working directory
+    dest_folder = dest_folder or Path(".").resolve()
+
     # obviously pylint is wrong because this is 100% callable
     converter = get_converter(convert_to)(comic)  # pylint: disable=not-callable
     yield from converter.create_file_progress(folder_path, dest_folder)
@@ -38,7 +41,7 @@ def convert(
     comic: Comic,
     folder_path: Path | str,
     convert_to: ConvertFormats,
-    dest_folder: Path | str,
+    dest_folder: Path | str | None = None,
 ) -> None:
     for _ in convert_progress(comic, folder_path, convert_to, dest_folder):
         pass

@@ -69,18 +69,22 @@ Run `mandown --help` for more info.
 ## Library usage
 
 ```python
-import os
 import mandown
-from mandown.converter import Converter
 
+# load previously downloaded comic
+comic = mandown.read("path/to/comic/folder")
+print(comic.metadata, comic.chapters)
+
+# fetch comic from a source by URL
 comic = mandown.query(url_to_comic)
 print(comic.metadata, comic.chapters)
-for c in comic.chapters:
-    mandown.download_chapter(c, dest_folder=os.getcwd(), maxthreads=4)
 
-folder_path = os.getcwd()
-mandown.process(folder_path, [ProcessOps.TRIM_BORDERS, ProcessOps.ROTATE_DOUBLE_PAGES])
+# download comic to ./comic using 4 threads
+mandown.download(comic, "./comic/", threads=4)
 
-converter = Converter(folder_path, metadata=comic.metadata)
-converter.to_epub()
+# apply image post-processing to comic images in ./comic
+mandown.process(comic, "./comic/", options=["rotate_double_pages", "trim_borders"])
+
+# convert comic located in ./comic to epub, storing it in ./epubs
+mandown.convert(comic, "./comic/", "epub", "./epubs")
 ```
