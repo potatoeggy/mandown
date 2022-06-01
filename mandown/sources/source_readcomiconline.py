@@ -8,7 +8,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from .base_source import BaseSource, Chapter, MangaMetadata
+from ..comic import BaseChapter, BaseMetadata
+from .base_source import BaseSource
 
 
 class ReadComicOnlineSource(BaseSource):
@@ -19,7 +20,7 @@ class ReadComicOnlineSource(BaseSource):
         super().__init__(url)
         self.id = self.url_to_id(url)
 
-    def fetch_metadata(self) -> MangaMetadata:
+    def fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(
             requests.get(f"https://readcomiconline.li/Comic/{self.id}").text,
             features="lxml",
@@ -36,22 +37,22 @@ class ReadComicOnlineSource(BaseSource):
         description = str(soup.select_one("p[style='text-align: justify;']").text)
         cover = self.domains[0] + str(soup.find("link")["href"])
 
-        return MangaMetadata(title, author, self.url, genres, description, cover)
+        return BaseMetadata(title, author, self.url, genres, description, cover)
 
-    def fetch_chapter_list(self) -> list[Chapter]:
+    def fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(
             requests.get(f"https://readcomiconline.li/Comic/{self.id}").text,
             features="lxml",
         )
 
-        chapters: list[Chapter] = []
+        chapters: list[BaseChapter] = []
         for e in soup.select("ul.list > li > a"):
             chapters.append(
-                Chapter(self, next(e.children).text, self.domains[0] + e["href"])
+                BaseChapter(self, next(e.children).text, self.domains[0] + e["href"])
             )
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
+    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         text = requests.get(chapter.url).text
 
         images: list[str] = []

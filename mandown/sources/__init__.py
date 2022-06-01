@@ -2,7 +2,9 @@
 import sys
 import types
 
-from . import (
+from .base_source import BaseSource
+
+from . import (  # isort: skip
     source_mangadex,
     source_mangakakalot,
     source_manganato,
@@ -10,7 +12,6 @@ from . import (
     source_readcomiconline,
     source_webtoons,
 )
-from .base_source import BaseSource
 
 __class_list: list[type[BaseSource]] = []
 
@@ -19,7 +20,7 @@ def _get_all_source_modules() -> list[str]:
     out = []
     for _, val in globals().items():
         if isinstance(val, types.ModuleType) and val.__name__.startswith(
-            "mandown.sources.source_"
+            "mandown.adapters.adapter_"
         ):
             out.append(val.__name__)
     return out

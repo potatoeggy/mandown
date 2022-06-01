@@ -10,19 +10,23 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 
-from .base_source import BaseSource, Chapter, MangaMetadata
+from ..comic import BaseChapter, BaseMetadata
+from .base_source import BaseSource
 
 
 class MangaSeeSource(BaseSource):
     name = "MangaSee"
     domains = ["https://mangasee123.com"]
+    USER_AGENT = (
+        "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0"
+    )
 
     def __init__(self, url: str) -> None:
         super().__init__(url)
         self.id = self.url_to_id(url)
         self._scripts: str | None = None
 
-    def fetch_metadata(self) -> MangaMetadata:
+    def fetch_metadata(self) -> BaseMetadata:
         # all of the metadata is available in the <script type="application/ld+json"> element
         # so are the chapters
         soup = BeautifulSoup(self._get_scripts(), "html.parser")
@@ -42,9 +46,9 @@ class MangaSeeSource(BaseSource):
 
         cover_art = f"https://cover.nep.li/cover/{self.id}.jpg"
 
-        return MangaMetadata(title, authors, self.url, genres, description, cover_art)
+        return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
-    def fetch_chapter_list(self) -> list[Chapter]:
+    def fetch_chapter_list(self) -> list[BaseChapter]:
         feed = feedparser.parse(
             f"https://mangasee123.com/rss/{self.id}.xml", agent=self.USER_AGENT
         )
@@ -52,12 +56,12 @@ class MangaSeeSource(BaseSource):
         chapters = []
         for c in feed["entries"]:
             chapter_title = str(c["title"]).lstrip(self.metadata.title).strip()
-            chapters.append(Chapter(self, chapter_title, c["link"]))
+            chapters.append(BaseChapter(self, chapter_title, c["link"]))
 
         chapters.reverse()
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
+    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "html.parser")
         full_js = str(
             soup.find("script", type="application/ld+json")

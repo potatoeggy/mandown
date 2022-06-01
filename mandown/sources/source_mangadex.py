@@ -9,7 +9,8 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-from .base_source import BaseSource, Chapter, MangaMetadata
+from ..comic import BaseChapter, BaseMetadata
+from .base_source import BaseSource
 
 
 class MangaDexSource(BaseSource):
@@ -29,7 +30,7 @@ class MangaDexSource(BaseSource):
             ]["relationships"]
             self.id: str = next(filter(lambda i: i["type"] == "manga", r))["id"]  # type: ignore
 
-    def fetch_metadata(self) -> MangaMetadata:
+    def fetch_metadata(self) -> BaseMetadata:
         # TODO: support non-English downloads
         r = self._get(
             f"https://api.mangadex.org/manga/{self.id}"
@@ -64,7 +65,7 @@ class MangaDexSource(BaseSource):
             if d["attributes"]["group"] == "genre":
                 genres.append(d["attributes"]["name"][self.lang_code])
 
-        return MangaMetadata(
+        return BaseMetadata(
             title,
             authors,
             f"https://mangadex.org/title/{self.id}",
@@ -73,7 +74,7 @@ class MangaDexSource(BaseSource):
             cover_art,
         )
 
-    def fetch_chapter_list(self) -> list[Chapter]:
+    def fetch_chapter_list(self) -> list[BaseChapter]:
         # for some reason *sometimes* it goes all name/service not found
         r = self._get(
             f"https://api.mangadex.org/manga/{self.id}/"
@@ -81,10 +82,10 @@ class MangaDexSource(BaseSource):
             "&order[volume]=desc&order[chapter]=desc"
         ).json()
 
-        chapters: list[Chapter] = []
+        chapters: list[BaseChapter] = []
         for c in r["data"]:
             chapters.append(
-                Chapter(
+                BaseChapter(
                     self,
                     c["attributes"]["title"] or f"Chapter {c['attributes']['chapter']}",
                     f"https://mangadex.org/chapter/{c['id']}",
@@ -92,7 +93,7 @@ class MangaDexSource(BaseSource):
             )
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
+    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         *_, chapter_id = chapter.url.split("/")
         r = self._get(f"https://api.mangadex.org/at-home/server/{chapter_id}").json()
         base_url = r["baseUrl"]

@@ -38,3 +38,7 @@ build-backend = "poetry.core.masonry.api"
 plugins = [
     "pydantic.mypy"
 ]
+
+[tool.isort]
+# not released in stable branch yet
+#split_on_trailing_comma = true

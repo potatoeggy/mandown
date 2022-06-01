@@ -9,7 +9,8 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 
-from .base_source import BaseSource, Chapter, MangaMetadata
+from ..comic import BaseChapter, BaseMetadata
+from .base_source import BaseSource
 
 
 class WebtoonsSource(BaseSource):
@@ -30,7 +31,7 @@ class WebtoonsSource(BaseSource):
 
         self._title_path = "/".join(url.split("/")[3:6])
 
-    def fetch_metadata(self) -> MangaMetadata:
+    def fetch_metadata(self) -> BaseMetadata:
         feed = feedparser.parse(
             f"https://www.webtoons.com/{self._title_path}/rss?title_no={self._title_no}"
         )
@@ -43,7 +44,7 @@ class WebtoonsSource(BaseSource):
         cover_art: str = feed["channel"]["image"]["href"]
         description: str = feed["channel"]["description"].strip()
 
-        return MangaMetadata(
+        return BaseMetadata(
             title,
             authors,
             f"https://www.webtoons.com/{self._title_path}/list?title_no={self._title_no}",
@@ -52,7 +53,7 @@ class WebtoonsSource(BaseSource):
             cover_art,
         )
 
-    def fetch_chapter_list(self) -> list[Chapter]:
+    def fetch_chapter_list(self) -> list[BaseChapter]:
         soup = self._get_soup()
         titles = [
             str(e.next_element) for e in soup.select("p.sub_title > span.ellipsis")
@@ -60,14 +61,11 @@ class WebtoonsSource(BaseSource):
 
         links: list[str] = [e["href"] for e in soup.select('a[class^="NPI=a:list"]')]
 
-        chapters = [
-            Chapter(self, t, u, {"Referer": "https://webtoons.com"})
-            for t, u in zip(titles, links)
-        ]
+        chapters = [BaseChapter(self, t, u) for t, u in zip(titles, links)]
         chapters.reverse()
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
+    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "html.parser")
         images: list[str] = []
         for c in soup.select("div#_imageList > img"):
@@ -84,9 +82,7 @@ class WebtoonsSource(BaseSource):
         )
 
         self._soup = BeautifulSoup(
-            requests.get(
-                mobile_url, headers={"Referer": "https://m.webtoons.com"}
-            ).text,
+            requests.get(mobile_url, headers=self.headers).text,
             "html.parser",
         )
         return self._soup
