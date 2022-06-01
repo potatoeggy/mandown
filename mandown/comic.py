@@ -3,9 +3,7 @@ from pathlib import Path
 
 from slugify import slugify
 
-from mandown import iohandler
-
-from . import sources
+from . import iohandler, sources
 
 
 @dataclass(frozen=True)

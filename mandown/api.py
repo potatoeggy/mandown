@@ -1,10 +1,9 @@
 from pathlib import Path
 from typing import Iterable
 
-from mandown import iohandler, sources
-from mandown.converter import ConvertFormats, get_converter
-
-from .comic import BaseChapter, BaseMetadata, Comic
+from . import iohandler, sources
+from .comic import Comic
+from .converter import ConvertFormats, get_converter
 
 
 def query(url: str) -> Comic:
