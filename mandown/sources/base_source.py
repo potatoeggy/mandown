@@ -1,10 +1,6 @@
 from ..comic import BaseChapter, BaseMetadata
 
 
-class SourceNotOverriddenError(Exception):
-    pass
-
-
 class BaseSource:
     name = "Source name goes here"
     domains = ["Source domains goes here"]
@@ -37,27 +33,27 @@ class BaseSource:
         """
         Fetch and return title, author, and url of the comic.
         """
-        raise SourceNotOverriddenError("Metadata getter not overridden")
+        raise NotImplementedError("Metadata getter not overridden")
 
     def fetch_chapter_list(self) -> list[BaseChapter]:
         """
         Fetch and return a list of chapter titles and their URL in ascending order.
         """
-        raise SourceNotOverriddenError("Chapter list getter not overridden")
+        raise NotImplementedError("Chapter list getter not overridden")
 
     def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         """
         Given a chapter link, fetch and return a list of image URLs in ascending
         order for that chapter.
         """
-        raise SourceNotOverriddenError("Image URL getter not overridden")
+        raise NotImplementedError("Image URL getter not overridden")
 
     @staticmethod
     def check_url(url: str) -> bool:
         """
         Returns whether the url given matches that of the site and is processable
         """
-        raise SourceNotOverriddenError("URL checker not overridden")
+        raise NotImplementedError("URL checker not overridden")
 
 
 def get_class() -> type[BaseSource]:
