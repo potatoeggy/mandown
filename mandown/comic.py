@@ -35,7 +35,7 @@ class BaseMetadata:
 class BaseChapter:
     title: str
     url: str
-    slug: str | None = None
+    slug: str = None
 
     def __post_init__(self) -> None:
         if self.slug is None:
