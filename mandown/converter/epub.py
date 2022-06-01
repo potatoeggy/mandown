@@ -168,6 +168,9 @@ class EpubConverter(BaseConverter):
             pretty_print=True,
         )
 
+    def generate_nav_xhtml(self) -> str:
+        pass
+
 
 def get_class() -> EpubConverter:
     return EpubConverter

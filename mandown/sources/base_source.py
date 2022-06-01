@@ -33,11 +33,6 @@ class BaseSource:
         self._chapters = self.fetch_chapter_list()
         return self._chapters
 
-    def __post_init__(self) -> None:
-        """
-        Put any other initialisation here instead of using init
-        """
-
     def fetch_metadata(self) -> BaseMetadata:
         """
         Fetch and return title, author, and url of the comic.
