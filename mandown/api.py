@@ -32,9 +32,7 @@ def convert_progress(
 ) -> Iterable:
     # obviously pylint is wrong because this is 100% callable
     converter = get_converter(convert_to)(comic)  # pylint: disable=not-callable
-    converter.create_file(folder_path, dest_folder)
-
-    yield
+    yield from converter.create_file_progress(folder_path, dest_folder)
 
 
 def convert(
