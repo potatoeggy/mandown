@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Iterable
 
 from mandown import iohandler, sources
+from mandown.converter import ConvertFormats, get_converter
 
 from .comic import BaseChapter, BaseMetadata, Comic
 
@@ -11,7 +12,7 @@ def query(url: str) -> Comic:
     Attempt to query for a comic given a URL.
     :param `url`: An internet URL to search for
     """
-    adapter = sources.get_class_for(url)
+    adapter = sources.get_class_for(url)(url)
     return Comic(adapter.metadata, adapter.chapters)
 
 
@@ -23,12 +24,26 @@ def read(path: Path | str) -> Comic:
     return iohandler.read_comic(path)
 
 
-def convert_progress(comic: Comic) -> Iterable:
-    pass
+def convert_progress(
+    comic: Comic,
+    folder_path: Path | str,
+    convert_to: ConvertFormats,
+    dest_folder: Path | str,
+) -> Iterable:
+    # obviously pylint is wrong because this is 100% callable
+    converter = get_converter(convert_to)(comic)  # pylint: disable=not-callable
+    converter.create_file(folder_path, dest_folder)
+
+    yield
 
 
-def convert(comic: Comic) -> None:
-    for _ in convert_progress(comic):
+def convert(
+    comic: Comic,
+    folder_path: Path | str,
+    convert_to: ConvertFormats,
+    dest_folder: Path | str,
+) -> None:
+    for _ in convert_progress(comic, folder_path, convert_to, dest_folder):
         pass
 
 
