@@ -154,6 +154,7 @@ class EpubConverter(BaseConverter):
                 *els_genres,
                 M.meta(name="mandown:cover", content=self.cover_art),
                 # TODO: fix cover, incorporate it in
+                # TODO: also add in chapters and orientation and metas
                 E.guide(E.reference(type="cover", title="Cover", href="cover")),
                 nsmap=OPF_MAP["opf"],
                 version="3.0",
