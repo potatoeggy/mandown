@@ -28,6 +28,13 @@ Install the package from PyPI:
 pip3 install mandown
 ```
 
+Arch Linux users may also install the package from the [AUR](https://aur.archlinux.org/packages/mandown.git):
+
+```
+git clone https://aur.archlinux.org/mandown-git.git
+makepkg -si
+```
+
 Or, to build from source:
 
 Mandown depends on [poetry](https://github.com/python-poetry/poetry) for building.
