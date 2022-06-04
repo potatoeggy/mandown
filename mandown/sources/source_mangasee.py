@@ -56,7 +56,7 @@ class MangaSeeSource(BaseSource):
         chapters = []
         for c in feed["entries"]:
             chapter_title = str(c["title"]).lstrip(self.metadata.title).strip()
-            chapters.append(BaseChapter(self, chapter_title, c["link"]))
+            chapters.append(BaseChapter(chapter_title, c["link"]))
 
         chapters.reverse()
         return chapters

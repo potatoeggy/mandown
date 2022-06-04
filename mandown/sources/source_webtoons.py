@@ -61,7 +61,7 @@ class WebtoonsSource(BaseSource):
 
         links: list[str] = [e["href"] for e in soup.select('a[class^="NPI=a:list"]')]
 
-        chapters = [BaseChapter(self, t, u) for t, u in zip(titles, links)]
+        chapters = [BaseChapter(t, u) for t, u in zip(titles, links)]
         chapters.reverse()
         return chapters
 

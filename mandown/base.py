@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from slugify import slugify
 
 
-@dataclass(frozen=True)
+@dataclass
 class BaseMetadata:
     title: str
     authors: list[str]

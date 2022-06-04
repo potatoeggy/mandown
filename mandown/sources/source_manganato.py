@@ -46,7 +46,7 @@ class MangaNatoSource(BaseSource):
     def fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(self._get_scripts(), "html.parser")
         chapters = [
-            BaseChapter(self, c.next_element, c["href"])
+            BaseChapter(c.next_element, c["href"])
             for c in soup.select("a.chapter-name")
         ]
         chapters.reverse()

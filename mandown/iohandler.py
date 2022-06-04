@@ -91,5 +91,6 @@ def save_comic(comic: Comic, path: Path | str) -> None:
 
     json_path = path / MD_METADATA_FILE
 
+    print(comic.asdict())
     with open(json_path, "w", encoding="utf-8") as file:
         json.dump(comic.asdict(), file)

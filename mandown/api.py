@@ -77,7 +77,7 @@ def download_progress(
         full_path.mkdir(exist_ok=True)
 
     # save metadata json
-    comic.save_metadata(path)
+    iohandler.save_comic(comic, full_path)
 
     # for each chapter
     for chap in comic.chapters[start:end]:

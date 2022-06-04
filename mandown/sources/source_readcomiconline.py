@@ -48,7 +48,7 @@ class ReadComicOnlineSource(BaseSource):
         chapters: list[BaseChapter] = []
         for e in soup.select("ul.list > li > a"):
             chapters.append(
-                BaseChapter(self, next(e.children).text, self.domains[0] + e["href"])
+                BaseChapter(next(e.children).text, self.domains[0] + e["href"])
             )
         return chapters
 

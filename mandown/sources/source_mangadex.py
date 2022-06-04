@@ -86,7 +86,6 @@ class MangaDexSource(BaseSource):
         for c in r["data"]:
             chapters.append(
                 BaseChapter(
-                    self,
                     c["attributes"]["title"] or f"Chapter {c['attributes']['chapter']}",
                     f"https://mangadex.org/chapter/{c['id']}",
                 )
