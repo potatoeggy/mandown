@@ -1,21 +1,24 @@
 from pathlib import Path
+from platform import processor
 from typing import Iterable
 
+from mandown.processor import ProcessOps, Processor
+
 from . import iohandler, sources
-from .comic import Comic
+from .comic import BaseComic
 from .converter import ConvertFormats, get_converter
 
 
-def query(url: str) -> Comic:
+def query(url: str) -> BaseComic:
     """
     Attempt to query for a comic given a URL.
     :param `url`: An internet URL to search for
     """
     adapter = sources.get_class_for(url)(url)
-    return Comic(adapter.metadata, adapter.chapters)
+    return BaseComic(adapter.metadata, adapter.chapters)
 
 
-def read(path: Path | str) -> Comic:
+def read(path: Path | str) -> BaseComic:
     """
     Load a mandown-created comic from the file system.
     :param `path`: A folder where mandown has created a comic
@@ -24,7 +27,7 @@ def read(path: Path | str) -> Comic:
 
 
 def convert_progress(
-    comic: Comic,
+    comic: BaseComic,
     folder_path: Path | str,
     convert_to: ConvertFormats,
     dest_folder: Path | str | None = None,
@@ -38,7 +41,7 @@ def convert_progress(
 
 
 def convert(
-    comic: Comic,
+    comic: BaseComic,
     folder_path: Path | str,
     convert_to: ConvertFormats,
     dest_folder: Path | str | None = None,
@@ -47,17 +50,23 @@ def convert(
         pass
 
 
-def process_progress(comic: Comic) -> Iterable:
-    pass
+def process_progress(
+    comic_path: Path | str, ops: list[ProcessOps] | None = None
+) -> Iterable:
+    data = iohandler.discover_local_images(comic_path)
+    for _, images in data.items():
+        for i in images:
+            Processor(i).process(ops)
+            yield
 
 
-def process(comic: Comic) -> None:
-    for _ in process_progress(comic):
+def process(comic: BaseComic, ops: list[ProcessOps] | None = None) -> None:
+    for _ in process_progress(comic, ops):
         pass
 
 
 def download_progress(
-    comic: Comic,
+    comic: BaseComic,
     path: Path | str = ".",
     *,
     start: int | None = None,
@@ -77,7 +86,16 @@ def download_progress(
         full_path.mkdir(exist_ok=True)
 
     # save metadata json
+    comic.set_chapter_range(start=start, end=end)
     iohandler.save_comic(comic, full_path)
+
+    # cover
+    if comic.metadata.cover_art:
+        next(
+            iohandler.download_images(
+                [comic.metadata.cover_art], full_path, filestems=["cover"]
+            )
+        )
 
     # for each chapter
     for chap in comic.chapters[start:end]:
@@ -119,7 +137,7 @@ def download_progress(
 
 
 def download(
-    comic: Comic,
+    comic: BaseComic,
     path: Path | str = ".",
     *,
     start: int | None = None,

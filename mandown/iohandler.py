@@ -11,7 +11,7 @@ from typing import Iterable, Sequence
 import requests
 
 from .base import BaseChapter, BaseMetadata
-from .comic import Comic
+from .comic import BaseComic
 
 NUM_LEFT_PAD_DIGITS = 5
 FILE_PADDING = f"0{NUM_LEFT_PAD_DIGITS}"
@@ -72,25 +72,38 @@ def download_images(
         yield from pool.imap_unordered(async_download_image, map_pool)
 
 
-def read_comic(path: Path | str) -> Comic:
+def read_comic(path: Path | str) -> BaseComic:
     path = Path(path)
     json_path = path / MD_METADATA_FILE
 
     with open(json_path, "r", encoding="utf-8") as file:
         data = json.load(file)
 
-    return Comic(
+    return BaseComic(
         BaseMetadata(**data["metadata"]),
         [BaseChapter(**c) for c in data["chapters"]],
     )
 
 
-def save_comic(comic: Comic, path: Path | str) -> None:
+def save_comic(comic: BaseComic, path: Path | str) -> None:
     path = Path(path)
     path.mkdir(exist_ok=True)
 
     json_path = path / MD_METADATA_FILE
 
-    print(comic.asdict())
     with open(json_path, "w", encoding="utf-8") as file:
         json.dump(comic.asdict(), file)
+
+
+def discover_local_images(path: Path | str) -> dict[str, list[Path]]:
+    """
+    Given a comic path, return a dictionary of slugs: images.
+    Basically a slightly modified version of os.walk.
+    """
+    path = Path(path)
+
+    return {
+        chap.stem: list(chap.iterdir())
+        for chap in path.iterdir()
+        if chap.is_dir()  # force explosion for readability
+    }

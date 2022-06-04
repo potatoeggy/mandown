@@ -48,7 +48,7 @@ class Processor:
 
     def write(self, filename: Path | str | None = None) -> None:
         """Save the processed image(s) manually"""
-        filename = Path(filename) or self.image_path
+        filename = Path(filename or self.image_path)
         self.image.save(filename)
 
         for image in self.new_images:
@@ -71,18 +71,18 @@ class Processor:
             try:
                 images: tuple[Image.Image] | Image.Image | None = getattr(
                     ProcessContainer, func
-                )()
+                )(self.image)
 
                 if images is None:
                     continue
 
                 if isinstance(images, Image.Image):
-                    images = [images]
+                    images = tuple(images)
 
                 self.image = images[0]
 
                 if len(images) > 1:
-                    self.new_images.append(images[1:])
+                    self.new_images.extend(images[1:])
 
                 self.is_modified = True
             except AttributeError as err:

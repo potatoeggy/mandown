@@ -1,11 +1,12 @@
 from dataclasses import dataclass
+from pathlib import Path
 
 from . import sources
 from .base import BaseChapter, BaseMetadata
 
 
 @dataclass
-class Comic:
+class BaseComic:
     def __init__(
         self,
         metadata: BaseMetadata,
@@ -23,3 +24,11 @@ class Comic:
 
     def get_chapter_image_urls(self, chapter: BaseChapter) -> list[str]:
         return self.source.fetch_chapter_image_list(chapter)
+
+    def set_chapter_range(
+        self, *, start: int | None = None, end: int | None = None
+    ) -> None:
+        """
+        `start` and `end` are zero-indexed.
+        """
+        self.chapters = self.chapters[start:end]

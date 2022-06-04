@@ -3,7 +3,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Iterable, Literal
 
-from ..comic import Comic
+from ..comic import BaseComic
 
 ACCEPTED_IMAGE_EXTENSIONS = {
     ".gif": "gif",
@@ -31,7 +31,7 @@ class ConvertOptions:
 
 
 class BaseConverter:
-    def __init__(self, comic: Comic, options: ConvertOptions | None = None) -> None:
+    def __init__(self, comic: BaseComic, options: ConvertOptions | None = None) -> None:
         self.comic = comic
         self.options = options or ConvertOptions()
 
