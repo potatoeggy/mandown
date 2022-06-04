@@ -29,7 +29,7 @@ class PdfConverter(BaseConverter):
 
         images: list[Image.Image] = [
             Image.open(f)
-            for f in Path.rglob(path, "*")
+            for f in sorted(Path.rglob(path, "*"))
             if f.suffix in ACCEPTED_IMAGE_EXTENSIONS
         ]
 
