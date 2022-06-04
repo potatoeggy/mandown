@@ -1,9 +1,8 @@
-import os
 import zipfile
 from pathlib import Path
 from typing import Iterable
 
-from .base_converter import ACCEPTED_IMAGE_EXTENSIONS, BaseConverter
+from .base_converter import BaseConverter
 
 
 class CbzConverter(BaseConverter):

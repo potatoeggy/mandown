@@ -1,5 +1,4 @@
 from pathlib import Path
-from platform import processor
 from typing import Iterable
 
 from mandown.processor import ProcessOps, Processor
@@ -103,10 +102,10 @@ def download_progress(
         # expect that they're named by numbers only
         skip_images: set[int] = set()
         if only_download_missing:
-            for f in path.iterdir():
-                if f.stem == f.stem.rjust(iohandler.NUM_LEFT_PAD_DIGITS, "0"):
+            for file in path.iterdir():
+                if file.stem == file.stem.rjust(iohandler.NUM_LEFT_PAD_DIGITS, "0"):
                     try:
-                        skip_images.add(int(f.stem))
+                        skip_images.add(int(file.stem))
                     except ValueError:
                         # expected if not an image file
                         pass

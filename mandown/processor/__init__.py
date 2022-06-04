@@ -4,7 +4,7 @@ from pathlib import Path
 from .ops import ProcessContainer
 
 try:
-    from PIL import Image, ImageChops
+    from PIL import Image
 
     HAS_PILLOW = True
 except ImportError:
