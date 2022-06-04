@@ -1,8 +1,12 @@
 # pylint: disable=no-member
+"""
+I'M SORRY I DON'T UNDERSTAND EPUB OKAY
+"""
 
 import shutil
 import tempfile
 import zipfile
+from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
@@ -38,14 +42,19 @@ CONTAINER_XML = """
 
 OPF_MAP = {
     "opf": "http://www.idpf.org/2007/opf",
+    "dc": "http://purl.org/dc/elements/1.1/",
 }
 
 NAV_MAP = {
-    "epub": "http://www.w3.org/1999/xhtml",
+    "epub": "http://www.idpf.org/2007/ops",
+    None: "http://www.w3.org/1999/xhtml",
 }
 
 
 class EpubConverter(BaseConverter):
+    def __post_init__(self) -> None:
+        self.uuid = str(uuid4())
+
     def create_file_progress(
         self, path: Path | str, save_to: Path | str
     ) -> Iterable[None]:
@@ -57,10 +66,9 @@ class EpubConverter(BaseConverter):
             root = Path(temp)
             oebps = self.create_skeleton(root)
             (oebps / "toc.ncx").write_text(self.toc_ncx)
-            (oebps / "nav.xhtml").write_text(self.nav_xhtml)
+            (oebps / "nav.xhtml").write_text(self.nav_xhtml(slug_map))
             (oebps / "content.opf").write_text(self.content_opf(slug_map))
-
-            print(self.content_opf(slug_map))
+            (oebps / "Text" / "style.css").write_text(STYLE_CSS)
 
             for chap in self.comic.chapters:
                 yield "Building"
@@ -73,12 +81,12 @@ class EpubConverter(BaseConverter):
 
                 for i, image in enumerate((path / chap.slug).iterdir(), start=1):
                     if image.suffix in ACCEPTED_IMAGE_EXTENSIONS:
-                        new_file = text_dir / f"{i:0{NUM_LEFT_PAD_DIGITS}}.xhtml"
+                        new_file = text_dir / f"{image.with_suffix('').name}.xhtml"
                         new_file.write_text(self.generate_image_html(chap.slug, image))
 
                         shutil.copyfile(
                             image,
-                            image_dir / f"{i:0{NUM_LEFT_PAD_DIGITS}}{image.suffix}",
+                            image_dir / image.name,
                         )
 
             dest_file = save_to / f"{self.comic.metadata.title}.epub"
@@ -121,8 +129,12 @@ class EpubConverter(BaseConverter):
         chapter_slug: str,
         image_path: Path,
     ) -> None:
+        X = ElementMaker(  # pylint: disable=invalid-name
+            namespace="http://www.w3.org/1999/xhtml",
+            nsmap=NAV_MAP,
+        )
         image_base = str(image_path.with_suffix(""))
-        tree = E.html(
+        tree = X.html(
             E.head(
                 E.title(image_base),
                 E.link(href="../style.css", type="text/css", rel="stylesheet"),
@@ -130,9 +142,7 @@ class EpubConverter(BaseConverter):
             E.body(
                 E.div(style="text-align:center;top:0.0%"),
                 E.img(
-                    width="auto",
-                    height="100%",
-                    src=f"../../Images/{chapter_slug}/{image_path}",
+                    src=f"../../Images/{chapter_slug}/{image_path.name}",
                 ),
             ),
         )
@@ -161,7 +171,7 @@ class EpubConverter(BaseConverter):
 
         tree = E.ncx(
             E.head(
-                E.meta(name="dtb:uid", content=f"urn:uuid:{uuid4()}"),
+                E.meta(name="dtb:uid", content=f"urn:uuid:{self.uuid}"),
                 E.meta(name="dtb:depth", content="1"),
                 E.meta(name="dtb:totalPageCount", content="0"),
                 E.meta(name="dtb.maxPageNumber", content="0"),
@@ -184,64 +194,98 @@ class EpubConverter(BaseConverter):
     def content_opf(
         self, slug_map: dict[str, list[Path]], cover: Path | None = None
     ) -> str:
-        M = ElementMaker(  # pylint: disable=invalid-name
-            namespace="http://purl.org/dc/elements/1.1/",
-            nsmap=OPF_MAP,
-        )
-
         metadata = self.comic.metadata
-        els_genres = [M.subject(i) for i in metadata.genres]
-        els_authors = [M.creator(i) for i in metadata.authors]
 
         item_ids: list[etree._Element] = []
+        item_img_ids: list[etree._Element] = [
+            E.item(
+                id="nav",
+                href="nav.xhtml",
+                properties="nav",
+                **{"media-type": "application/xhtml+xml"},
+            ),
+            E.item(
+                id="ncx", href="toc.ncx", **{"media-type": "application/x-dtbncx+xml"}
+            ),
+            E.item(id="css", href="Text/style.css", **{"media-type": "text/css"}),
+        ]
         item_refs: list[str] = []
-
         for c_index, chap in enumerate(self.comic.chapters, start=1):
             for index, image in enumerate(slug_map[chap.slug], start=1):
-                ref_id = f"page_Images_C{chap.slug}-{index:0{NUM_LEFT_PAD_DIGITS}}"
-
-                el = E.item(
-                    id=f"{ref_id}-mandown",
-                    href=f"Text/{chap.slug}/{index:0{NUM_LEFT_PAD_DIGITS}}.xhtml",
+                ref_id = (
+                    f"page_Images_C{chap.slug}-{index:0{NUM_LEFT_PAD_DIGITS}}-mandown"
                 )
-                el.attrib["media-type"] = "application/xhtml+xml"
-                item_ids.append(el)
-                item_refs.append(E.itemref(idref=ref_id))
+                image_ref_id = (
+                    f"img_Images_C{chap.slug}-{index:0{NUM_LEFT_PAD_DIGITS}}-mandown"
+                )
 
-        spine = E.spine(*item_refs, toc="ncx")
-        spine.attrib["page-progression-direction"] = "ltr"
+                img_el = E.item(
+                    id=image_ref_id,
+                    href=f"Images/{chap.slug}/{image.name}",
+                    **{
+                        "media-type": f"image/{ACCEPTED_IMAGE_EXTENSIONS[image.suffix]}"
+                    },
+                )
+
+                text_el = E.item(
+                    id=ref_id,
+                    href=f"Text/{chap.slug}/{image.with_suffix('').name}.xhtml",
+                    **{"media-type": "application/xhtml+xml"},
+                )
+
+                item_ids.append(text_el)
+                item_img_ids.append(img_el)
+                item_refs.append(E.itemref(idref=ref_id))
 
         if cover:
             cover_el = E.item(
                 id="cover",
                 href=f"Images/{cover.name}",
                 properties="cover-image",
+                **{"media-type": f"image/{ACCEPTED_IMAGE_EXTENSIONS[cover.suffix]}"},
             )
-            cover_el.attrib[
-                "media-type"
-            ] = f"image/{ACCEPTED_IMAGE_EXTENSIONS[cover.suffix]}"
             item_ids.append(cover_el)
+
+        M = ElementMaker(  # pylint: disable=invalid-name
+            # namespace="http://purl.org/dc/elements/1.1/",
+            nsmap=OPF_MAP,
+        )
+
+        MD = ElementMaker(  # pylint: disable=invalid-name
+            namespace="http://purl.org/dc/elements/1.1/",
+            nsmap=OPF_MAP,
+        )
+
+        els_genres = [MD.subject(i) for i in metadata.genres]
+        els_authors = [MD.creator(i) for i in metadata.authors]
 
         time_now = datetime.now().replace(microsecond=0).isoformat()
 
         package = E.package(
             M.metadata(
-                M.title(metadata.title),
+                MD.title(metadata.title),
                 *els_authors,
-                M.contributor("mandown", role="bkp"),
-                M.description(metadata.description),
-                M.identifier(metadata.url, scheme="URL"),
-                M.language("eng"),
+                MD.contributor("mandown"),
+                MD.description(metadata.description),
+                MD.identifier(metadata.url),
+                MD.identifier(f"urn:uuid:{self.uuid}", id="BookID"),
+                MD.language("eng"),
                 *els_genres,
-                M.meta(name="mandown:cover", content=metadata.cover_art),
+                E.meta(name="mandown:cover", content=metadata.cover_art),
+                E.meta(f"{time_now}Z", property="dcterms:modified"),
                 # TODO: fix cover, incorporate it in
                 # TODO: also add in chapters and orientation and metas
                 # E.guide(E.reference(type="cover", title="Cover", href="cover")),
             ),
-            E.manifest(*item_ids),
-            spine,
+            E.manifest(*item_ids, *item_img_ids),
+            E.spine(
+                *item_refs,
+                toc="ncx",
+                **{"page-progression-direction": "ltr"},
+            ),
             xmlns=OPF_MAP["opf"],
             version="3.0",
+            **{"unique-identifier": "BookID"},
         )
 
         return etree.tostring(
@@ -251,16 +295,38 @@ class EpubConverter(BaseConverter):
             pretty_print=True,
         ).decode("utf-8")
 
-    @property
-    def nav_xhtml(self) -> str:
-        tree = E.html(
+    def nav_xhtml(self, slug_map: dict[str, list[Path]]) -> str:
+        X = ElementMaker(  # pylint: disable=invalid-name
+            namespace="http://www.w3.org/1999/xhtml",
+            nsmap=NAV_MAP,
+        )
+
+        els_list: list[etree._Element] = []
+        for c_index, chap in enumerate(self.comic.chapters, start=1):
+            href = f"Text/{chap.slug}/{1:0{NUM_LEFT_PAD_DIGITS}}.xhtml"
+            els_list.append(E.li(E.a(chap.title, href=href)))
+
+        # you can't reuse elements after much head-banging
+        els_list2 = deepcopy(els_list)
+
+        tree = X.html(
             E.head(
                 E.title(self.comic.metadata.title),
                 E.meta(charset="utf-8"),
             ),
-            E.body(E.nav()),
-            nsmap=NAV_MAP["epub"],
+            E.body(
+                X.nav(
+                    E.ol(*els_list2),
+                    id="toc",
+                    **{"{http://www.idpf.org/2007/ops}type": "toc"},
+                ),
+                X.nav(
+                    E.ol(*els_list),
+                    **{"{http://www.idpf.org/2007/ops}type": "page-list"},
+                ),
+            ),
         )
+
         return etree.tostring(
             tree,
             xml_declaration=True,
