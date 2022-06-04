@@ -1,4 +1,4 @@
-from ..comic import BaseChapter, BaseMetadata
+from ..base import BaseChapter, BaseMetadata
 
 
 class BaseSource:

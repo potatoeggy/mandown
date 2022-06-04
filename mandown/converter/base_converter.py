@@ -1,8 +1,9 @@
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Literal
 
 from ..comic import Comic
-from . import ConvertOptions
 
 ACCEPTED_IMAGE_EXTENSIONS = {
     ".gif": "gif",
@@ -12,11 +13,32 @@ ACCEPTED_IMAGE_EXTENSIONS = {
     ".jpe": "jpeg",
 }
 
+CBZ = "cbz"
+EPUB = "epub"
+PDF = "pdf"
+
+
+class ConvertFormats(str, Enum):
+    # for typing purposes
+    CBZ = "cbz"
+    EPUB = "epub"
+    PDF = "pdf"
+
+
+@dataclass(kw_only=True)
+class ConvertOptions:
+    page_progression: Literal["rtl"] | Literal["ltr"] = "ltr"
+
 
 class BaseConverter:
     def __init__(self, comic: Comic, options: ConvertOptions | None = None) -> None:
         self.comic = comic
         self.options = options or ConvertOptions()
+
+        self.__post_init__()
+
+    def __post_init__(self) -> None:
+        pass
 
     def create_file_progress(
         self, path: Path | str, save_to: Path | str

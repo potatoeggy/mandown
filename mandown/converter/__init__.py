@@ -4,23 +4,7 @@ from enum import Enum
 from typing import Literal
 
 from . import cbz, epub, pdf
-from .base_converter import BaseConverter
-
-CBZ = "cbz"
-EPUB = "epub"
-PDF = "pdf"
-
-
-class ConvertFormats(str, Enum):
-    # for typing purposes
-    CBZ = "cbz"
-    EPUB = "epub"
-    PDF = "pdf"
-
-
-@dataclass(kw_only=True)
-class ConvertOptions:
-    page_progression: Literal["ltr"] | Literal["rtl"] = "ltr"
+from .base_converter import BaseConverter, ConvertFormats
 
 
 def get_converter(convert_to: ConvertFormats) -> type[BaseConverter]:

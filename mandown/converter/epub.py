@@ -3,6 +3,7 @@
 import shutil
 import tempfile
 import zipfile
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
@@ -38,6 +39,11 @@ HTML_NS = "http://www.w3.org/1999/xhtml"
 
 
 class EpubConverter(BaseConverter):
+    def __post_init__(self) -> None:
+        #  create chapter map (slug to list of images)
+        for chap in self.chapters:
+            pass
+
     def create_file_progress(
         self, path: Path | str, save_to: Path | str
     ) -> Iterable[None]:
@@ -170,6 +176,13 @@ class EpubConverter(BaseConverter):
         els_genres = [M.subject(i) for i in metadata.genres]
         els_authors = [M.creator(i) for i in metadata.authors]
 
+        item_ids: list[str] = []
+        item_refs: list[str] = []
+
+        for chap in self.comic.chapters:
+            for index, image in enumerate(chap.images, start=1):
+                pass
+
         if cover:
             cover_el = E.item(
                 id="cover",
@@ -181,6 +194,8 @@ class EpubConverter(BaseConverter):
             ] = f"image/{ACCEPTED_IMAGE_EXTENSIONS[cover.suffix]}"
         else:
             cover_el = None
+
+        time_now = datetime.now().replace(microsecond=0).isoformat()
 
         package = E.package(
             M.metadata(

@@ -1,7 +1,9 @@
 # pylint: disable=invalid-name
 import sys
 import types
+from dataclasses import dataclass
 
+from ..base import BaseChapter, BaseMetadata
 from .base_source import BaseSource
 
 from . import (  # isort: skip

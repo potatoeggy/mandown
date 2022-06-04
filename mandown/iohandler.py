@@ -10,7 +10,8 @@ from typing import Iterable, Sequence
 
 import requests
 
-from .comic import BaseChapter, BaseMetadata, Comic
+from .base import BaseChapter, BaseMetadata
+from .comic import Comic
 
 NUM_LEFT_PAD_DIGITS = 5
 FILE_PADDING = f"0{NUM_LEFT_PAD_DIGITS}"

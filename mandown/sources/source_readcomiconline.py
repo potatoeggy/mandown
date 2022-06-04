@@ -8,7 +8,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from ..comic import BaseChapter, BaseMetadata
+from ..base import BaseChapter, BaseMetadata
 from .base_source import BaseSource
 
 

@@ -58,7 +58,7 @@ def process(comic: Comic) -> None:
 
 def download_progress(
     comic: Comic,
-    path: Path | str,
+    path: Path | str = ".",
     *,
     start: int | None = None,
     end: int | None = None,
@@ -120,10 +120,10 @@ def download_progress(
 
 def download(
     comic: Comic,
-    path: Path | str,
+    path: Path | str = ".",
     *,
-    start: int = 0,
-    end: int = -1,
+    start: int | None = None,
+    end: int | None = None,
     threads: int = 2,
     only_download_missing: bool = True,
 ) -> None:
