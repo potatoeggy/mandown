@@ -8,7 +8,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from .base_source import BaseSource, Chapter, MangaMetadata
+from ..base import BaseChapter, BaseMetadata
+from .base_source import BaseSource
 
 
 class MangaNatoSource(BaseSource):
@@ -21,7 +22,7 @@ class MangaNatoSource(BaseSource):
         self.id = self.url_to_id(url)
         self._scripts: str | None = None
 
-    def fetch_metadata(self) -> MangaMetadata:
+    def fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(self._get_scripts(), "html.parser")
         title: str = soup.h1.next_element
         authors_genres = soup.select(".manga-info-text > li > a")
@@ -40,18 +41,18 @@ class MangaNatoSource(BaseSource):
         description_html.find("p").replace_with("")  # remove p block
         description = description_html.get_text().strip()
 
-        return MangaMetadata(title, authors, self.url, genres, description, cover_art)
+        return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
-    def fetch_chapter_list(self) -> list[Chapter]:
+    def fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(self._get_scripts(), "html.parser")
         chapters = [
-            Chapter(self, c.next_element, c["href"], self.headers)
+            BaseChapter(c.next_element, c["href"])
             for c in soup.select(".row > span > a")
         ]
         chapters.reverse()
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
+    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text)
         images = []
         for i in soup.select(".container-chapter-reader > img"):

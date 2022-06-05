@@ -1,112 +1,161 @@
-# pylint: disable=invalid-name
-import multiprocessing as mp
-import os
 from pathlib import Path
 from typing import Iterable
 
-from natsort import natsorted
+from mandown.processor import ProcessOps, Processor
 
-from mandown import converter, iohandler, processing, sources
-from mandown.processing import ProcessOps
-from mandown.sources.base_source import BaseSource, Chapter
+from . import iohandler, sources
+from .comic import BaseComic
+from .converter import ConvertFormats, get_converter
 
 
-def query(url: str, populate: bool = True, populate_sort: bool = True) -> BaseSource:
+def query(url: str) -> BaseComic:
     """
-    Return the source file for a URL.
+    Attempt to query for a comic given a URL.
+    :param `url`: An internet URL to search for
     """
-    source = sources.get_class_for(url)(url)
-    if populate:
-        # these statements are to trigger their getters to
-        # fetch the data
-        if source.metadata:
-            pass
-        if source.chapters:
-            if populate_sort:
-                titles = [c.title for c in source.chapters]
-                if titles != natsorted(titles):
-                    padding = f"0{len(str(len(source.chapters)))}"
-                    for i, c in enumerate(source.chapters):
-                        c.title = f"{i+1:{padding}}. {c.title}"
-    return source
+    adapter = sources.get_class_for(url)(url)
+    return BaseComic(adapter.metadata, adapter.chapters)
 
 
-def download_chapter_progress(
-    chapter: Chapter, dest_folder: str, maxthreads: int = 1, only_needed: bool = True
-) -> Iterable[None]:
+def read(path: Path | str) -> BaseComic:
     """
-    Download the images of a chapter to a destination folder.
-    Returns a generator that increments whenever an item has finished
-    downloading.
-    Raises ValueError if the folder does not exist.
+    Load a mandown-created comic from the file system.
+    :param `path`: A folder where mandown has created a comic
+    :throws FileNotFoundError if `md-metadata.json` cannot be found.
     """
-    if not chapter.images:
-        raise ValueError("No images available to download")
-
-    if not os.path.isdir(dest_folder):
-        raise ValueError(f"Folder path {dest_folder} does not exist")
-
-    download_folder = os.path.join(dest_folder, chapter.title)
-    if not os.path.isdir(download_folder):
-        os.mkdir(download_folder)
-
-    padding = len(str(len(chapter.images)))
-    skip_images: set[int] = set()
-    if only_needed:
-        for f in os.listdir(download_folder):
-            name = Path(f).stem
-            if name == name.rjust(padding, "0"):
-                try:
-                    skip_images.add(int(name))
-                except ValueError:
-                    # expected if it's not an image
-                    pass
-
-    if len(skip_images) != len(chapter.images):
-        # zip will crash if fed an empty array
-        processed_chapter_images, filestems = zip(
-            *(
-                (link, str(i).rjust(padding, "0"))
-                for i, link in enumerate(chapter.images, start=1)
-                if i not in skip_images
-            )
-        )
-
-        yield from iohandler.download(
-            processed_chapter_images,
-            os.path.join(dest_folder, download_folder),
-            chapter.headers,
-            maxthreads,
-            filestems,
-        )
+    return iohandler.read_comic(path)
 
 
-def download_chapter(
-    chapter: Chapter, dest_folder: str, maxthreads: int = 1, only_needed: bool = True
+def convert_progress(
+    comic: BaseComic,
+    folder_path: Path | str,
+    convert_to: ConvertFormats,
+    dest_folder: Path | str | None = None,
+) -> Iterable:
+    if convert_to == ConvertFormats.NONE:
+        return
+
+    # default to working directory
+    dest_folder = dest_folder or Path(".").resolve()
+
+    # obviously pylint is wrong because this is 100% callable
+    converter = get_converter(convert_to)(comic)  # pylint: disable=not-callable
+    yield from converter.create_file_progress(folder_path, dest_folder)
+
+
+def convert(
+    comic: BaseComic,
+    folder_path: Path | str,
+    convert_to: ConvertFormats,
+    dest_folder: Path | str | None = None,
 ) -> None:
-    """
-    Download the images of a chapter to a destination folder.
-    Raises ValueError if the folder does not exist.
-    """
-    for _ in download_chapter_progress(chapter, dest_folder, maxthreads, only_needed):
+    for _ in convert_progress(comic, folder_path, convert_to, dest_folder):
         pass
 
 
 def process_progress(
-    folder_paths: list[Path], options: list[ProcessOps], maxthreads: int = 4
-) -> Iterable[None]:
-    map_pool: list[tuple[Path | str, list[ProcessOps]]] = []
-    for folder in folder_paths:
-        for image_path in folder.iterdir():
-            if image_path.is_file():
-                map_pool.append((image_path.absolute(), options))
-
-    with mp.Pool(maxthreads) as pool:
-        yield from pool.imap_unordered(processing.async_process, map_pool)
+    comic_path: Path | str, ops: list[ProcessOps] | None = None
+) -> Iterable:
+    data = iohandler.discover_local_images(comic_path)
+    for _, images in data.items():
+        for i in images:
+            Processor(i).process(ops)
+        yield "1 chapter"
 
 
-def process(
-    folder_paths: list[Path], options: list[ProcessOps], maxthreads: int = 4
+def process(comic: BaseComic, ops: list[ProcessOps] | None = None) -> None:
+    for _ in process_progress(comic, ops):
+        pass
+
+
+def download_progress(
+    comic: BaseComic,
+    path: Path | str = ".",
+    *,
+    start: int | None = None,
+    end: int | None = None,
+    threads: int = 2,
+    only_download_missing: bool = True,
+) -> Iterable:
+    path = Path(path)
+
+    # create dir
+    try:
+        full_path = path / comic.metadata.title
+        full_path.mkdir(exist_ok=True)
+    except IOError:
+        # invalid filename
+        full_path = path / comic.metadata.title_slug
+        full_path.mkdir(exist_ok=True)
+
+    # save metadata json
+    comic.set_chapter_range(start=start, end=end)
+    iohandler.save_comic(comic, full_path)
+
+    # cover
+    if comic.metadata.cover_art:
+        next(
+            iohandler.download_images(
+                [comic.metadata.cover_art], full_path, filestems=["cover"]
+            )
+        )
+
+    # for each chapter
+    for chap in comic.chapters[start:end]:
+        image_urls = comic.get_chapter_image_urls(chap)
+        # expect that they're named by numbers only
+        skip_images: set[int] = set()
+        if only_download_missing:
+            for file in path.iterdir():
+                if file.stem == file.stem.rjust(iohandler.NUM_LEFT_PAD_DIGITS, "0"):
+                    try:
+                        skip_images.add(int(file.stem))
+                    except ValueError:
+                        # expected if not an image file
+                        pass
+
+        if not image_urls or len(skip_images) == len(image_urls):
+            # skip processing if there's nothing to download
+            continue
+
+        # name them 00001.png, 00002.png, etc
+        # skipping ones that already exist
+        processed_image_urls, filestems = zip(
+            *(
+                (link, str(i).rjust(iohandler.NUM_LEFT_PAD_DIGITS, "0"))
+                for i, link in enumerate(image_urls, start=1)
+                if i not in skip_images
+            )
+        )
+
+        chapter_path = full_path / chap.slug
+
+        for _ in iohandler.download_images(
+            processed_image_urls,
+            chapter_path,
+            headers=comic.source.headers,
+            filestems=filestems,
+            threads=threads,
+        ):
+            pass
+        yield
+
+
+def download(
+    comic: BaseComic,
+    path: Path | str = ".",
+    *,
+    start: int | None = None,
+    end: int | None = None,
+    threads: int = 2,
+    only_download_missing: bool = True,
 ) -> None:
-    for _ in process_progress(folder_paths, options, maxthreads):
+    for _ in download_progress(
+        comic,
+        path,
+        start=start,
+        end=end,
+        threads=threads,
+        only_download_missing=only_download_missing,
+    ):
         pass

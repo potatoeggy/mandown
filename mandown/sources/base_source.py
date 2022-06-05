@@ -1,135 +1,59 @@
-import textwrap
-from dataclasses import InitVar, dataclass, field
-from typing import Callable, Final
-import re
-
-
-class SourceNotOverriddenError(Exception):
-    pass
-
-
-@dataclass(frozen=True)
-class MangaMetadata:
-    title: str
-    authors: list[str]
-    url: str
-    genres: list[str]
-    description: str
-    cover_art: str
-
-
-@dataclass
-class Chapter:
-    # quotes are used to prevent syntax error
-    # pylint: disable=used-before-assignment
-    source: InitVar["BaseSource"]  # type: ignore
-    title: str
-    url: str
-    headers: dict[str, str] | None = None
-
-    _image_fetcher: Callable[
-        ["Chapter"], list[str]  # type: ignore # pylint: disable=undefined-variable
-    ] = field(init=False)
-    _images: list[str] = field(init=False, default_factory=list)
-
-    def __post_init__(self, source: "BaseSource") -> None:  # type: ignore
-        self._image_fetcher = source.fetch_chapter_image_list
-        # get rid of all forbidden chars in filenames
-        self.title_sanitised = re.sub(r"[\\\/:*?<>|]", "_", self.title)
-
-    @property
-    def images(self) -> list[str]:
-        if self._images:
-            return self._images
-        self._images = self._image_fetcher(self)
-        return self._images
-
-    def __repr__(self) -> str:
-        return self.__str__()
-
-    def __str__(self) -> str:
-        return textwrap.dedent(
-            f"""\
-        title: {self.title}
-        id/url: {self.url}
-        images: {self._images}
-        headers: {self.headers}\
-        """
-        )
+from ..base import BaseChapter, BaseMetadata
 
 
 class BaseSource:
     name = "Source name goes here"
     domains = ["Source domains goes here"]
+    headers: dict[str, str] = {}
 
-    _metadata: MangaMetadata | None = None
-    _chapters: list[Chapter] = []
-    USER_AGENT: Final = (
-        "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0"
-    )
+    _metadata: BaseMetadata | None = None
+    _chapters: list[BaseChapter] = []
 
     def __init__(self, url: str):
         """
-        An object representing a manga from a specific source.
-        Properties `metadata` and `chapters` will be lazily populated on first access.
+        An object representing network state for fetching data of a comic.
         """
         self.url = url
 
     @property
-    def metadata(self) -> MangaMetadata:
+    def metadata(self) -> BaseMetadata:
         if self._metadata:
             return self._metadata
         self._metadata = self.fetch_metadata()
         return self._metadata
 
     @property
-    def chapters(self) -> list[Chapter]:
+    def chapters(self) -> list[BaseChapter]:
         if self._chapters:
             return self._chapters
         self._chapters = self.fetch_chapter_list()
         return self._chapters
 
-    def fetch_metadata(self) -> MangaMetadata:
+    def fetch_metadata(self) -> BaseMetadata:
         """
-        Fetch and return title, author, and url of the manga.
+        Fetch and return title, author, and url of the comic.
         """
-        raise SourceNotOverriddenError("Metadata getter not overridden")
+        raise NotImplementedError("Metadata getter not overridden")
 
-    def fetch_chapter_list(self) -> list[Chapter]:
+    def fetch_chapter_list(self) -> list[BaseChapter]:
         """
         Fetch and return a list of chapter titles and their URL in ascending order.
         """
-        raise SourceNotOverriddenError("Chapter list getter not overridden")
+        raise NotImplementedError("Chapter list getter not overridden")
 
-    def fetch_chapter_image_list(self, chapter: Chapter) -> list[str]:
+    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         """
         Given a chapter link, fetch and return a list of image URLs in ascending
         order for that chapter.
         """
-        raise SourceNotOverriddenError("Image URL getter not overridden")
+        raise NotImplementedError("Image URL getter not overridden")
 
     @staticmethod
     def check_url(url: str) -> bool:
         """
         Returns whether the url given matches that of the site and is processable
         """
-        raise SourceNotOverriddenError("URL checker not overridden")
-
-    def __repr__(self) -> str:
-        return self.__str__()
-
-    def __str__(self) -> str:
-        return textwrap.dedent(
-            f"""\
-            title: {self.metadata.title}
-            authors: {self.metadata.authors}
-            url: {self.metadata.url}
-            genres: {self.metadata.genres}
-            description:
-                {(chr(10) + " "*16).join(self.metadata.description.split(chr(10)))}
-            chapters: {len(self.chapters)}\
-            """
-        )
+        raise NotImplementedError("URL checker not overridden")
 
 
 def get_class() -> type[BaseSource]:

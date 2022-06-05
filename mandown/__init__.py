@@ -1,7 +1,10 @@
-from .api import (
-    download_chapter,
-    download_chapter_progress,
+from .api import (  # isort: skip
+    convert,
+    convert_progress,
+    download,
+    download_progress,
     process,
     process_progress,
     query,
+    read,
 )
