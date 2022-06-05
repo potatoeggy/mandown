@@ -10,3 +10,7 @@ def get_converter(convert_to: ConvertFormats) -> type[BaseConverter]:
             return epub.EpubConverter
         case ConvertFormats.PDF:
             return pdf.PdfConverter
+        case _:
+            raise NotImplementedError(
+                f"{convert_to} conversion has not been implemented yet!"
+            )

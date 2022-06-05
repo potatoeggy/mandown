@@ -31,3 +31,14 @@ class BaseComic:
         `start` and `end` are zero-indexed.
         """
         self.chapters = self.chapters[start:end]
+
+    def __str__(self) -> str:
+        return f"""
+Title: {self.metadata.title},
+Author(s): {', '.join(self.metadata.authors)}
+URL: {self.metadata.url}
+Genres: {', '.join(self.metadata.genres)}
+Chapters: {len(self.chapters)}
+Description:
+    {self.metadata.description}
+""".strip()

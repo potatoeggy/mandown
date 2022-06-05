@@ -70,6 +70,7 @@ class EpubConverter(BaseConverter):
             (oebps / "content.opf").write_text(self.content_opf(slug_map))
             (oebps / "Text" / "style.css").write_text(STYLE_CSS)
 
+            # TODO: make building and compressing the same step
             for chap in self.comic.chapters:
                 yield "Building"
 

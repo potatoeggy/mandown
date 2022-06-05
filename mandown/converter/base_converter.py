@@ -13,16 +13,13 @@ ACCEPTED_IMAGE_EXTENSIONS = {
     ".jpe": "jpeg",
 }
 
-CBZ = "cbz"
-EPUB = "epub"
-PDF = "pdf"
-
 
 class ConvertFormats(str, Enum):
     # for typing purposes
     CBZ = "cbz"
     EPUB = "epub"
     PDF = "pdf"
+    NONE = "none"
 
 
 @dataclass(kw_only=True)

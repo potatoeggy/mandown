@@ -31,6 +31,9 @@ def convert_progress(
     convert_to: ConvertFormats,
     dest_folder: Path | str | None = None,
 ) -> Iterable:
+    if convert_to == ConvertFormats.NONE:
+        return
+
     # default to working directory
     dest_folder = dest_folder or Path(".").resolve()
 
@@ -56,7 +59,7 @@ def process_progress(
     for _, images in data.items():
         for i in images:
             Processor(i).process(ops)
-            yield
+        yield "1 chapter"
 
 
 def process(comic: BaseComic, ops: list[ProcessOps] | None = None) -> None:
@@ -126,13 +129,15 @@ def download_progress(
 
         chapter_path = full_path / chap.slug
 
-        yield from iohandler.download_images(
+        for _ in iohandler.download_images(
             processed_image_urls,
             chapter_path,
             headers=comic.source.headers,
             filestems=filestems,
             threads=threads,
-        )
+        ):
+            pass
+        yield
 
 
 def download(
