@@ -65,8 +65,8 @@ class EpubConverter(BaseConverter):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             oebps = self.create_skeleton(root)
-            (oebps / "toc.ncx").write_text(self.toc_ncx)
-            (oebps / "nav.xhtml").write_text(self.nav_xhtml(slug_map))
+            (oebps / "toc.ncx").write_text(self.toc_ncx())
+            (oebps / "nav.xhtml").write_text(self.nav_xhtml())
             (oebps / "content.opf").write_text(self.content_opf(slug_map))
             (oebps / "Text" / "style.css").write_text(STYLE_CSS)
 
@@ -80,7 +80,7 @@ class EpubConverter(BaseConverter):
                 image_dir = oebps / "Images" / chap.slug
                 image_dir.mkdir(exist_ok=True)
 
-                for i, image in enumerate((path / chap.slug).iterdir(), start=1):
+                for _, image in enumerate((path / chap.slug).iterdir(), start=1):
                     if image.suffix in ACCEPTED_IMAGE_EXTENSIONS:
                         new_file = text_dir / f"{image.with_suffix('').name}.xhtml"
                         new_file.write_text(self.generate_image_html(chap.slug, image))
@@ -155,7 +155,6 @@ class EpubConverter(BaseConverter):
             pretty_print=True,
         ).decode("utf-8")
 
-    @property
     def toc_ncx(self) -> str:
         nav_map: list[etree._Element] = []
 
@@ -296,7 +295,7 @@ class EpubConverter(BaseConverter):
             pretty_print=True,
         ).decode("utf-8")
 
-    def nav_xhtml(self, slug_map: dict[str, list[Path]]) -> str:
+    def nav_xhtml(self) -> str:
         X = ElementMaker(  # pylint: disable=invalid-name
             namespace="http://www.w3.org/1999/xhtml",
             nsmap=NAV_MAP,
