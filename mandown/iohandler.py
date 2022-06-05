@@ -64,6 +64,9 @@ def download_images(
     # args to async_download
     map_pool: list[tuple[str, Path | str, str | None, dict[str, str] | None]] = []
 
+    if filestems is None:
+        filestems = [f"{i+1:FILE_PADDING}" for i in range(len(urls))]
+
     for url, stem in zip(urls, filestems, strict=True):
         _, ext = os.path.splitext(urllib.parse.urlparse(url).path)
         map_pool.append((url, dest_folder, f"{stem}{ext}", headers))
