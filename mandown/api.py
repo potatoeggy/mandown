@@ -21,6 +21,7 @@ def read(path: Path | str) -> BaseComic:
     """
     Load a mandown-created comic from the file system.
     :param `path`: A folder where mandown has created a comic
+    :throws FileNotFoundError if `md-metadata.json` cannot be found.
     """
     return iohandler.read_comic(path)
 
