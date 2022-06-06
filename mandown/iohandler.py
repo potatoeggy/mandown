@@ -76,6 +76,11 @@ def download_images(
 
 
 def read_comic(path: Path | str) -> BaseComic:
+    """
+    Open a comic from a folder path.
+    :param `path`: A folder containing `md-metadata.json`
+    :returns A comic with metadata and chapter data of that folder
+    """
     path = Path(path)
     json_path = path / MD_METADATA_FILE
 
@@ -89,6 +94,9 @@ def read_comic(path: Path | str) -> BaseComic:
 
 
 def save_comic(comic: BaseComic, path: Path | str) -> None:
+    """
+    Save an `md-metadata.json` from `comic` into `path`.
+    """
     path = Path(path)
     path.mkdir(exist_ok=True)
 

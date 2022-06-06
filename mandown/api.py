@@ -31,6 +31,13 @@ def convert_progress(
     convert_to: ConvertFormats,
     dest_folder: Path | str | None = None,
 ) -> Iterable:
+    """
+    From metadata in `comic`, convert the comic in `folder_path`
+    to `convert_to` and put it in `dest_folder` (defaults to workdir).
+
+    Returns an iterable representing a progress bar up to the
+    number of chapters in the comic.
+    """
     if convert_to == ConvertFormats.NONE:
         return
 
@@ -48,6 +55,10 @@ def convert(
     convert_to: ConvertFormats,
     dest_folder: Path | str | None = None,
 ) -> None:
+    """
+    From metadata in `comic`, convert the comic in `folder_path`
+    to `convert_to` and put it in `dest_folder` (defaults to workdir).
+    """
     for _ in convert_progress(comic, folder_path, convert_to, dest_folder):
         pass
 
@@ -55,6 +66,12 @@ def convert(
 def process_progress(
     comic_path: Path | str, ops: list[ProcessOps] | None = None
 ) -> Iterable:
+    """
+    Process the comic in `comic_path` with `ops` in the order provided.
+
+    Returns an iterable representing a progress bar up to the
+    number of chapters in the comic.
+    """
     data = iohandler.discover_local_images(comic_path)
     for _, images in data.items():
         for i in images:
@@ -63,6 +80,9 @@ def process_progress(
 
 
 def process(comic: BaseComic, ops: list[ProcessOps] | None = None) -> None:
+    """
+    Process the comic in `comic_path` with `ops` in the order provided.
+    """
     for _ in process_progress(comic, ops):
         pass
 
@@ -76,6 +96,18 @@ def download_progress(
     threads: int = 2,
     only_download_missing: bool = True,
 ) -> Iterable:
+    """
+    Download comic `comic` to `path` using `threads` threads.
+
+    If `start` or `end` are specified, only download those
+    chapters (one-indexed).
+
+    If `only_download_missing` is `True`, images already in the
+    destination path will not be downloaded again.
+
+    Returns an iterable representing a progress bar up to the
+    number of chapters in the comic.
+    """
     path = Path(path)
 
     # create dir
@@ -149,6 +181,15 @@ def download(
     threads: int = 2,
     only_download_missing: bool = True,
 ) -> None:
+    """
+    Download comic `comic` to `path` using `threads` threads.
+
+    If `start` or `end` are specified, only download those
+    chapters (one-indexed).
+
+    If `only_download_missing` is `True`, images already in the
+    destination path will not be downloaded again.
+    """
     for _ in download_progress(
         comic,
         path,

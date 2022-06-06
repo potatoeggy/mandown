@@ -22,6 +22,10 @@ class BaseComic:
         }
 
     def get_chapter_image_urls(self, chapter: BaseChapter) -> list[str]:
+        """
+        Fetch a list of image URLs of a chapter based on the
+        current source.
+        """
         return self.source.fetch_chapter_image_list(chapter)
 
     def set_chapter_range(
