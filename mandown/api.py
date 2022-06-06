@@ -1,11 +1,10 @@
 from pathlib import Path
 from typing import Iterable
 
-from mandown.processor import ProcessOps, Processor
-
 from . import iohandler, sources
 from .comic import BaseComic
 from .converter import ConvertFormats, get_converter
+from .processor import ProcessOps, Processor
 
 
 def query(url: str) -> BaseComic:
