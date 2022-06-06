@@ -68,7 +68,7 @@ def cli_process(
     )
     with typer.progressbar(
         api.process_progress(comic_path, options),
-        length=comic.chapters.length,
+        length=len(comic.chapters),
         label="Processing",
     ) as progress:
         for _ in progress:

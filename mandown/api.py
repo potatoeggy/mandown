@@ -63,9 +63,7 @@ def convert(
         pass
 
 
-def process_progress(
-    comic_path: Path | str, ops: list[ProcessOps] | None = None
-) -> Iterable:
+def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterable:
     """
     Process the comic in `comic_path` with `ops` in the order provided.
 
@@ -79,11 +77,11 @@ def process_progress(
         yield "1 chapter"
 
 
-def process(comic: BaseComic, ops: list[ProcessOps] | None = None) -> None:
+def process(comic_path: Path | str, ops: list[ProcessOps]) -> None:
     """
     Process the comic in `comic_path` with `ops` in the order provided.
     """
-    for _ in process_progress(comic, ops):
+    for _ in process_progress(comic_path, ops):
         pass
 
 
