@@ -14,7 +14,7 @@ from .processor import ProcessOps
 app = typer.Typer()
 
 
-def cli_query(url: str) -> BaseComic | None:
+def cli_query(url: str) -> BaseComic:
     typer.echo(f"Searching sources for {url}")
 
     try:
@@ -48,9 +48,7 @@ def cli_convert(
     typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
 
 
-def cli_process(
-    comic_path: Path, options: list[ProcessOps], maxthreads: int = 4
-) -> None:
+def cli_process(comic_path: Path, options: list[ProcessOps]) -> None:
     if ProcessOps.NO_POSTPROCESSING in options:
         return
 
@@ -99,7 +97,8 @@ def convert(
         raise typer.Exit(1) from err
 
     typer.echo(
-        f"Found {comic.metadata.title} with {len(comic.chapters)} chapters, converting to {convert_to}..."
+        f"Found {comic.metadata.title} with {len(comic.chapters)} chapters, "
+        f"converting to {convert_to}..."
     )
     cli_convert(folder_path, convert_to, dest)
 

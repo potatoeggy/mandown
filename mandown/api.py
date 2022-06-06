@@ -123,11 +123,10 @@ def download_progress(
 
     # cover
     if comic.metadata.cover_art:
-        next(
-            iohandler.download_images(
-                [comic.metadata.cover_art], full_path, filestems=["cover"]
-            )
-        )
+        for _ in iohandler.download_images(
+            [comic.metadata.cover_art], full_path, filestems=["cover"]
+        ):
+            pass
 
     # for each chapter
     for chap in comic.chapters[start:end]:

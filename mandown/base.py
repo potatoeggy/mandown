@@ -30,10 +30,10 @@ class BaseMetadata:
 class BaseChapter:
     title: str
     url: str
-    slug: str = None
+    slug: str = ""
 
     def __post_init__(self) -> None:
-        if self.slug is None:
+        if not self.slug:
             self.slug = slugify(self.title)
 
     def asdict(self) -> dict:
