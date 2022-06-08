@@ -23,12 +23,22 @@ class QtUi(QWidget):
         self.dest_path: str | None = None
 
     def init_hooks(self) -> None:
+        # select "No" for default convert
+        self.ui.radio_no_convert.toggle()
+        # button: Open Folder
         self.ui.button_from_folder.clicked.connect(self.hook_from_folder)
+        # button: Browse
+        self.ui.pushButton_3.clicked.connect(self.hook_set_dest)
+        # button: Start!
+        self.ui.button_start.clicked.connect(self.hook_go)
 
-    # hooks
+    """
+    Hooks go here!
+    """
+
     def hook_from_folder(self) -> None:
         self.source_path = QFileDialog.getExistingDirectory(
-            self.base, "Open Comic Folder", "~"
+            self, "Open Comic Folder", "~"
         )
         self.ui.text_source.setText(self.source_path)
         # load metadata
@@ -38,6 +48,9 @@ class QtUi(QWidget):
             self, "Set Destination Folder", "~"
         )
         self.ui.text_dest.setText(self.dest_path)
+
+    def hook_go(self) -> None:
+        pass
 
 
 def main() -> None:
