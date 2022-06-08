@@ -1,4 +1,8 @@
 # pylint: disable=no-member
+"""
+Generate mainwin.py while in mandown/ui/ with
+`uic -g python -o mainwin.py form.ui`
+"""
 import sys
 
 from mainwin import Ui_Widget
