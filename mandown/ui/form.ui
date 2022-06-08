@@ -84,7 +84,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGraphicsView" name="image_view"/>
+        <widget class="QLabel" name="label_image"/>
        </item>
        <item>
         <widget class="QListWidget" name="metadata_list"/>

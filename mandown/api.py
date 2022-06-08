@@ -11,6 +11,7 @@ def query(url: str) -> BaseComic:
     """
     Attempt to query for a comic given a URL.
     :param `url`: An internet URL to search for
+    :raises `ValueError` if the source is not found.
     """
     adapter = sources.get_class_for(url)(url)
     return BaseComic(adapter.metadata, adapter.chapters)
