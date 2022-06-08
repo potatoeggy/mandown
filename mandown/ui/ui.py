@@ -9,14 +9,14 @@ from mainwin import Ui_Widget
 from PySide6.QtWidgets import QApplication, QFileDialog, QWidget
 
 
-class QtUi:
+class QtUi(QWidget):
     def __init__(self) -> None:
-        self.base = QWidget()
+        super().__init__()
         self.ui = Ui_Widget()
-        self.ui.setupUi(self.base)
+        self.ui.setupUi(self)
         self.init_hooks()
 
-        self.base.show()
+        self.show()
 
         self.source_path: str | None = None
         self.source_url: str | None = None
@@ -35,7 +35,7 @@ class QtUi:
 
     def hook_set_dest(self) -> None:
         self.dest_path = QFileDialog.getExistingDirectory(
-            self.base, "Set Destination Folder", "~"
+            self, "Set Destination Folder", "~"
         )
         self.ui.text_dest.setText(self.dest_path)
 
