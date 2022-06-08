@@ -87,7 +87,7 @@
         <widget class="QLabel" name="label_image"/>
        </item>
        <item>
-        <widget class="QListWidget" name="metadata_list"/>
+        <widget class="QLabel" name="label_metadata"/>
        </item>
       </layout>
      </item>

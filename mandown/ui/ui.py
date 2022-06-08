@@ -8,11 +8,19 @@ import sys
 import requests
 from mainwin import Ui_Widget
 from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QApplication, QFileDialog, QMessageBox, QWidget
 
 import mandown
 from mandown import iohandler
 from mandown.comic import BaseComic
+
+from PySide6.QtWidgets import (  # isort: skip
+    QApplication,
+    QFileDialog,
+    QMessageBox,
+    QTableWidgetItem,
+    QWidget,
+)
+
 
 COVER_IMG_HEIGHT = 400
 
@@ -27,6 +35,8 @@ class QtUi(QWidget):
         self.ui.progress_bar.setDisabled(True)
         self.ui.progress_bar.setValue(0)
         self.ui.label_progress.setText("")
+
+        self.ui.label_metadata.setWordWrap(True)
 
         self.setWindowTitle("Mandown 0.10.0")
 
@@ -51,6 +61,16 @@ class QtUi(QWidget):
         # button: Start!
         self.ui.button_start.clicked.connect(self.hook_go)
 
+    def metadata_to_table(self) -> list[str]:
+        metadata = self.comic.metadata
+        return [
+            f"<b>Title:</b> {metadata.title}",
+            f"<b>Author(s):</b> {', '.join(metadata.authors)}",
+            f"<b>Genre(s):</b> {', '.join(metadata.genres)}",
+            "",
+            metadata.description,
+        ]
+
     @property
     def comic(self) -> BaseComic | None:
         return self._comic
@@ -58,7 +78,8 @@ class QtUi(QWidget):
     @comic.setter
     def comic(self, comic: BaseComic) -> None:
         self._comic = comic
-        self.ui.metadata_list.addItems(self.metadata_to_qtlist())
+
+        self.ui.label_metadata.setText("<br />".join(self.metadata_to_table()))
 
         # refresh screen w/metadata et al here
         if comic.metadata.cover_art:
@@ -67,15 +88,6 @@ class QtUi(QWidget):
                 QImage.fromData(r.content).scaledToHeight(COVER_IMG_HEIGHT)
             )
             self.ui.label_image.setPixmap(self.img_cover)
-
-    def metadata_to_qtlist(self) -> list[str]:
-        metadata = self.comic.metadata
-        return [
-            f"Title: {metadata.title}",
-            f"Author(s): {', '.join(metadata.authors)}",
-            f"Genres: {', '.join(metadata.genres)}",
-            metadata.description,
-        ]
 
     """
     Hooks go here!

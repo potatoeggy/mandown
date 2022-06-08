@@ -82,10 +82,10 @@ class Ui_Widget(object):
 
         self.verticalLayout.addWidget(self.label_image)
 
-        self.metadata_list = QListWidget(Widget)
-        self.metadata_list.setObjectName("metadata_list")
+        self.label_metadata = QLabel(Widget)
+        self.label_metadata.setObjectName("label_metadata")
 
-        self.verticalLayout.addWidget(self.metadata_list)
+        self.verticalLayout.addWidget(self.label_metadata)
 
         self.horizontalLayout.addLayout(self.verticalLayout)
 
