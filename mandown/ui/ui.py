@@ -71,6 +71,11 @@ class QtUi(QWidget):
             metadata.description,
         ]
 
+    def chapters_to_table(self) -> list:
+        # TODO: make them VIEWS / LAYOUTS not widgets
+        # because i can't add checkboxes
+        pass
+
     @property
     def comic(self) -> BaseComic | None:
         return self._comic
