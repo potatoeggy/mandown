@@ -163,7 +163,7 @@ class Ui_Widget(object):
     def retranslateUi(self, Widget):
         Widget.setWindowTitle(QCoreApplication.translate("Widget", "Widget", None))
         self.label_4.setText(
-            QCoreApplication.translate("Widget", "Comic Folder / URL:", None)
+            QCoreApplication.translate("Widget", "Source Folder / URL:", None)
         )
         self.button_from_url.setText(
             QCoreApplication.translate("Widget", "Search URL", None)

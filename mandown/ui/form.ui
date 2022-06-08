@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Comic Folder / URL:</string>
+        <string>Source Folder / URL:</string>
        </property>
       </widget>
      </item>
