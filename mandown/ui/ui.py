@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (  # isort: skip
 COVER_IMG_HEIGHT = 400
 
 
-class QtUi(QWidget):
+class MandownQtUi(QWidget):
     def __init__(self) -> None:
         super().__init__()
         self.ui = Ui_Widget()
@@ -74,7 +74,7 @@ class QtUi(QWidget):
     def chapters_to_table(self) -> list:
         # TODO: make them VIEWS / LAYOUTS not widgets
         # because i can't add checkboxes
-        pass
+        return [c.title for c in self.comic.chapters]
 
     @property
     def comic(self) -> BaseComic | None:
@@ -85,6 +85,10 @@ class QtUi(QWidget):
         self._comic = comic
 
         self.ui.label_metadata.setText("<br />".join(self.metadata_to_table()))
+
+        for i, chap in enumerate(self.comic.chapters):
+            self.ui.chapter_table.setItem(i, 0, QTableWidgetItem(""))
+            self.ui.chapter_table.setItem(i, 1, QTableWidgetItem(chap.title))
 
         # refresh screen w/metadata et al here
         if comic.metadata.cover_art:
@@ -142,7 +146,7 @@ class QtUi(QWidget):
 
 def main() -> None:
     app = QApplication([])
-    wid = QtUi()
+    wid = MandownQtUi()
     sys.exit(app.exec())
 
 
