@@ -80,6 +80,7 @@ def read_comic(path: Path | str) -> BaseComic:
     Open a comic from a folder path.
     :param `path`: A folder containing `md-metadata.json`
     :returns A comic with metadata and chapter data of that folder
+    :raises `FileNotFoundError` if `md-metadata.json` is not found
     """
     path = Path(path)
     json_path = path / MD_METADATA_FILE
@@ -91,6 +92,47 @@ def read_comic(path: Path | str) -> BaseComic:
         BaseMetadata(**data["metadata"]),
         [BaseChapter(**c) for c in data["chapters"]],
     )
+
+
+def parse_comic(path: Path | str, url: str) -> BaseComic:
+    """
+    Parse and return an incomplete comic (without most metadata)
+    :param `url`: A source URL to fill metadata from
+    """
+    path = Path(path)
+
+    title = path.stem
+    authors: list[str] = []
+    url = ""
+    genres: list[str] = []
+    description = ""
+    cover_art = ""
+    metadata = BaseMetadata(title, authors, url, genres, description, cover_art)
+
+    chapters = [
+        BaseChapter(inode.stem, "", inode.stem)
+        for inode in path.iterdir()
+        if inode.is_dir()
+    ]
+
+    return BaseComic(metadata, chapters)
+
+
+def init_parse_comic(path: Path | str, url: str) -> BaseComic:
+    """
+    Open a comic from a folder path, either via `md-metadata.json` or
+    if that fails, parse the comic structure and create an `md-metadata.json`
+
+    :param `path`: A folder containing `md-metadata.json` or a comic structure
+    :param `url`: A source URL to fill metadata from
+    :returns A comic with metadata and chapter data of that folder
+    """
+    try:
+        comic = read_comic(path)
+    except FileNotFoundError:
+        comic = parse_comic_structure(path, url)
+        save_comic(comic, path)
+    return comic
 
 
 def save_comic(comic: BaseComic, path: Path | str) -> None:
