@@ -151,6 +151,7 @@ def download_progress(
 
         if not image_urls or len(skip_images) == len(image_urls):
             # move to next chapter if there's nothing to download for this one
+            yield
             continue
 
         # name them 00001.png, 00002.png, etc
