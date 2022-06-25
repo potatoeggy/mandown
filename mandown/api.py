@@ -86,7 +86,7 @@ def process(comic_path: Path | str, ops: list[ProcessOps]) -> None:
 
 
 def download_progress(
-    comic: BaseComic,
+    comic: BaseComic | str,
     path: Path | str = ".",
     *,
     start: int | None = None,
@@ -95,7 +95,7 @@ def download_progress(
     only_download_missing: bool = True,
 ) -> Iterable:
     """
-    Download comic `comic` to `path` using `threads` threads.
+    Download comic or comic URL `comic` to `path` using `threads` threads.
 
     If `start` or `end` are specified, only download those
     chapters (one-indexed).
@@ -107,6 +107,10 @@ def download_progress(
     number of chapters in the comic.
     """
     path = Path(path)
+
+    # make var comic a BaseComic
+    if isinstance(comic, str):
+        comic = query(comic)
 
     # create dir
     try:
@@ -131,10 +135,13 @@ def download_progress(
     # for each chapter
     for chap in comic.chapters[start:end]:
         image_urls = comic.get_chapter_image_urls(chap)
+        chapter_path = full_path / chap.slug
+        chapter_path.mkdir(exist_ok=True)
+
         # expect that they're named by numbers only
         skip_images: set[int] = set()
         if only_download_missing:
-            for file in path.iterdir():
+            for file in chapter_path.iterdir():
                 if file.stem == file.stem.rjust(iohandler.NUM_LEFT_PAD_DIGITS, "0"):
                     try:
                         skip_images.add(int(file.stem))
@@ -143,7 +150,7 @@ def download_progress(
                         pass
 
         if not image_urls or len(skip_images) == len(image_urls):
-            # skip processing if there's nothing to download
+            # move to next chapter if there's nothing to download for this one
             continue
 
         # name them 00001.png, 00002.png, etc
@@ -155,8 +162,6 @@ def download_progress(
                 if i not in skip_images
             )
         )
-
-        chapter_path = full_path / chap.slug
 
         for _ in iohandler.download_images(
             processed_image_urls,
@@ -170,7 +175,7 @@ def download_progress(
 
 
 def download(
-    comic: BaseComic,
+    comic: BaseComic | str,
     path: Path | str = ".",
     *,
     start: int | None = None,
@@ -179,7 +184,7 @@ def download(
     only_download_missing: bool = True,
 ) -> None:
     """
-    Download comic `comic` to `path` using `threads` threads.
+    Download comic or comic URL `comic` to `path` using `threads` threads.
 
     If `start` or `end` are specified, only download those
     chapters (one-indexed).
