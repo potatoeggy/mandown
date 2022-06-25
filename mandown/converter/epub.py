@@ -16,7 +16,7 @@ from lxml import etree
 from lxml.builder import E, ElementMaker
 from lxml.etree import QName
 
-from ..iohandler import NUM_LEFT_PAD_DIGITS, discover_local_images
+from ..io import NUM_LEFT_PAD_DIGITS, discover_local_images
 from .base_converter import ACCEPTED_IMAGE_EXTENSIONS, BaseConverter
 
 STYLE_CSS = """

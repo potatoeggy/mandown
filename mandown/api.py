@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Iterable
 
-from . import iohandler, sources
+from . import io, sources
 from .comic import BaseComic
 from .converter import ConvertFormats, get_converter
 from .processor import ProcessOps, Processor
@@ -23,7 +23,7 @@ def read(path: Path | str) -> BaseComic:
     :param `path`: A folder where mandown has created a comic
     :throws FileNotFoundError if `md-metadata.json` cannot be found.
     """
-    return iohandler.read_comic(path)
+    return io.read_comic(path)
 
 
 def convert_progress(
@@ -71,7 +71,7 @@ def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterable[
     Returns an iterable representing a progress bar up to the
     number of chapters in the comic.
     """
-    data = iohandler.discover_local_images(comic_path)
+    data = io.discover_local_images(comic_path)
     for _, images in data.items():
         for i in images:
             Processor(i).process(ops)
@@ -124,11 +124,11 @@ def download_progress(
 
     # save metadata json
     comic.set_chapter_range(start=start, end=end)
-    iohandler.save_comic(comic, full_path)
+    io.save_comic(comic, full_path)
 
     # cover
     if comic.metadata.cover_art:
-        for _ in iohandler.download_images(
+        for _ in io.download_images(
             [comic.metadata.cover_art], full_path, filestems=["cover"]
         ):
             pass
@@ -142,8 +142,8 @@ def download_progress(
         # expect that they're named by numbers only
         skip_images: set[int] = set()
         if only_download_missing:
-            for file in chapter_path.iterdir():
-                if file.stem == file.stem.rjust(iohandler.NUM_LEFT_PAD_DIGITS, "0"):
+            for file in path.iterdir():
+                if file.stem == file.stem.rjust(io.NUM_LEFT_PAD_DIGITS, "0"):
                     try:
                         skip_images.add(int(file.stem))
                     except ValueError:
@@ -159,13 +159,15 @@ def download_progress(
         # skipping ones that already exist
         processed_image_urls, filestems = zip(
             *(
-                (link, str(i).rjust(iohandler.NUM_LEFT_PAD_DIGITS, "0"))
+                (link, str(i).rjust(io.NUM_LEFT_PAD_DIGITS, "0"))
                 for i, link in enumerate(image_urls, start=1)
                 if i not in skip_images
             )
         )
 
-        for _ in iohandler.download_images(
+        chapter_path = full_path / chap.slug
+
+        for _ in io.download_images(
             processed_image_urls,
             chapter_path,
             headers=comic.source.headers,
