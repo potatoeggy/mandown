@@ -130,7 +130,7 @@ def init_parse_comic(path: Path | str, url: str) -> BaseComic:
     try:
         comic = read_comic(path)
     except FileNotFoundError:
-        comic = parse_comic_structure(path, url)
+        comic = parse_comic(path, url)
         save_comic(comic, path)
     return comic
 
