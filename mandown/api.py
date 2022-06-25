@@ -86,7 +86,7 @@ def process(comic_path: Path | str, ops: list[ProcessOps]) -> None:
 
 
 def download_progress(
-    comic: BaseComic,
+    comic: BaseComic | str,
     path: Path | str = ".",
     *,
     start: int | None = None,
@@ -95,7 +95,7 @@ def download_progress(
     only_download_missing: bool = True,
 ) -> Iterable:
     """
-    Download comic `comic` to `path` using `threads` threads.
+    Download comic or comic URL `comic` to `path` using `threads` threads.
 
     If `start` or `end` are specified, only download those
     chapters (one-indexed).
@@ -107,6 +107,10 @@ def download_progress(
     number of chapters in the comic.
     """
     path = Path(path)
+
+    # make var comic a BaseComic
+    if isinstance(comic, str):
+        comic = query(comic)
 
     # create dir
     try:
@@ -170,7 +174,7 @@ def download_progress(
 
 
 def download(
-    comic: BaseComic,
+    comic: BaseComic | str,
     path: Path | str = ".",
     *,
     start: int | None = None,
@@ -179,7 +183,7 @@ def download(
     only_download_missing: bool = True,
 ) -> None:
     """
-    Download comic `comic` to `path` using `threads` threads.
+    Download comic or comic URL `comic` to `path` using `threads` threads.
 
     If `start` or `end` are specified, only download those
     chapters (one-indexed).
