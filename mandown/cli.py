@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
-import importlib.metadata
 from pathlib import Path
 from typing import List, Optional
 
 import typer
 
-from . import api, sources
+from . import __version_str__, api, sources
 from .comic import BaseComic
 from .converter.base_converter import ConvertFormats
 from .processor import ProcessOps
@@ -208,7 +207,7 @@ def callback(
     ),
 ) -> None:
     if version:
-        typer.echo(f"mandown {importlib.metadata.version('mandown')}")
+        typer.echo(f"mandown {__version_str__}")
         raise typer.Exit()
 
     if supported_sites:
