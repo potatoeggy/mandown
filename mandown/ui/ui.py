@@ -7,12 +7,13 @@ import sys
 from pathlib import Path
 
 import requests
-from mainwin import Ui_Widget
 from PySide6.QtGui import QImage, QPixmap
 
 import mandown
 from mandown import __version_str__
 from mandown.comic import BaseComic
+
+from .mainwin import Ui_Widget
 
 from PySide6.QtWidgets import (  # isort: skip
     QApplication,

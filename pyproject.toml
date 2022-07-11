@@ -11,7 +11,7 @@ keywords = ["manga", "comic", "downloader", "download"]
 
 [tool.poetry.scripts]
 mandown = "mandown.cli:main"
-mandown-gui = "mandown.gui:main"
+mandown-gui = "mandown.ui.ui:main"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
