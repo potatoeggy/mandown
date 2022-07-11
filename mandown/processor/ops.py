@@ -1,4 +1,9 @@
-from PIL import Image, ImageChops
+import sys
+
+try:
+    from PIL import Image, ImageChops
+except ImportError:
+    sys.exit()
 
 
 class ProcessContainer:
