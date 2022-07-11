@@ -1,9 +1,17 @@
-import sys
+from typing import TYPE_CHECKING
 
 try:
     from PIL import Image, ImageChops
 except ImportError:
-    sys.exit()
+
+    if not TYPE_CHECKING:
+
+        class Image:
+            class Image:
+                pass
+
+        class ImageChops:
+            pass
 
 
 class ProcessContainer:

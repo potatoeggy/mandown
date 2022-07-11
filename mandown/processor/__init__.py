@@ -1,5 +1,6 @@
 from enum import Enum
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from .ops import ProcessContainer
 
@@ -9,6 +10,12 @@ try:
     HAS_PILLOW = True
 except ImportError:
     HAS_PILLOW = False
+
+    if not TYPE_CHECKING:
+
+        class Image:
+            class Image:
+                pass
 
 
 class ProcessOps(str, Enum):
