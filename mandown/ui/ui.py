@@ -34,7 +34,7 @@ class MandownQtUi(QWidget):
 
         self.ui.progress_bar.setDisabled(True)
         self.ui.progress_bar.setValue(0)
-        self.ui.label_progress.setText("")
+        self.ui.label_progress.setText("Waiting")
 
         self.ui.label_metadata.setWordWrap(True)
 
@@ -141,7 +141,76 @@ class MandownQtUi(QWidget):
         self.ui.text_dest.setText(self.dest_path)
 
     def hook_go(self) -> None:
-        pass
+        if not self.ui.text_source.text():
+            # if empty
+            res = QMessageBox.critical(
+                self,
+                "Missing source",
+                "Please select a source folder or URL",
+                QMessageBox.Ok,
+            )
+
+        if not self.ui.text_dest.text():
+            # if empty
+            res = QMessageBox.critical(
+                self,
+                "Missing destination",
+                "Please select a destination directory.",
+                QMessageBox.Ok,
+            )
+
+        if not self.comic:
+            res = QMessageBox.critical(
+                self,
+                "Something went wrong",
+                "ERROR: if not self.comic check failed. You should never see this message.",
+            )
+            return
+
+        # heavy bits
+        self.ui.label_progress.setText("Downloading")
+        max_size = len(self.comic.chapters)
+        self.ui.progress_bar.setDisabled(False)
+        for i, _ in enumerate(
+            mandown.download_progress(
+                self.comic,
+                self.ui.text_dest.text(),
+                threads=4,
+            ),
+            start=1,
+        ):
+            print("oi")
+            # TODO: this hangs the program so move it to a QThread
+            self.ui.progress_bar.setValue(int(i / max_size * 100))
+
+        # convert
+        if not self.ui.radio_no_convert.isChecked():
+            target = "none"
+            if self.ui.radio_convert_cbz.isChecked():
+                target = "cbz"
+            elif self.ui.radio_convert_epub.isChecked():
+                target = "epub"
+            elif self.ui.radio_convert_pdf.isChecked():
+                target = "pdf"
+
+            self.ui.label_progress.setText("Converting")
+            self.ui.progress_bar.setValue(1)
+            for i, text in enumerate(
+                mandown.convert_progress(
+                    self.comic, self.ui.text_dest.text(), target, self.ui.text_dest
+                ),
+                start=1,
+            ):
+                self.ui.label_progress.setText(text)
+                self.ui.progress_bar.setValue(int(i / max_size * 100))
+
+        res = QMessageBox.information(
+            self, "Done", "All operations complete.", QMessageBox.Ok
+        )
+
+        self.ui.progress_bar.setValue(0)
+        self.ui.progress_bar.setDisabled(True)
+        self.ui.label_progress.setText("Waiting")
 
 
 def main() -> None:
