@@ -39,7 +39,7 @@ class BaseConverter:
 
     def create_file_progress(
         self, path: Path | str, save_to: Path | str
-    ) -> Iterable[None]:
+    ) -> Iterable[str]:
         raise NotImplementedError
 
     def create_file(self, path: Path | str, save_to: Path | str) -> None:

@@ -18,7 +18,7 @@ PDF_IMAGE_MIN_INTERVAL_FACTOR = 0.12
 class PdfConverter(BaseConverter):
     def create_file_progress(
         self, path: Path | str, save_to: Path | str
-    ) -> Iterable[None]:
+    ) -> Iterable[str]:
         if not HAS_PILLOW:
             raise ImportError(
                 "Pillow could not be found and is required for PDF conversion"
@@ -69,7 +69,7 @@ class PdfConverter(BaseConverter):
 
             for j in images[i : i + interval]:
                 j.close()
-            yield
+            yield "Building"
 
 
 def get_class() -> PdfConverter:

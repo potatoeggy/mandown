@@ -57,7 +57,7 @@ class EpubConverter(BaseConverter):
 
     def create_file_progress(
         self, path: Path | str, save_to: Path | str
-    ) -> Iterable[None]:
+    ) -> Iterable[str]:
         path = Path(path)
         save_to = Path(save_to)
         slug_map = discover_local_images(path)

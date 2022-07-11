@@ -174,8 +174,8 @@ def download(
         api.download_progress(comic, dest, threads=maxthreads),
         length=len(comic.chapters),
     ) as progress:
-        for _ in progress:
-            pass
+        for title in progress:
+            progress.label = title
     typer.secho(
         f"Successfully downloaded {end_chapter - start_chapter} chapters.",
         fg=typer.colors.GREEN,

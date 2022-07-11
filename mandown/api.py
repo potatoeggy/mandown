@@ -30,7 +30,7 @@ def convert_progress(
     folder_path: Path | str,
     convert_to: ConvertFormats,
     dest_folder: Path | str | None = None,
-) -> Iterable:
+) -> Iterable[str]:
     """
     From metadata in `comic`, convert the comic in `folder_path`
     to `convert_to` and put it in `dest_folder` (defaults to workdir).
@@ -63,7 +63,7 @@ def convert(
         pass
 
 
-def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterable:
+def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterable[str]:
     """
     Process the comic in `comic_path` with `ops` in the order provided.
 
@@ -74,7 +74,7 @@ def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterable:
     for _, images in data.items():
         for i in images:
             Processor(i).process(ops)
-        yield "1 chapter"
+        yield "Processing"
 
 
 def process(comic_path: Path | str, ops: list[ProcessOps]) -> None:
@@ -93,7 +93,7 @@ def download_progress(
     end: int | None = None,
     threads: int = 2,
     only_download_missing: bool = True,
-) -> Iterable:
+) -> Iterable[str]:
     """
     Download comic or comic URL `comic` to `path` using `threads` threads.
 
@@ -151,7 +151,7 @@ def download_progress(
 
         if not image_urls or len(skip_images) == len(image_urls):
             # move to next chapter if there's nothing to download for this one
-            yield
+            yield chap.title
             continue
 
         # name them 00001.png, 00002.png, etc
@@ -172,7 +172,7 @@ def download_progress(
             threads=threads,
         ):
             pass
-        yield
+        yield chap.title
 
 
 def download(
