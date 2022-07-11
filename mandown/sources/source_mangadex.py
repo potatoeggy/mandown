@@ -46,7 +46,11 @@ class MangaDexSource(BaseSource):
             else next(iter(metadata["attributes"]["title"]))
         )
         title: str = metadata["attributes"]["title"][self.lang_code]
-        description: str = metadata["attributes"]["description"][self.lang_code]
+
+        if metadata["attributes"]["description"]:
+            description: str = metadata["attributes"]["description"][self.lang_code]
+        else:
+            description = ""
 
         authors: list[str] = []
         cover_art = ""
