@@ -4,13 +4,14 @@ Generate mainwin.py while in mandown/ui/ with
 `uic -g python -o mainwin.py form.ui`
 """
 import sys
+from pathlib import Path
 
 import requests
 from mainwin import Ui_Widget
 from PySide6.QtGui import QImage, QPixmap
 
 import mandown
-from mandown import iohandler
+from mandown import __version_str__
 from mandown.comic import BaseComic
 
 from PySide6.QtWidgets import (  # isort: skip
@@ -38,7 +39,7 @@ class MandownQtUi(QWidget):
 
         self.ui.label_metadata.setWordWrap(True)
 
-        self.setWindowTitle("Mandown 0.10.0")
+        self.setWindowTitle(f"Mandown {__version_str__}")
 
         self.source_path: str | None = None
         self.source_url: str | None = None
@@ -98,6 +99,10 @@ class MandownQtUi(QWidget):
             )
             self.ui.label_image.setPixmap(self.img_cover)
 
+    @property
+    def text_dest_full(self) -> str:
+        return str(Path(self.ui.text_dest.text()) / self.comic.metadata.title)
+
     """
     Hooks go here!
     """
@@ -108,7 +113,7 @@ class MandownQtUi(QWidget):
             self, "Open Comic Folder", "~"
         )
         self.ui.text_source.setText(self.source_path)
-        self.ui.text_dest.setText(self.source_path)
+        self.ui.text_dest.setText(str(Path(self.source_path).parent))
 
         # load metadata
         try:
@@ -158,6 +163,7 @@ class MandownQtUi(QWidget):
                 "Please select a destination directory.",
                 QMessageBox.Ok,
             )
+            return
 
         if not self.comic:
             res = QMessageBox.critical(
@@ -179,7 +185,6 @@ class MandownQtUi(QWidget):
             ),
             start=1,
         ):
-            print("oi")
             # TODO: this hangs the program so move it to a QThread
             self.ui.progress_bar.setValue(int(i / max_size * 100))
 
@@ -197,7 +202,10 @@ class MandownQtUi(QWidget):
             self.ui.progress_bar.setValue(1)
             for i, text in enumerate(
                 mandown.convert_progress(
-                    self.comic, self.ui.text_dest.text(), target, self.ui.text_dest
+                    self.comic,
+                    self.text_dest_full,
+                    target,
+                    self.text_dest_full,
                 ),
                 start=1,
             ):
@@ -208,9 +216,7 @@ class MandownQtUi(QWidget):
             self, "Done", "All operations complete.", QMessageBox.Ok
         )
 
-        self.ui.progress_bar.setValue(0)
         self.ui.progress_bar.setDisabled(True)
-        self.ui.label_progress.setText("Waiting")
 
 
 def main() -> None:
