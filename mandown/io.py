@@ -1,5 +1,3 @@
-# because no natsort so you would get
-# 1, 10, 2, 3, 4, 41, 42, 5
 import imghdr
 import json
 import multiprocessing as mp
@@ -9,7 +7,9 @@ from pathlib import Path
 from typing import Iterable, Sequence
 
 import requests
+from natsort import natsorted
 
+from . import sources
 from .base import BaseChapter, BaseMetadata
 from .comic import BaseComic
 
@@ -80,6 +80,7 @@ def read_comic(path: Path | str) -> BaseComic:
     Open a comic from a folder path.
     :param `path`: A folder containing `md-metadata.json`
     :returns A comic with metadata and chapter data of that folder
+    :raises `FileNotFoundError` if `md-metadata.json` is not found
     """
     path = Path(path)
     json_path = path / MD_METADATA_FILE
@@ -91,6 +92,37 @@ def read_comic(path: Path | str) -> BaseComic:
         BaseMetadata(**data["metadata"]),
         [BaseChapter(**c) for c in data["chapters"]],
     )
+
+
+def parse_comic(path: Path | str, source_url: str | None = None) -> BaseComic:
+    """
+    Parse and return an incomplete comic (without most metadata)
+    :param `url`: A source URL to fill metadata from
+    """
+    path = Path(path)
+
+    title = path.stem
+    authors: list[str] = []
+    url = ""
+    genres: list[str] = []
+    description = ""
+    cover_art = ""
+    metadata = BaseMetadata(title, authors, url, genres, description, cover_art)
+
+    chapters = [
+        BaseChapter(inode.stem, "", inode.stem)
+        for inode in natsorted(path.iterdir(), key=lambda i: i.stem)
+        if inode.is_dir()
+    ]
+
+    if source_url:
+        new_comic = sources.get_class_for(source_url)(source_url)
+        metadata = new_comic.metadata
+        for local, remote in zip(chapters, new_comic.chapters):
+            local.title = remote.title
+            local.url = remote.url
+
+    return BaseComic(metadata, chapters)
 
 
 def save_comic(comic: BaseComic, path: Path | str) -> None:

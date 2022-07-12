@@ -23,6 +23,7 @@ lxml = "^4.7.1"
 Pillow = {version = "^9.0.1", optional = true}
 python-slugify = "^6.1.2"
 PySide6 = "^6.3.0"
+natsort = "^8.1.0"
 
 [tool.poetry.dev-dependencies]
 types-requests = "^2.26.3"
