@@ -9,5 +9,5 @@ from .api import (  # isort: skip
     read,
 )
 
-__version__ = (0, 9, 0)
+__version__ = (0, 10, 0)
 __version_str__ = ".".join(map(str, __version__))

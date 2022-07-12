@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mandown"
-version = "0.9.0"
+version = "0.10.0"
 description = "Command line application and library to download and convert comics from various sources"
 authors = ["Daniel Chen <danielchen04@hotmail.ca>"]
 license = "LGPL-3.0-only"
