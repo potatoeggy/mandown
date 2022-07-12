@@ -42,7 +42,7 @@ class Processor:
 
         # dangerous if there are multiple types of operations
         # that would add new image files to be written
-        self.new_images: list[Image.Image, Path] = []
+        self.new_images: list[Image.Image] = []
 
     @property
     def image(self) -> Image.Image:
@@ -76,7 +76,7 @@ class Processor:
 
         for func in operations:
             try:
-                images: tuple[Image.Image] | Image.Image | None = getattr(
+                images: tuple[Image.Image, ...] | Image.Image | None = getattr(
                     ProcessContainer, func
                 )(self.image)
 

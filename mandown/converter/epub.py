@@ -70,7 +70,6 @@ class EpubConverter(BaseConverter):
             (oebps / "content.opf").write_text(self.content_opf(slug_map))
             (oebps / "Text" / "style.css").write_text(STYLE_CSS)
 
-            # TODO: make building and compressing the same step
             for chap in self.comic.chapters:
                 yield "Building"
 
@@ -129,7 +128,7 @@ class EpubConverter(BaseConverter):
         self,
         chapter_slug: str,
         image_path: Path,
-    ) -> None:
+    ) -> str:
         X = ElementMaker(  # pylint: disable=invalid-name
             namespace="http://www.w3.org/1999/xhtml",
             nsmap=NAV_MAP,
@@ -209,8 +208,8 @@ class EpubConverter(BaseConverter):
             ),
             E.item(id="css", href="Text/style.css", **{"media-type": "text/css"}),
         ]
-        item_refs: list[str] = []
-        for c_index, chap in enumerate(self.comic.chapters, start=1):
+        item_refs: list[etree._Element] = []
+        for _, chap in enumerate(self.comic.chapters, start=1):
             for index, image in enumerate(slug_map[chap.slug], start=1):
                 ref_id = (
                     f"page_Images_C{chap.slug}-{index:0{NUM_LEFT_PAD_DIGITS}}-mandown"
@@ -273,8 +272,6 @@ class EpubConverter(BaseConverter):
                 *els_genres,
                 E.meta(name="mandown:cover", content=metadata.cover_art),
                 E.meta(f"{time_now}Z", property="dcterms:modified"),
-                # TODO: fix cover, incorporate it in
-                # TODO: also add in chapters and orientation and metas
                 # E.guide(E.reference(type="cover", title="Cover", href="cover")),
             ),
             E.manifest(*item_ids, *item_img_ids),
@@ -302,7 +299,7 @@ class EpubConverter(BaseConverter):
         )
 
         els_list: list[etree._Element] = []
-        for c_index, chap in enumerate(self.comic.chapters, start=1):
+        for _, chap in enumerate(self.comic.chapters, start=1):
             href = f"Text/{chap.slug}/{1:0{NUM_LEFT_PAD_DIGITS}}.xhtml"
             els_list.append(E.li(E.a(chap.title, href=href)))
 
@@ -335,5 +332,5 @@ class EpubConverter(BaseConverter):
         ).decode("utf-8")
 
 
-def get_class() -> EpubConverter:
+def get_class() -> type[EpubConverter]:
     return EpubConverter

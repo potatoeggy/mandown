@@ -72,5 +72,5 @@ class PdfConverter(BaseConverter):
             yield "Building"
 
 
-def get_class() -> PdfConverter:
+def get_class() -> type[PdfConverter]:
     return PdfConverter

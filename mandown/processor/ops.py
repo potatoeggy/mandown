@@ -31,23 +31,26 @@ class ProcessContainer:
         width, height = image.size
         if width > height:
             return image.rotate(90, expand=1)
+        return None
 
     @staticmethod
-    def split_double_pages(image: Image.Image) -> tuple[Image.Image] | None:
+    def split_double_pages(
+        image: Image.Image,
+    ) -> tuple[Image.Image, Image.Image] | None:
         width, height = image.size
         if not width > height:
-            return
+            return None
 
         left = image.crop((0, 0, int(width / 2), height))
         right = image.crop((int(width / 2), 0, width, height))
-
         return (left, right)
 
     @staticmethod
-    def trim_borders(image) -> Image.Image | None:
+    def trim_borders(image: Image.Image) -> Image.Image | None:
         bg = Image.new(image.mode, image.size, image.getpixel((0, 0)))
         diff = ImageChops.difference(image, bg)
         diff = ImageChops.add(diff, diff, 2.0, -100)
         bbox = diff.getbbox()
         if bbox:
             return image.crop(bbox)
+        return None

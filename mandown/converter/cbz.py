@@ -32,5 +32,5 @@ class CbzConverter(BaseConverter):
                     )
 
 
-def get_class() -> CbzConverter:
+def get_class() -> type[CbzConverter]:
     return CbzConverter
