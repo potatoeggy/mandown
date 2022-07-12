@@ -5,6 +5,8 @@ from typing import List, Optional
 
 import typer
 
+from mandown.io import MD_METADATA_FILE
+
 from . import __version_str__, api, sources
 from .comic import BaseComic
 from .converter.base_converter import ConvertFormats
@@ -197,7 +199,13 @@ def init_metadata(
         None, help="The url to get metadata from"
     ),
 ) -> None:
-    api.init_parse_comic(path, source_url)
+    if (path / MD_METADATA_FILE).is_file():
+        return typer.echo(
+            "Metadata already found. Please remove it to create new metadata."
+        )
+    comic = api.init_parse_comic(path, source_url)
+    typer.secho(f"Found {comic.title}:", fg=typer.colors.BRIGHT_GREEN)
+    typer.echo(comic)
 
 
 @app.callback(invoke_without_command=True, no_args_is_help=True)
