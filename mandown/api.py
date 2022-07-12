@@ -26,6 +26,23 @@ def read(path: Path | str) -> BaseComic:
     return io.read_comic(path)
 
 
+def init_parse_comic(path: Path | str, source_url: str | None = None) -> BaseComic:
+    """
+    Open a comic from a folder path, either via `md-metadata.json` or
+    if that fails, parse the comic structure and create an `md-metadata.json`
+
+    :param `path`: A folder containing `md-metadata.json` or a comic structure
+    :param `source_url`: A source URL to fill metadata from
+    :returns A comic with metadata and chapter data of that folder
+    """
+    try:
+        comic = io.read_comic(path)
+    except FileNotFoundError:
+        comic = io.parse_comic(path, source_url)
+        io.save_comic(comic, path)
+    return comic
+
+
 def convert_progress(
     comic: BaseComic,
     folder_path: Path | str,

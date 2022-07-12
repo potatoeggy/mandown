@@ -190,6 +190,16 @@ def download(
         cli_convert(dest / comic.metadata.title, convert_to, dest)
 
 
+@app.command(name="init-metadata")
+def init_metadata(
+    path: Path,
+    source_url: Optional[str] = typer.Argument(
+        None, help="The url to get metadata from"
+    ),
+) -> None:
+    api.init_parse_comic(path, source_url)
+
+
 @app.callback(invoke_without_command=True, no_args_is_help=True)
 def callback(
     version: Optional[bool] = typer.Option(

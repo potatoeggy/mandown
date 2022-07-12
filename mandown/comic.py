@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from mandown.sources.base_source import BaseSource
+
 from . import sources
 from .base import BaseChapter, BaseMetadata
 
@@ -13,7 +15,13 @@ class BaseComic:
     ):
         self.metadata = metadata
         self.chapters = chapters
-        self.source = sources.get_class_for(self.metadata.url)(self.metadata.url)
+        try:
+            self.source = sources.get_class_for(self.metadata.url)(self.metadata.url)
+        except ValueError as err:
+            if self.metadata.url == "":  # sentinel value
+                self.source = BaseSource("")
+            else:
+                raise ValueError from err
 
     def asdict(self) -> dict:
         return {
