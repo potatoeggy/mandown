@@ -204,7 +204,7 @@ def init_metadata(
             "Metadata already found. Please remove it to create new metadata."
         )
     comic = api.init_parse_comic(path, source_url)
-    typer.secho(f"Found {comic.title}:", fg=typer.colors.BRIGHT_GREEN)
+    typer.secho(f"Found {comic.metadata.title}:", fg=typer.colors.BRIGHT_GREEN)
     typer.echo(comic)
 
 
