@@ -31,7 +31,7 @@ types-lxml = "^2022.4.10"
 
 [tool.poetry.extras]
 postprocessing = ["Pillow"]
-gui = "PySide6"
+gui = ["PySide6"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
