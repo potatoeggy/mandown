@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "mandown"
 version = "0.10.0"
-description = "Comic downloader and converter to CBZ/EPUB/PDF"
+description = "Comic/manga/webtoon downloader and converter to CBZ/EPUB/PDF"
 authors = ["Daniel Chen <danielchen04@hotmail.ca>"]
 license = "LGPL-3.0-only"
 readme = "README.md"
 repository = "https://github.com/potatoeggy/mandown"
 documentation = "https://github.com/potatoeggy/mandown"
-keywords = ["manga", "comic", "downloader", "download"]
+keywords = ["manga", "comic", "downloader", "download", "webtoons", "webtoon"]
 
 [tool.poetry.scripts]
 mandown = "mandown.cli:main"
