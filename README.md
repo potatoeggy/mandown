@@ -29,6 +29,15 @@ Install the package from PyPI:
 pip3 install mandown
 ```
 
+Install the optional large dependencies for some features of Mandown:
+```
+# image processing
+pip3 install Pillow
+
+# graphical interface (GUI)
+pip3 install PySide6
+```
+
 Arch Linux users may also install the package from the [AUR](https://aur.archlinux.org/packages/mandown.git):
 
 ```
