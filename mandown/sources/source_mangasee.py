@@ -10,8 +10,8 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 
-from mandown.base import BaseChapter, BaseMetadata
-from mandown.sources.base_source import BaseSource
+from ..base import BaseChapter, BaseMetadata
+from .base_source import BaseSource
 
 
 class MangaSeeSource(BaseSource):
@@ -29,7 +29,7 @@ class MangaSeeSource(BaseSource):
     def fetch_metadata(self) -> BaseMetadata:
         # all of the metadata is available in the <script type="application/ld+json"> element
         # so are the chapters
-        soup = BeautifulSoup(self._get_scripts(), "html.parser")
+        soup = BeautifulSoup(self._get_scripts(), "lxml")
         metadata_json: dict = json.loads(
             soup.find("script", type="application/ld+json").next_element
         )["mainEntity"]
@@ -64,7 +64,7 @@ class MangaSeeSource(BaseSource):
         return chapters
 
     def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
-        soup = BeautifulSoup(requests.get(chapter.url).text, "html.parser")
+        soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         full_js = str(
             soup.find("script", type="application/ld+json")
             .find_next("script")

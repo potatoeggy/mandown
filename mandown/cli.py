@@ -5,11 +5,10 @@ from typing import List, Optional
 
 import typer
 
-from mandown.io import MD_METADATA_FILE
-
 from . import __version_str__, api, sources
 from .comic import BaseComic
 from .converter.base_converter import ConvertFormats
+from .io import MD_METADATA_FILE
 from .processor import ProcessOps
 
 app = typer.Typer()

@@ -66,7 +66,7 @@ class WebtoonsSource(BaseSource):
         return chapters
 
     def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
-        soup = BeautifulSoup(requests.get(chapter.url).text, "html.parser")
+        soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         images: list[str] = []
         for c in soup.select("div#_imageList > img"):
             images.append(c["data-url"])
@@ -83,7 +83,7 @@ class WebtoonsSource(BaseSource):
 
         self._soup = BeautifulSoup(
             requests.get(mobile_url, headers=self.headers).text,
-            "html.parser",
+            "lxml",
         )
         return self._soup
 

@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import Iterable
 
-from mandown import io, sources
-from mandown.comic import BaseComic
-from mandown.converter import ConvertFormats, get_converter
-from mandown.processor import ProcessOps, Processor
+from . import io, sources
+from .comic import BaseComic
+from .converter import ConvertFormats, get_converter
+from .processor import ProcessOps, Processor
 
 
 def query(url: str) -> BaseComic:
@@ -109,7 +109,7 @@ def download_progress(
     *,
     start: int | None = None,
     end: int | None = None,
-    threads: int = 2,
+    threads: int = 4,
     only_download_missing: bool = True,
 ) -> Iterable[str]:
     """
@@ -201,7 +201,7 @@ def download(
     *,
     start: int | None = None,
     end: int | None = None,
-    threads: int = 2,
+    threads: int = 4,
     only_download_missing: bool = True,
 ) -> None:
     """

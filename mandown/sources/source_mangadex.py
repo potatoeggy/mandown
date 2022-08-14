@@ -10,8 +10,8 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-from mandown.base import BaseChapter, BaseMetadata
-from mandown.sources.base_source import BaseSource
+from ..base import BaseChapter, BaseMetadata
+from .base_source import BaseSource
 
 
 class MangaDexSource(BaseSource):

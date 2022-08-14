@@ -23,7 +23,7 @@ class MangaNatoSource(BaseSource):
         self._scripts: str | None = None
 
     def fetch_metadata(self) -> BaseMetadata:
-        soup = BeautifulSoup(self._get_scripts(), "html.parser")
+        soup = BeautifulSoup(self._get_scripts(), "lxml")
         title: str = soup.h1.next_element
         authors_genres = soup.select("td > a.a-h")
         authors: list[str] = []
@@ -44,7 +44,7 @@ class MangaNatoSource(BaseSource):
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
     def fetch_chapter_list(self) -> list[BaseChapter]:
-        soup = BeautifulSoup(self._get_scripts(), "html.parser")
+        soup = BeautifulSoup(self._get_scripts(), "lxml")
         chapters = [
             BaseChapter(c.next_element, c["href"])
             for c in soup.select("a.chapter-name")
@@ -53,7 +53,7 @@ class MangaNatoSource(BaseSource):
         return chapters
 
     def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
-        soup = BeautifulSoup(requests.get(chapter.url).text, "html.parser")
+        soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         images = []
         for i in soup.find_all("img"):
             if not i["src"].startswith("https://readmanganato.com"):
