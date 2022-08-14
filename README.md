@@ -81,11 +81,11 @@ Run `mandown --help` for more info.
 ```python
 import mandown
 
-# load previously downloaded comic
+# load a previously downloaded comic...
 comic = mandown.read("path/to/comic/folder")
 print(comic.metadata, comic.chapters)
 
-# fetch comic from a source by URL
+# ...OR fetch a comic from a source by URL
 comic = mandown.query(url_to_comic)
 print(comic.metadata, comic.chapters)
 
@@ -93,7 +93,7 @@ print(comic.metadata, comic.chapters)
 mandown.download(comic, "./comic/", threads=4)
 
 # apply image post-processing to comic images in ./comic
-mandown.process(comic, "./comic/", options=["rotate_double_pages", "trim_borders"])
+mandown.process("./comic/", options=["rotate_double_pages", "trim_borders"])
 
 # convert comic located in ./comic to epub, storing it in ./epubs
 mandown.convert(comic, "./comic/", "epub", "./epubs")
