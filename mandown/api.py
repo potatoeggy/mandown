@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import Iterable
 
-from . import io, sources
-from .comic import BaseComic
-from .converter import ConvertFormats, get_converter
-from .processor import ProcessOps, Processor
+from mandown import io, sources
+from mandown.comic import BaseComic
+from mandown.converter import ConvertFormats, get_converter
+from mandown.processor import ProcessOps, Processor
 
 
 def query(url: str) -> BaseComic:
@@ -159,7 +159,7 @@ def download_progress(
         # expect that they're named by numbers only
         skip_images: set[int] = set()
         if only_download_missing:
-            for file in path.iterdir():
+            for file in chapter_path.iterdir():
                 if file.stem == file.stem.rjust(io.NUM_LEFT_PAD_DIGITS, "0"):
                     try:
                         skip_images.add(int(file.stem))
