@@ -84,7 +84,7 @@ class Processor:
                     continue
 
                 if isinstance(images, Image.Image):
-                    images = tuple(images)
+                    images = (images,)
 
                 self.image = images[0]
 
