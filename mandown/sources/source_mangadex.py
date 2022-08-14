@@ -3,14 +3,15 @@ Source file for mangadex.org
 """
 # pylint: disable=invalid-name
 
+
 import re
 import time
 
 import requests
 from bs4 import BeautifulSoup
 
-from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from mandown.base import BaseChapter, BaseMetadata
+from mandown.sources.base_source import BaseSource
 
 
 class MangaDexSource(BaseSource):
@@ -52,11 +53,11 @@ class MangaDexSource(BaseSource):
         else:
             description = ""
 
-        authors: list[str] = []
+        authors: set[str] = set()
         cover_art = ""
         for d in metadata["relationships"]:
             if d["type"] == "author" or d["type"] == "artist":
-                authors.append(d["attributes"]["name"])
+                authors.add(d["attributes"]["name"])
             elif d["type"] == "cover_art":
                 # pylint: disable=line-too-long
                 cover_art = (
@@ -71,7 +72,7 @@ class MangaDexSource(BaseSource):
 
         return BaseMetadata(
             title,
-            authors,
+            list(authors),
             f"https://mangadex.org/title/{self.id}",
             genres,
             description,
