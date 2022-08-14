@@ -82,7 +82,7 @@ Run `mandown --help` for more info.
 import mandown
 
 # load a previously downloaded comic...
-comic = mandown.read("path/to/comic/folder")
+comic = mandown.load("path/to/comic/folder")
 print(comic.metadata, comic.chapters)
 
 # ...OR fetch a comic from a source by URL

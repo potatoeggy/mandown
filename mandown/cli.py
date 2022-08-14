@@ -29,7 +29,7 @@ def cli_convert(
     comic_path: Path, target_format: ConvertFormats, dest_folder: Path = Path.cwd()
 ) -> None:
     try:
-        comic = api.read(comic_path)
+        comic = api.load(comic_path)
     except FileNotFoundError as err:
         typer.secho(
             f"Comic not found at {comic_path}, is md-metadata.json missing?",
@@ -53,7 +53,7 @@ def cli_process(comic_path: Path, options: list[ProcessOps]) -> None:
         return
 
     try:
-        comic = api.read(comic_path)
+        comic = api.load(comic_path)
     except FileNotFoundError as err:
         typer.secho(
             f"Comic not found at {comic_path}, is md-metadata.json missing?",
@@ -88,7 +88,7 @@ def convert(
     Convert a comic folder into CBZ/EPUB/PDF.
     """
     try:
-        comic = api.read(folder_path)
+        comic = api.load(folder_path)
     except FileNotFoundError as err:
         typer.secho(
             f"Comic not found at {folder_path}, is md-metadata.json missing?",

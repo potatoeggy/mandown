@@ -17,7 +17,7 @@ def query(url: str) -> BaseComic:
     return BaseComic(adapter.metadata, adapter.chapters)
 
 
-def read(path: Path | str) -> BaseComic:
+def load(path: Path | str) -> BaseComic:
     """
     Load a mandown-created comic from the file system.
     :param `path`: A folder where mandown has created a comic

@@ -3,10 +3,10 @@ from .api import (  # isort: skip
     convert_progress,
     download,
     download_progress,
+    load,
     process,
     process_progress,
     query,
-    read,
 )
 
 __version__ = (0, 10, 0)

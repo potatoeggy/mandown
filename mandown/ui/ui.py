@@ -10,9 +10,9 @@ import requests
 from PySide6.QtGui import QImage, QPixmap
 
 import mandown
-from mandown import __version_str__
-from mandown.comic import BaseComic
 
+from .. import __version_str__
+from ..comic import BaseComic
 from .mainwin import Ui_Widget
 
 from PySide6.QtWidgets import (  # isort: skip
@@ -118,7 +118,7 @@ class MandownQtUi(QWidget):
 
         # load metadata
         try:
-            self.comic = mandown.read(self.source_path)
+            self.comic = mandown.load(self.source_path)
         except FileNotFoundError:
             res = QMessageBox.critical(
                 self,
