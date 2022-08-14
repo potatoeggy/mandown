@@ -114,7 +114,7 @@ def process(
 
 
 @app.command()
-def download(
+def get(
     url: str,
     dest: Path = typer.Argument(
         Path.cwd(), help="The destination folder to download to."
