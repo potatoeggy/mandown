@@ -10,8 +10,8 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 
-from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from mandown.base import BaseChapter, BaseMetadata
+from mandown.sources.base_source import BaseSource
 
 
 class MangaSeeSource(BaseSource):
@@ -44,7 +44,9 @@ class MangaSeeSource(BaseSource):
         description_html = soup.select_one("div.top-5.Content")
         description = str(description_html.next_element).strip()
 
-        cover_art = f"https://cover.nep.li/cover/{self.id}.jpg"
+        cover_art = soup.select_one('div[style="padding-right:0px;"] img.bottom-5')[
+            "src"
+        ]
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
