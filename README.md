@@ -78,6 +78,24 @@ Run `mandown --help` for more info.
 
 ## Library usage
 
+To just download the images:
+```python
+import mandown
+
+mandown.download("https://comic-site.com/the-best-comic")
+```
+
+To download and convert to EPUB:
+```python
+import mandown
+
+comic = mandown.query("https://comic-site.com/the-best-comic")
+mandown.download(comic)
+mandown.convert(comic, comic.metadata.title, "epub")
+```
+
+More advanced stuff:
+
 ```python
 import mandown
 
@@ -89,8 +107,8 @@ print(comic.metadata, comic.chapters)
 comic = mandown.query(url_to_comic)
 print(comic.metadata, comic.chapters)
 
-# download comic to ./comic using 4 threads
-mandown.download(comic, "./comic/", threads=4)
+# download the first 10 chapters of comic to ./comic using 4 threads
+mandown.download(comic, "./comic/", threads=4, end=10)
 
 # apply image post-processing to comic images in ./comic
 mandown.process("./comic/", options=["rotate_double_pages", "trim_borders"])
