@@ -1,6 +1,6 @@
 import zipfile
 from pathlib import Path
-from typing import Iterable
+from typing import Iterator
 
 from .base_converter import BaseConverter
 
@@ -8,7 +8,7 @@ from .base_converter import BaseConverter
 class CbzConverter(BaseConverter):
     def create_file_progress(
         self, path: Path | str, save_to: Path | str
-    ) -> Iterable[str]:
+    ) -> Iterator[str]:
         path = Path(path).absolute()
         save_to = Path(save_to)
 

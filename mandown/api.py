@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterable
+from typing import Iterator
 
 from . import io, sources
 from .comic import BaseComic
@@ -48,12 +48,12 @@ def convert_progress(
     folder_path: Path | str,
     convert_to: ConvertFormats,
     dest_folder: Path | str | None = None,
-) -> Iterable[str]:
+) -> Iterator[str]:
     """
     From metadata in `comic`, convert the comic in `folder_path`
     to `convert_to` and put it in `dest_folder` (defaults to workdir).
 
-    Returns an iterable representing a progress bar up to the
+    Returns an Iterator representing a progress bar up to the
     number of chapters in the comic.
     """
     if convert_to == ConvertFormats.NONE:
@@ -81,11 +81,11 @@ def convert(
         pass
 
 
-def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterable[str]:
+def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterator[str]:
     """
     Process the comic in `comic_path` with `ops` in the order provided.
 
-    Returns an iterable representing a progress bar up to the
+    Returns an Iterator representing a progress bar up to the
     number of chapters in the comic.
     """
     data = io.discover_local_images(comic_path)
@@ -111,7 +111,7 @@ def download_progress(
     end: int | None = None,
     threads: int = 4,
     only_download_missing: bool = True,
-) -> Iterable[str]:
+) -> Iterator[str]:
     """
     Download comic or comic URL `comic` to `path` using `threads` threads.
 
@@ -121,7 +121,7 @@ def download_progress(
     If `only_download_missing` is `True`, images already in the
     destination path will not be downloaded again.
 
-    Returns an iterable representing a progress bar up to the
+    Returns an Iterator representing a progress bar up to the
     number of chapters in the comic.
     """
     path = Path(path)

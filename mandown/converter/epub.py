@@ -9,7 +9,7 @@ import zipfile
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
-from typing import Iterable
+from typing import Iterator
 from uuid import uuid4
 
 from lxml import etree
@@ -57,7 +57,7 @@ class EpubConverter(BaseConverter):
 
     def create_file_progress(
         self, path: Path | str, save_to: Path | str
-    ) -> Iterable[str]:
+    ) -> Iterator[str]:
         path = Path(path)
         save_to = Path(save_to)
         slug_map = discover_local_images(path)

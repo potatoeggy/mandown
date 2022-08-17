@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Iterable, Literal
+from typing import Iterator, Literal
 
 from ..comic import BaseComic
 
@@ -39,7 +39,7 @@ class BaseConverter:
 
     def create_file_progress(
         self, path: Path | str, save_to: Path | str
-    ) -> Iterable[str]:
+    ) -> Iterator[str]:
         raise NotImplementedError
 
     def create_file(self, path: Path | str, save_to: Path | str) -> None:

@@ -4,7 +4,7 @@ import multiprocessing as mp
 import os
 import urllib.parse
 from pathlib import Path
-from typing import Iterable, Sequence
+from typing import Iterator, Sequence
 
 import requests
 from natsort import natsorted
@@ -46,7 +46,7 @@ def download_images(
     filestems: Sequence[str] | None = None,
     headers: dict[str, str] | None = None,
     threads: int = 1,
-) -> Iterable[None]:
+) -> Iterator[None]:
     """
     Download one or multiple URLs to a destination folder.
     Raises ValueError if the folder does not exist.

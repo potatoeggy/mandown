@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterable
+from typing import Iterator
 
 from .base_converter import ACCEPTED_IMAGE_EXTENSIONS, BaseConverter
 
@@ -18,7 +18,7 @@ PDF_IMAGE_MIN_INTERVAL_FACTOR = 0.12
 class PdfConverter(BaseConverter):
     def create_file_progress(
         self, path: Path | str, save_to: Path | str
-    ) -> Iterable[str]:
+    ) -> Iterator[str]:
         if not HAS_PILLOW:
             raise ImportError(
                 "Pillow could not be found and is required for PDF conversion"
