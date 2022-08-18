@@ -68,11 +68,23 @@ To convert the download contents to CBZ/EPUB, append the `--convert` option. To 
 mandown get <URL> --convert epub --process rotate_double_pages
 ```
 
-To convert an existing folder without downloading anything except metadata (like a stripped-down version of https://github.com/ciromattia/kcc), use the `convert` command.
+To download only a certain range of chapters, append the `--start` and/or `--end` options.
+
+> **Note:** `--start` and `--end` are *inclusive*, i.e., using `--start 2 --end 3` will download chapters 2 and 3.
+
+To convert an existing folder without downloading anything (like a stripped-down version of https://github.com/ciromattia/kcc), use the `convert` command.
 
 ```
 mandown convert <FORMAT> <PATH_TO_FOLDER>
 ```
+
+To process an existing folder without downloading anything, use the `process` command.
+
+```
+mandown convert <PROCESS_OPERATIONS> <PATH_TO_FOLDER>
+```
+
+Where `PROCESS_OPERATIONS` is an option found from running `mandown process --help`.
 
 Run `mandown --help` for more info.
 
