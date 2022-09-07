@@ -22,7 +22,7 @@ class ConvertFormats(str, Enum):
     NONE = "none"
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class ConvertOptions:
     page_progression: Literal["rtl"] | Literal["ltr"] = "ltr"
 

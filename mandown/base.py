@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from slugify import slugify
 
 
-@dataclass
+@dataclass(slots=True)
 class BaseMetadata:
     title: str
     authors: list[str]
@@ -11,6 +11,7 @@ class BaseMetadata:
     genres: list[str]
     description: str
     cover_art: str
+    title_slug: str = ""
 
     def __post_init__(self) -> None:
         self.title_slug = slugify(self.title)
@@ -26,7 +27,7 @@ class BaseMetadata:
         }
 
 
-@dataclass
+@dataclass(slots=True)
 class BaseChapter:
     title: str
     url: str
