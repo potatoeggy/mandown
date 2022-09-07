@@ -1,11 +1,8 @@
-from dataclasses import dataclass
-
 from . import sources
 from .base import BaseChapter, BaseMetadata
 from .sources.base_source import BaseSource
 
 
-@dataclass
 class BaseComic:
     def __init__(
         self,
