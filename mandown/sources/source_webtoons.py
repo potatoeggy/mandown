@@ -24,7 +24,7 @@ class WebtoonsSource(BaseSource):
 
         title_no_index = url.index("?title_no=") + len("?title_no=")
         title_no_end_index: int | None = url.find("&", title_no_index)
-        if title_no_end_index == -1:
+        if title_no_end_index == -1:  # if '&' not found in url
             title_no_end_index = None
 
         self._title_no = int(url[title_no_index:title_no_end_index])
@@ -48,7 +48,7 @@ class WebtoonsSource(BaseSource):
             title,
             authors,
             f"https://www.webtoons.com/{self._title_path}/list?title_no={self._title_no}",
-            ["Webtoons.com does not support genres"],
+            [],  # TODO: webtoons does have genres but they have to be scraped
             description,
             cover_art,
         )

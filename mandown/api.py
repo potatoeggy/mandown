@@ -133,11 +133,10 @@ def download_progress(
     # create dir
     try:
         full_path = path / comic.metadata.title
-        full_path.mkdir(exist_ok=True)
     except IOError:
         # invalid filename
         full_path = path / comic.metadata.title_slug
-        full_path.mkdir(exist_ok=True)
+    full_path.mkdir(exist_ok=True)
 
     # save metadata json
     comic.set_chapter_range(start=start, end=end)
