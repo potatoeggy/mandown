@@ -198,6 +198,9 @@ def init_metadata(
         None, help="The url to get metadata from"
     ),
 ) -> None:
+    """
+    Initialise a folder with metadata to be converted with Mandown, optionally fetching metadata from an internet source.
+    """
     if (path / MD_METADATA_FILE).is_file():
         return typer.echo(
             "Metadata already found. Please remove it to create new metadata."
