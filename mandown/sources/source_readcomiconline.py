@@ -3,7 +3,7 @@ Source file for readcomiconline.li
 """
 # pylint: disable=invalid-name
 
-
+import binascii
 import re
 
 import requests
@@ -52,7 +52,7 @@ class ReadComicOnlineSource(BaseSource):
             chapters.append(
                 BaseChapter(next(e.children).text, self.domains[0] + e["href"])
             )
-        return chapters
+        return list(reversed(chapters))
 
     def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         text = requests.get(chapter.url).text
@@ -60,9 +60,9 @@ class ReadComicOnlineSource(BaseSource):
         images: list[str] = []
         start = 0
         while (index := text.find("lstImages.push(", start)) != -1:
-            s_index = index + len("lstImages.push('")
-            e_index = text.find("');", s_index)
-            images.append(text[s_index:e_index])
+            s_index = index + len("lstImages.push(") + 1
+            e_index = text.find(");", s_index) - 1  # could be single or double quotes
+            images.append(self.beau(text[s_index:e_index]))
             start = e_index
         return images
 
@@ -77,6 +77,29 @@ class ReadComicOnlineSource(BaseSource):
     @staticmethod
     def check_url(url: str) -> bool:
         return bool(re.match(r"https://readcomiconline.li/Comic/.*", url))
+
+    @staticmethod
+    def beau(url: str) -> str:
+        """
+        Deobfuscator
+        copied from https://github.com/mikf/gallery-dl/blob/master/gallery_dl/extractor/readcomiconline.py
+
+        i had to relicense to GPLv2 for this >:(
+        """
+        url = url.replace("_x236", "d").replace("_x945", "g")
+
+        if url.startswith("https"):
+            return url
+
+        url, sep, rest = url.partition("?")
+        containsS0 = "=s0" in url
+        url = url[: -3 if containsS0 else -6]
+        url = url[4:22] + url[25:]
+        url = url[0:-6] + url[-2:]
+        url = binascii.a2b_base64(url).decode()
+        url = url[0:13] + url[17:]
+        url = url[0:-2] + ("=s0" if containsS0 else "=s1600")
+        return f"https://2.bp.blogspot.com/{url}{sep}{rest}"
 
 
 def get_class() -> type[BaseSource]:
