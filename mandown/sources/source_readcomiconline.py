@@ -3,6 +3,7 @@ Source file for readcomiconline.li
 """
 # pylint: disable=invalid-name
 
+
 import re
 
 import requests
@@ -34,7 +35,8 @@ class ReadComicOnlineSource(BaseSource):
             )
         ]
         genres: list[str] = [str(e.text) for e in soup.select("a[href^='/Genre']")]
-        description = str(soup.select_one("p[style='text-align: justify;']").text)
+        description_maybe = soup.select_one("p[style='text-align: justify;']")
+        description = str(description_maybe.text if description_maybe else "")
         cover = self.domains[0] + str(soup.find("link")["href"])
 
         return BaseMetadata(title, author, self.url, genres, description, cover)
@@ -58,16 +60,19 @@ class ReadComicOnlineSource(BaseSource):
         images: list[str] = []
         start = 0
         while (index := text.find("lstImages.push(", start)) != -1:
-            s_index = index + len('lstImages.push("')
-            e_index = text.find('");', s_index)
+            s_index = index + len("lstImages.push('")
+            e_index = text.find("');", s_index)
             images.append(text[s_index:e_index])
             start = e_index
         return images
 
     @classmethod
     def url_to_id(cls, url: str) -> str:
-        *_, last_item = filter(None, url.split("/"))
-        return last_item
+        segments = url.split("/")
+        for i, s in enumerate(segments):
+            if s == "Comic":
+                return segments[i + 1]
+        raise ValueError("Invalid comic URL")
 
     @staticmethod
     def check_url(url: str) -> bool:
