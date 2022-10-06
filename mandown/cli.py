@@ -199,7 +199,8 @@ def init_metadata(
     ),
 ) -> None:
     """
-    Initialise a folder with metadata to be converted with Mandown, optionally fetching metadata from an internet source.
+    Initialise a folder with metadata to be converted with Mandown, optionally
+    fetching metadata from an internet source.
     """
     if (path / MD_METADATA_FILE).is_file():
         return typer.echo(

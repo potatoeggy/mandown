@@ -3,6 +3,7 @@ Source file for webtoons.com
 """
 # pylint: disable=invalid-name
 
+
 import re
 
 import feedparser
@@ -35,20 +36,21 @@ class WebtoonsSource(BaseSource):
         feed = feedparser.parse(
             f"https://www.webtoons.com/{self._title_path}/rss?title_no={self._title_no}"
         )
-        feed = feedparser.parse(
-            f"https://www.webtoons.com/{self._title_path}/rss?title_no={self._title_no}"
-        )
+
+        page = self._get_soup()
+
         authors: list[str] = feed["entries"][0].author.split("/")
         authors = [s.strip() for s in authors]
         title: str = feed["channel"]["title"]
         cover_art: str = feed["channel"]["image"]["href"]
         description: str = feed["channel"]["description"].strip()
+        genre: str = page.select_one(".genre").text
 
         return BaseMetadata(
             title,
             authors,
             f"https://www.webtoons.com/{self._title_path}/list?title_no={self._title_no}",
-            [],  # TODO: webtoons does have genres but they have to be scraped
+            [genre],
             description,
             cover_art,
         )
