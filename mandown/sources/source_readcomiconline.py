@@ -3,12 +3,13 @@ Source file for readcomiconline.li
 """
 # pylint: disable=invalid-name
 
+
 import re
 
 from bs4 import BeautifulSoup
-from ..iohandler import UndetectedDriver
 
 from ..base import BaseChapter, BaseMetadata
+from ..undetected import UndetectedDriver
 from .base_source import BaseSource
 
 
@@ -74,8 +75,11 @@ class ReadComicOnlineSource(BaseSource):
 
     @classmethod
     def url_to_id(cls, url: str) -> str:
-        *_, last_item = filter(None, url.split("/"))
-        return last_item
+        segments = url.split("/")
+        for i, s in enumerate(segments):
+            if s == "Comic":
+                return segments[i + 1]
+        raise ValueError("Invalid comic")
 
     @staticmethod
     def check_url(url: str) -> bool:
