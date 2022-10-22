@@ -40,6 +40,21 @@ class BaseComic:
         """
         self.chapters = self.chapters[start:end]
 
+    def update(self, *, chapters: bool = True, metadata: bool = True) -> None:
+        """
+        Refresh comic.metadata and comic.chapters with new information
+        from the source. Remember to call mandown.save_metadata(comic)
+        to actually save the updated data to the filesystem.
+
+        :param `chapters`: whether to update the chapter index
+        :param `metadata`: whether to update comic metadata
+        """
+        if chapters:
+            self.chapters = self.source.fetch_chapter_list()
+
+        if metadata:
+            self.metadata = self.source.fetch_metadata()
+
     def __str__(self) -> str:
         return f"""
 Title: {self.metadata.title},

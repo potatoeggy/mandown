@@ -26,6 +26,13 @@ def load(path: Path | str) -> BaseComic:
     return io.read_comic(path)
 
 
+def save_metadata(comic: BaseComic, path: Path | str) -> None:
+    """
+    Save the metadata from the comic to `<path>/md-metadata.json`.
+    """
+    io.save_comic(comic, path)
+
+
 def init_parse_comic(path: Path | str, source_url: str | None = None) -> BaseComic:
     """
     Open a comic from a folder path, either via `md-metadata.json` or
