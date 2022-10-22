@@ -81,7 +81,7 @@ mandown convert <FORMAT> <PATH_TO_FOLDER>
 To process an existing folder without downloading anything, use the `process` command.
 
 ```
-mandown convert <PROCESS_OPERATIONS> <PATH_TO_FOLDER>
+mandown process <PROCESS_OPERATIONS> <PATH_TO_FOLDER>
 ```
 
 Where `PROCESS_OPERATIONS` is an option found from running `mandown process --help`.
