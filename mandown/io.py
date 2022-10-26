@@ -1,4 +1,3 @@
-import imghdr
 import json
 import multiprocessing as mp
 import os
@@ -6,6 +5,7 @@ import urllib.parse
 from pathlib import Path
 from typing import Iterator, Sequence
 
+import filetype
 import requests
 from natsort import natsorted
 
@@ -34,9 +34,9 @@ def async_download_image(
 
     # if the file extension is lying
     # rename it so epubcheck doesn't yell at us
-    ext = imghdr.what(dest_file)
-    if ext is not None:
-        dest_file.rename(dest_file.with_suffix(f".{ext}"))
+    ext = filetype.guess(dest_file)
+    if ext is not None and ext.extension in ["jpg", "png", "gif"]:
+        dest_file.rename(dest_file.with_suffix(f".{ext.extension}"))
 
 
 def download_images(
