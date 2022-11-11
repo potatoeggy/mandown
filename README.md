@@ -38,7 +38,7 @@ pip3 install Pillow
 pip3 install PySide6
 ```
 
-Arch Linux users may also install the package from the [AUR](https://aur.archlinux.org/packages/mandown.git):
+Arch Linux users may also install the package from the [AUR](https://aur.archlinux.org/packages/mandown-git.git):
 
 ```
 git clone https://aur.archlinux.org/mandown-git.git
