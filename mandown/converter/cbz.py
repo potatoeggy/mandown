@@ -26,8 +26,9 @@ class CbzConverter(BaseConverter):
                         )
                 elif outerpath.stem == "cover":
                     file.write(
-                        outerpath.with_stem("__cover"),  # to be first
-                        outerpath.absolute().relative_to(path),
+                        outerpath,
+                        # rename cover to appear first in the archive
+                        outerpath.with_stem("__cover").absolute().relative_to(path),
                         zipfile.ZIP_DEFLATED,
                     )
 
