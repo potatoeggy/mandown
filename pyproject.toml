@@ -14,7 +14,7 @@ mandown = "mandown.cli:main"
 mandown-gui = "mandown.ui.ui:main"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.11"
+python = ">=3.10,<3.12"
 typer = "^0.6.0"
 feedparser = "^6.0.8"
 beautifulsoup4 = "^4.10.0"
@@ -22,7 +22,7 @@ requests = "^2.27.0"
 lxml = "^4.7.1"
 Pillow = {version = "^9.0.1", optional = true}
 python-slugify = "^6.1.2"
-PySide6 = {version = "^6.3.0", optional = true}
+PySide6 = {version = "^6.4.0", optional = true}
 natsort = "^8.1.0"
 filetype = "^1.1.0"
 
