@@ -2,6 +2,10 @@ from ..base import BaseChapter, BaseMetadata
 
 
 class BaseSource:
+    """
+    An object representing network state for fetching data of a comic.
+    """
+
     name = "Source name goes here"
     domains = ["Source domains goes here"]
     headers: dict[str, str] = {}
@@ -10,13 +14,14 @@ class BaseSource:
     _chapters: list[BaseChapter] = []
 
     def __init__(self, url: str):
-        """
-        An object representing network state for fetching data of a comic.
-        """
+
         self.url = url
 
     @property
     def metadata(self) -> BaseMetadata:
+        """
+        Return the metadata of the comic, fetching and caching it if necessary.
+        """
         if self._metadata:
             return self._metadata
         self._metadata = self.fetch_metadata()
@@ -24,6 +29,9 @@ class BaseSource:
 
     @property
     def chapters(self) -> list[BaseChapter]:
+        """
+        Return the chapter list of the comic, fetching and caching it if necessary.
+        """
         if self._chapters:
             return self._chapters
         self._chapters = self.fetch_chapter_list()

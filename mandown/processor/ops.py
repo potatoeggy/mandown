@@ -28,6 +28,9 @@ class ProcessContainer:
 
     @staticmethod
     def rotate_double_pages(image: Image.Image) -> Image.Image | None:
+        """
+        Rotate the image 90 degrees if it is a double page so it fits on the screen.
+        """
         width, height = image.size
         if width > height:
             return image.rotate(90, expand=1)
@@ -37,6 +40,9 @@ class ProcessContainer:
     def split_double_pages(
         image: Image.Image,
     ) -> tuple[Image.Image, Image.Image] | None:
+        """
+        Split the image into two separate images if it is a double page.
+        """
         width, height = image.size
         if not width > height:
             return None
@@ -47,6 +53,9 @@ class ProcessContainer:
 
     @staticmethod
     def trim_borders(image: Image.Image) -> Image.Image | None:
+        """
+        Trim the borders of the image.
+        """
         bg = Image.new(image.mode, image.size, image.getpixel((0, 0)))
         diff = ImageChops.difference(image, bg)
         diff = ImageChops.add(diff, diff, 2.0, -100)

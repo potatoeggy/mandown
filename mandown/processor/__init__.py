@@ -30,6 +30,12 @@ class ProcessOps(str, Enum):
 
 
 class Processor:
+    """
+    A class for processing images.
+
+    :param `image_path`: The path to the image to process
+    """
+
     def __init__(self, image_path: Path | str) -> None:
         if not HAS_PILLOW:
             raise ImportError(
@@ -46,6 +52,12 @@ class Processor:
 
     @property
     def image(self) -> Image.Image:
+        """
+        The image to process. This is a `PIL.Image.Image` object.
+
+        :setter: Set the image to process
+        :returns: The image to process
+        """
         return self._image
 
     @image.setter
@@ -70,6 +82,11 @@ class Processor:
         Perform the operations in `operations` on the image in sequence
         and save it to disk. If `filename` is not None, it will be saved
         with that filename instead.
+
+        :param operations: A list of operations to perform on the image
+        :param filename: The filename to save the image as
+        :raises NotImplementedError: If an operation is not implemented
+        :raises OSError: If there is an error in saving the image
         """
         if ProcessOps.NO_POSTPROCESSING in operations:
             return

@@ -26,7 +26,10 @@ def cli_query(url: str) -> BaseComic:
 
 
 def cli_convert(
-    comic_path: Path, target_format: ConvertFormats, dest_folder: Path = Path.cwd()
+    comic_path: Path,
+    target_format: ConvertFormats,
+    dest_folder: Path = Path.cwd(),
+    remove_after: bool = False,
 ) -> None:
     try:
         comic = api.load(comic_path)
@@ -38,7 +41,9 @@ def cli_convert(
         raise typer.Exit(1) from err
 
     with typer.progressbar(
-        api.convert_progress(comic, comic_path, target_format, dest_folder),
+        api.convert_progress(
+            comic, comic_path, target_format, dest_folder, remove_after
+        ),
         length=len(comic.chapters),
         label="Converting",
     ) as progress:
@@ -83,6 +88,12 @@ def convert(
         "-d",
         help="The folder to save the converted file to.",
     ),
+    remove_after: bool = typer.Option(
+        False,
+        "--remove-after",
+        "-r",
+        help="Remove the the original folder after conversion",
+    ),
 ) -> None:
     """
     Convert a comic folder into CBZ/EPUB/PDF.
@@ -100,7 +111,7 @@ def convert(
         f"Found {comic.metadata.title} with {len(comic.chapters)} chapters, "
         f"converting to {convert_to}..."
     )
-    cli_convert(folder_path, convert_to, dest)
+    cli_convert(folder_path, convert_to, dest, remove_after)
 
 
 @app.command()
@@ -143,6 +154,12 @@ def get(
         "-p",
         help="Image processing options (in-place)",
         case_sensitive=True,
+    ),
+    remove_after: bool = typer.Option(
+        False,
+        "--remove-after",
+        "-r",
+        help="Remove the downloaded folder after converting (requires --convert)",
     ),
 ) -> None:
     """
@@ -188,7 +205,7 @@ def get(
 
     # convert
     if convert_to != ConvertFormats.NONE:
-        cli_convert(dest / comic.metadata.title, convert_to, dest)
+        cli_convert(dest / comic.metadata.title, convert_to, dest, remove_after)
 
 
 @app.command(name="init-metadata")

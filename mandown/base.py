@@ -5,6 +5,18 @@ from slugify import slugify
 
 @dataclass(slots=True)
 class BaseMetadata:
+    """
+    Metadata for a comic.
+
+    :param `title`: The title of the comic
+    :param `authors`: A list of authors of the comic
+    :param `url`: The URL of the comic
+    :param `genres`: A list of genres of the comic
+    :param `description`: A description of the comic
+    :param `cover_art`: The URL of the cover art
+    :param `title_slug`: The slug of the title
+    """
+
     title: str
     authors: list[str]
     url: str
@@ -17,6 +29,10 @@ class BaseMetadata:
         self.title_slug = slugify(self.title)
 
     def asdict(self) -> dict:
+        """
+        Return a dictionary representation of the metadata.
+        """
+
         return {
             "title": self.title,
             "authors": self.authors,
@@ -29,6 +45,14 @@ class BaseMetadata:
 
 @dataclass(slots=True)
 class BaseChapter:
+    """
+    A chapter of a comic.
+
+    :param `title`: The title of the chapter
+    :param `url`: The URL of the chapter
+    :param `slug`: The slug of the chapter
+    """
+
     title: str
     url: str
     slug: str = ""
@@ -38,6 +62,9 @@ class BaseChapter:
             self.slug = slugify(self.title)
 
     def asdict(self) -> dict:
+        """
+        Return a dictionary representation of the chapter.
+        """
         return {
             "title": self.title,
             "url": self.url,

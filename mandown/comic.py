@@ -4,6 +4,13 @@ from .sources.base_source import BaseSource
 
 
 class BaseComic:
+    """
+    A comic with metadata and chapter data.
+
+    :param `metadata`: Metadata of the comic
+    :param `chapters`: A list of chapters of the comic
+    """
+
     def __init__(
         self,
         metadata: BaseMetadata,
@@ -20,6 +27,10 @@ class BaseComic:
                 raise ValueError from err
 
     def asdict(self) -> dict:
+        """
+        Return a dictionary representation of the comic.
+        """
+
         return {
             "metadata": self.metadata.asdict(),
             "chapters": [c.asdict() for c in self.chapters],
@@ -29,6 +40,9 @@ class BaseComic:
         """
         Fetch a list of image URLs of a chapter based on the
         current source.
+
+        :param `chapter`: The chapter to fetch
+        :return: A list of image URLs
         """
         return self.source.fetch_chapter_image_list(chapter)
 
@@ -37,6 +51,9 @@ class BaseComic:
     ) -> None:
         """
         `start` and `end` are zero-indexed.
+
+        :param `start`: The index of the first chapter to keep
+        :param `end`: The index of the last chapter to keep
         """
         self.chapters = self.chapters[start:end]
 
