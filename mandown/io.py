@@ -21,6 +21,11 @@ MD_METADATA_FILE = "md-metadata.json"
 def async_download_image(
     data: tuple[str, Path | str, str | None, dict[str, str] | None]
 ) -> None:
+    """
+    Download an image from a URL to a destination folder, fixing the file extension if necessary.
+
+    :param `data`: A tuple of the url, destination folder, filename, and headers.
+    """
     url, dest_folder, filename, headers = data
     dest_folder = Path(dest_folder)
 
@@ -50,11 +55,13 @@ def download_images(
     """
     Download one or multiple URLs to a destination folder.
     Raises ValueError if the folder does not exist.
+
     :param `urls`: A list of URLs to download.
     :param `dest_folder`: The path to download files into.
     :param `filestems`: Specify the name of each downloaded file instead of the default.
     :param `headers`: Request headers
     :param `threads`: The number of processes to open
+    :returns An iterator that yields `None` for each downloaded file.
     """
     dest_folder = Path(dest_folder)
 
@@ -78,6 +85,7 @@ def download_images(
 def read_comic(path: Path | str) -> BaseComic:
     """
     Open a comic from a folder path.
+
     :param `path`: A folder containing `md-metadata.json`
     :returns A comic with metadata and chapter data of that folder
     :raises `FileNotFoundError` if `md-metadata.json` is not found
@@ -97,7 +105,10 @@ def read_comic(path: Path | str) -> BaseComic:
 def parse_comic(path: Path | str, source_url: str | None = None) -> BaseComic:
     """
     Parse and return an incomplete comic (without most metadata)
-    :param `url`: A source URL to fill metadata from
+
+    :param `path`: A folder containing images
+    :param `source_url`: A source URL to fill metadata from
+    :returns A `BaseComic` with metadata and chapter data of that folder
     """
     path = Path(path)
 
@@ -128,6 +139,9 @@ def parse_comic(path: Path | str, source_url: str | None = None) -> BaseComic:
 def save_comic(comic: BaseComic, path: Path | str) -> None:
     """
     Save an `md-metadata.json` from `comic` into `path`.
+
+    :param `comic`: A comic to save
+    :param `path`: A folder to save `md-metadata.json` into
     """
     path = Path(path)
     path.mkdir(exist_ok=True)
@@ -142,6 +156,9 @@ def discover_local_images(path: Path | str) -> dict[str, list[Path]]:
     """
     Given a comic path, return a dictionary of slugs: images.
     Basically a slightly modified version of os.walk.
+
+    :param `path`: A folder containing images
+    :returns A dictionary of {slugs: images}
     """
     path = Path(path)
 
