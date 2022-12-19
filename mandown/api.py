@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from typing import Iterator
 
@@ -55,10 +56,13 @@ def convert_progress(
     folder_path: Path | str,
     convert_to: ConvertFormats,
     dest_folder: Path | str | None = None,
+    remove_after: bool = False,
 ) -> Iterator[str]:
     """
     From metadata in `comic`, convert the comic in `folder_path`
     to `convert_to` and put it in `dest_folder` (defaults to workdir).
+
+    :param `remove_after`: If `True`, delete the original folder after conversion.
 
     Returns an Iterator representing a progress bar up to the
     number of chapters in the comic.
@@ -73,18 +77,26 @@ def convert_progress(
     converter = get_converter(convert_to)(comic)  # pylint: disable=not-callable
     yield from converter.create_file_progress(folder_path, dest_folder)
 
+    if remove_after:
+        shutil.rmtree(folder_path)
+
 
 def convert(
     comic: BaseComic,
     folder_path: Path | str,
     convert_to: ConvertFormats,
     dest_folder: Path | str | None = None,
+    remove_after: bool = False,
 ) -> None:
     """
     From metadata in `comic`, convert the comic in `folder_path`
     to `convert_to` and put it in `dest_folder` (defaults to workdir).
+
+    :param `remove_after`: If `True`, delete the original folder after conversion.
     """
-    for _ in convert_progress(comic, folder_path, convert_to, dest_folder):
+    for _ in convert_progress(
+        comic, folder_path, convert_to, dest_folder, remove_after
+    ):
         pass
 
 
