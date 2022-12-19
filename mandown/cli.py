@@ -159,7 +159,7 @@ def get(
         False,
         "--remove-after",
         "-r",
-        help="Remove the downloaded folder after processing",
+        help="Remove the downloaded folder after converting (requires --convert)",
     ),
 ) -> None:
     """
