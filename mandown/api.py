@@ -21,7 +21,10 @@ def query(url: str) -> BaseComic:
 def load(path: Path | str) -> BaseComic:
     """
     Load a mandown-created comic from the file system.
+
     :param `path`: A folder where mandown has created a comic
+    :returns A comic with metadata and chapter data of that folder
+
     :throws FileNotFoundError if `md-metadata.json` cannot be found.
     """
     return io.read_comic(path)
@@ -30,6 +33,9 @@ def load(path: Path | str) -> BaseComic:
 def save_metadata(comic: BaseComic, path: Path | str) -> None:
     """
     Save the metadata from the comic to `<path>/md-metadata.json`.
+
+    :param `comic`: A comic with metadata to save
+    :param `path`: A folder to save the metadata to
     """
     io.save_comic(comic, path)
 
@@ -62,10 +68,13 @@ def convert_progress(
     From metadata in `comic`, convert the comic in `folder_path`
     to `convert_to` and put it in `dest_folder` (defaults to workdir).
 
-    :param `remove_after`: If `True`, delete the original folder after conversion.
+    :param `comic`: A comic with metadata to convert
+    :param `folder_path`: A folder containing the comic to convert
+    :param `convert_to`: The format to convert to
+    :param `dest_folder`: A folder to put the converted comic in
+    :param `remove_after`: If `True`, delete the original folder after conversion
 
-    Returns an Iterator representing a progress bar up to the
-    number of chapters in the comic.
+    :returns An `Iterator` representing a progress bar up to the number of chapters in the comic.
     """
     if convert_to == ConvertFormats.NONE:
         return
@@ -92,7 +101,11 @@ def convert(
     From metadata in `comic`, convert the comic in `folder_path`
     to `convert_to` and put it in `dest_folder` (defaults to workdir).
 
-    :param `remove_after`: If `True`, delete the original folder after conversion.
+    :param `comic`: A comic with metadata to convert
+    :param `folder_path`: A folder containing the comic to convert
+    :param `convert_to`: The format to convert to
+    :param `dest_folder`: A folder to put the converted comic in
+    :param `remove_after`: If `True`, delete the original folder after conversion
     """
     for _ in convert_progress(
         comic, folder_path, convert_to, dest_folder, remove_after
@@ -104,8 +117,9 @@ def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterator[
     """
     Process the comic in `comic_path` with `ops` in the order provided.
 
-    Returns an Iterator representing a progress bar up to the
-    number of chapters in the comic.
+    :param `comic_path`: A folder containing a image folders to process
+    :param `ops`: A list of operations to perform on each image
+    :returns An `Iterator` representing a progress bar up to the number of images in the comic.
     """
     data = io.discover_local_images(comic_path)
     for _, images in data.items():
@@ -117,6 +131,10 @@ def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterator[
 def process(comic_path: Path | str, ops: list[ProcessOps]) -> None:
     """
     Process the comic in `comic_path` with `ops` in the order provided.
+
+    :param `comic_path`: A folder containing a image folders to process
+    :param `ops`: A list of operations to perform on each image
+    :returns An `Iterator` representing a progress bar up to the number of images in the comic.
     """
     for _ in process_progress(comic_path, ops):
         pass
@@ -134,14 +152,14 @@ def download_progress(
     """
     Download comic or comic URL `comic` to `path` using `threads` threads.
 
-    If `start` or `end` are specified, only download those
-    chapters (one-indexed).
+    :param `comic`: A comic or URL to download
+    :param `path`: A folder to download the comic to
+    :param `start`: The first chapter to download (one-indexed, inclusive)
+    :param `end`: The last chapter to download (one-indexed, inclusive)
+    :param `threads`: The number of threads to use
+    :param `only_download_missing`: If `True`, do not download images already in the destination path
 
-    If `only_download_missing` is `True`, images already in the
-    destination path will not be downloaded again.
-
-    Returns an Iterator representing a progress bar up to the
-    number of chapters in the comic.
+    :returns An `Iterator` representing a progress bar up to the number of chapters in the comic.
     """
     path = Path(path)
 
@@ -225,11 +243,12 @@ def download(
     """
     Download comic or comic URL `comic` to `path` using `threads` threads.
 
-    If `start` or `end` are specified, only download those
-    chapters (one-indexed).
-
-    If `only_download_missing` is `True`, images already in the
-    destination path will not be downloaded again.
+    :param `comic`: A comic or URL to download
+    :param `path`: A folder to download the comic to
+    :param `start`: The first chapter to download (one-indexed, inclusive)
+    :param `end`: The last chapter to download (one-indexed, inclusive)
+    :param `threads`: The number of threads to use
+    :param `only_download_missing`: If `True`, do not download images already in the destination path
     """
     for _ in download_progress(
         comic,
