@@ -2,9 +2,7 @@
 import sys
 import types
 
-from .base_source import BaseSource
-
-from . import (  # isort: skip
+from . import (
     source_mangadex,
     source_mangakakalot,
     source_manganato,
@@ -12,6 +10,7 @@ from . import (  # isort: skip
     source_readcomiconline,
     source_webtoons,
 )
+from .base_source import BaseSource
 
 __class_list: list[type[BaseSource]] = []
 

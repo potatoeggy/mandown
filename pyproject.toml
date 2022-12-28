@@ -39,5 +39,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
-# not released in stable branch yet
-#split_on_trailing_comma = true
+split_on_trailing_comma = true
