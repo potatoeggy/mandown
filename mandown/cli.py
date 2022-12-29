@@ -10,6 +10,7 @@ from .comic import BaseComic
 from .converter.base_converter import ConvertFormats
 from .io import MD_METADATA_FILE
 from .processor import ProcessOps
+from .processor.ops import ProcessConfig
 
 app = typer.Typer()
 
@@ -53,7 +54,9 @@ def cli_convert(
     typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
 
 
-def cli_process(comic_path: Path, options: list[ProcessOps]) -> None:
+def cli_process(
+    comic_path: Path, options: list[ProcessOps], config: ProcessConfig
+) -> None:
     if ProcessOps.NO_POSTPROCESSING in options:
         return
 
@@ -121,7 +124,7 @@ def process(
     """
     Process a comic folder in-place.
     """
-    cli_process(folder_path, options)
+    cli_process(folder_path, options, None)
 
 
 @app.command()
