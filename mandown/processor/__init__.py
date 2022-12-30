@@ -21,8 +21,6 @@ except ImportError:
 class ProcessSizeProfiles(str, Enum):
     """
     A class for storing size profiles for processing images.
-
-    :param `target_size`: The target size for the image. Only used if `resize` is enabled.
     """
 
     MOBILE = "mobile"
