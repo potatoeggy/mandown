@@ -5,7 +5,7 @@ from typing import List, Optional
 
 import typer
 
-from . import __version_str__, api, sources
+from . import __version_str__, all_profiles, api, sources
 from .comic import BaseComic
 from .converter.base_converter import ConvertFormats
 from .io import MD_METADATA_FILE
@@ -142,6 +142,7 @@ def process(
     """
     Process a comic folder in-place.
     """
+
     config = ProcessConfig(
         target_size=target_size,
         output_profile=size_profile.value if size_profile else None,
@@ -284,6 +285,13 @@ def callback(
         is_eager=True,
         help="Output a list of domains supported by mandown",
     ),
+    list_profiles: bool = typer.Option(
+        False,
+        "--list-profiles",
+        "-l",
+        help="List available device profiles and details",
+        is_eager=True,
+    ),
 ) -> None:
     if version:
         typer.echo(f"mandown {__version_str__}")
@@ -292,6 +300,16 @@ def callback(
     if supported_sites:
         for source in sources.get_all_classes():
             typer.echo(f"{source.name}: {', '.join(source.domains)}")
+        raise typer.Exit()
+
+    if list_profiles:
+        typer.echo("Available profiles:")
+        typer.echo(
+            "\n".join(
+                f' - {profile.name}: "{profile.id}"'
+                for profile in all_profiles.values()
+            )
+        )
         raise typer.Exit()
 
 
