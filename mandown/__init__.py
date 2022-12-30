@@ -8,8 +8,16 @@ from .api import (
     process_progress,
     query,
 )
+from .base import BaseChapter, BaseMetadata
+from .comic import BaseComic
 from .converter import ConvertFormats, get_converter
-from .processor import ProcessConfig, ProcessOps, Processor
+from .io import MD_METADATA_FILE
+from .processor import (
+    ProcessConfig,
+    ProcessOps,
+    ProcessOptionMismatchError,
+    Processor,
+)
 from .processor.profiles import SupportedProfiles, all_profiles
 
 __version__ = (1, 1, 1)

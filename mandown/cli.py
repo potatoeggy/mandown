@@ -5,13 +5,18 @@ from typing import List, Optional
 
 import typer
 
-from . import __version_str__, all_profiles, api, sources
-from .comic import BaseComic
-from .converter.base_converter import ConvertFormats
-from .io import MD_METADATA_FILE
-from .processor import ProcessOps, ProcessOptionMismatchError
-from .processor.ops import ProcessConfig
-from .processor.profiles import SupportedProfilesEnum
+from . import (
+    MD_METADATA_FILE,
+    BaseComic,
+    ConvertFormats,
+    ProcessConfig,
+    ProcessOps,
+    ProcessOptionMismatchError,
+    __version_str__,
+    all_profiles,
+    api,
+    sources,
+)
 
 app = typer.Typer()
 
