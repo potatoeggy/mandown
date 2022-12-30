@@ -60,7 +60,3 @@ __all_profiles_data: dict[SupportedProfiles, _ProfileType] = {
 all_profiles = {
     id: OutputProfile(id, *profile) for id, profile in __all_profiles_data.items()
 }
-
-SupportedProfilesEnum = Enum(
-    "SupportedProfilesEnum", {id: id for id in __all_profiles_data}
-)

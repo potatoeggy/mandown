@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, cast
 
 import typer
 
@@ -12,6 +12,7 @@ from . import (
     ProcessConfig,
     ProcessOps,
     ProcessOptionMismatchError,
+    SupportedProfiles,
     __version_str__,
     all_profiles,
     api,
@@ -137,7 +138,7 @@ def process(
         "-z",
         help="RESIZE ONLY: The target size (width, height) (cannot be used with `profile`)",
     ),
-    size_profile: Optional[SupportedProfilesEnum] = typer.Option(
+    size_profile: Optional[str] = typer.Option(
         None,
         "--profile",
         "-p",
@@ -147,10 +148,18 @@ def process(
     """
     Process a comic folder in-place.
     """
+    if size_profile not in all_profiles:
+        typer.secho(
+            f"Invalid profile {size_profile}, must be one of {all_profiles}",
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
+
+    size_profile = cast(SupportedProfiles | None, size_profile)
 
     config = ProcessConfig(
         target_size=target_size,
-        output_profile=size_profile.value if size_profile else None,
+        output_profile=size_profile,
     )
     cli_process(folder_path, options, config)
 
@@ -192,7 +201,7 @@ def get(
         "-z",
         help="IF PROCESSING AND RESIZING: The target size (width, height)",
     ),
-    size_profile: Optional[SupportedProfilesEnum] = typer.Option(
+    size_profile: Optional[str] = typer.Option(
         None,
         "--profile",
         "-p",
@@ -212,6 +221,15 @@ def get(
     """
     if not dest.is_dir():
         raise ValueError(f"{dest} is not a valid folder path.")
+
+    if size_profile not in all_profiles:
+        typer.secho(
+            f"Invalid profile {size_profile}, must be one of {all_profiles}",
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
+
+    size_profile = cast(SupportedProfiles | None, size_profile)
 
     # get and save metadata
     comic = cli_query(url)
@@ -246,7 +264,7 @@ def get(
     if processing_options:
         config = ProcessConfig(
             target_size=target_size,
-            output_profile=size_profile.value if size_profile else None,
+            output_profile=size_profile,
         )
         cli_process(dest / comic.metadata.title, processing_options, config)
 
