@@ -5,7 +5,7 @@ from typing import Iterator
 from . import io, sources
 from .comic import BaseComic
 from .converter import ConvertFormats, get_converter
-from .processor import ProcessOps, Processor
+from .processor import ProcessConfig, ProcessOps, Processor
 
 
 def query(url: str) -> BaseComic:
@@ -113,30 +113,35 @@ def convert(
         pass
 
 
-def process_progress(comic_path: Path | str, ops: list[ProcessOps]) -> Iterator[str]:
+def process_progress(
+    comic_path: Path | str, ops: list[ProcessOps], config: ProcessConfig | None = None
+) -> Iterator[str]:
     """
     Process the comic in `comic_path` with `ops` in the order provided.
 
     :param `comic_path`: A folder containing a image folders to process
     :param `ops`: A list of operations to perform on each image
+    :param `config`: Options for processing operations
     :returns An `Iterator` representing a progress bar up to the number of images in the comic.
     """
     data = io.discover_local_images(comic_path)
     for _, images in data.items():
         for i in images:
-            Processor(i).process(ops)
+            Processor(i, config).process(ops)
         yield "Processing"
 
 
-def process(comic_path: Path | str, ops: list[ProcessOps]) -> None:
+def process(
+    comic_path: Path | str, ops: list[ProcessOps], config: ProcessConfig | None = None
+) -> None:
     """
     Process the comic in `comic_path` with `ops` in the order provided.
 
     :param `comic_path`: A folder containing a image folders to process
     :param `ops`: A list of operations to perform on each image
-    :returns An `Iterator` representing a progress bar up to the number of images in the comic.
+    :param `config`: Options for processing operations
     """
-    for _ in process_progress(comic_path, ops):
+    for _ in process_progress(comic_path, ops, config):
         pass
 
 

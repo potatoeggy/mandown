@@ -1,8 +1,8 @@
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from .ops import ProcessContainer
+from .ops import ProcessConfig, ProcessContainer
 
 try:
     from PIL import Image
@@ -21,32 +21,49 @@ except ImportError:
 class ProcessOps(str, Enum):
     ROTATE_DOUBLE_PAGES = "rotate_double_pages"
     """If page width is greater than its height, rotate it 90 degrees."""
+
     SPLIT_DOUBLE_PAGES = "split_double_pages"
     """If page width is greater than its height, split it in half into two images."""
+
     NO_POSTPROCESSING = "none"
     """Disable image processing entirely."""
+
     TRIM_BORDERS = "trim_borders"
     """Conservatively remove borders in images."""
 
+    RESIZE = "resize"
+    """Resize images to a maximum width and height."""
 
-class Processor:
+
+class ProcessOptionMismatchError(Exception):
+    """Raised when an option is not valid for a given operation or
+    there are missing options."""
+
+
+class Processor(ProcessContainer):
     """
     A class for processing images.
 
     :param `image_path`: The path to the image to process
+    :raises `ImportError`: If Pillow is not installed
+    :raises `ProcessOptionMismatchError`: If an option is not valid for
+    a given operation or there are missing options
     """
 
-    def __init__(self, image_path: Path | str) -> None:
+    def __init__(
+        self, image_path: Path | str, config: ProcessConfig | None = None
+    ) -> None:
         if not HAS_PILLOW:
             raise ImportError(
                 "Pillow was not found and is needed for processing. Is it installed?"
             )
 
+        super().__init__(config)
         self.image_path = Path(image_path)
         self._image = Image.open(self.image_path)
         self.is_modified = False
 
-        # dangerous if there are multiple types of operations
+        # WARN: dangerous if there are multiple types of operations
         # that would add new image files to be written
         self.new_images: list[Image.Image] = []
 
@@ -81,20 +98,28 @@ class Processor:
         """
         Perform the operations in `operations` on the image in sequence
         and save it to disk. If `filename` is not None, it will be saved
-        with that filename instead.
+        with that filename instead. If "none" is in `operations`, no
+        post-processing will be done.
 
         :param operations: A list of operations to perform on the image
         :param filename: The filename to save the image as
         :raises NotImplementedError: If an operation is not implemented
         :raises OSError: If there is an error in saving the image
+        :raises ProcessOptionMismatchError: If an option is not valid for a given operation or there are missing options
         """
         if ProcessOps.NO_POSTPROCESSING in operations:
             return
 
+        if bool(self.config.target_size) ^ bool(ProcessOps.RESIZE in operations):
+            # if exactly one of target_size and resize is set
+            raise ProcessOptionMismatchError(
+                "target_size is set but resize is not in operations"
+            )
+
         for func in operations:
             try:
                 images: tuple[Image.Image, ...] | Image.Image | None = getattr(
-                    ProcessContainer, func
+                    self, func
                 )(self.image)
 
                 if images is None:
