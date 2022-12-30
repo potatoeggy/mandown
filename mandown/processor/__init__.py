@@ -36,7 +36,8 @@ class ProcessOps(str, Enum):
 
 
 class ProcessOptionMismatchError(Exception):
-    """Raised when an option is not valid for a given operation or there are missing options."""
+    """Raised when an option is not valid for a given operation or
+    there are missing options."""
 
 
 class Processor(ProcessContainer):
@@ -45,7 +46,8 @@ class Processor(ProcessContainer):
 
     :param `image_path`: The path to the image to process
     :raises `ImportError`: If Pillow is not installed
-    :raises `ProcessOptionMismatchError`: If an option is not valid for a given operation or there are missing options
+    :raises `ProcessOptionMismatchError`: If an option is not valid for
+    a given operation or there are missing options
     """
 
     def __init__(
