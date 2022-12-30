@@ -35,11 +35,17 @@ class ProcessOps(str, Enum):
     """Resize images to a maximum width and height."""
 
 
+class ProcessOptionMismatchError(Exception):
+    """Raised when an option is not valid for a given operation or there are missing options."""
+
+
 class Processor(ProcessContainer):
     """
     A class for processing images.
 
     :param `image_path`: The path to the image to process
+    :raises `ImportError`: If Pillow is not installed
+    :raises `ProcessOptionMismatchError`: If an option is not valid for a given operation or there are missing options
     """
 
     def __init__(
@@ -97,14 +103,21 @@ class Processor(ProcessContainer):
         :param filename: The filename to save the image as
         :raises NotImplementedError: If an operation is not implemented
         :raises OSError: If there is an error in saving the image
+        :raises ProcessOptionMismatchError: If an option is not valid for a given operation or there are missing options
         """
         if ProcessOps.NO_POSTPROCESSING in operations:
             return
 
+        if bool(self.config.target_size) ^ bool(ProcessOps.RESIZE in operations):
+            # if exactly one of target_size and resize is set
+            raise ProcessOptionMismatchError(
+                "target_size is set but resize is not in operations"
+            )
+
         for func in operations:
             try:
                 images: tuple[Image.Image, ...] | Image.Image | None = getattr(
-                    ProcessContainer, func
+                    self, func
                 )(self.image)
 
                 if images is None:

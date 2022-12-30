@@ -18,10 +18,12 @@ except ImportError:
             pass
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, slots=True)
 class ProcessConfig:
     """
     A class for storing configuration for processing images.
+
+    :param `target_size`: The target size for the image. Only used if `resize` is enabled.
     """
 
     target_size: tuple[int, int] | None = None

@@ -73,7 +73,7 @@ def cli_process(
         f"Applying processing options: {', '.join(options)}", fg=typer.colors.GREEN
     )
     with typer.progressbar(
-        api.process_progress(comic_path, options),
+        api.process_progress(comic_path, options, config),
         length=len(comic.chapters),
         label="Processing",
     ) as progress:
@@ -119,12 +119,20 @@ def convert(
 
 @app.command()
 def process(
-    options: list[ProcessOps], folder_path: Path = typer.Argument(Path.cwd())
+    options: list[ProcessOps],
+    folder_path: Path = typer.Argument(Path.cwd()),
+    target_size: Optional[tuple[int, int]] = typer.Option(
+        None,
+        "--target-size",
+        "-z",
+        help="The target size if `resize` is used (width, height)",
+    ),
 ) -> None:
     """
     Process a comic folder in-place.
     """
-    cli_process(folder_path, options, None)
+    config = ProcessConfig(target_size=target_size)
+    cli_process(folder_path, options, config)
 
 
 @app.command()
@@ -157,6 +165,12 @@ def get(
         "-p",
         help="Image processing options (in-place)",
         case_sensitive=True,
+    ),
+    target_size: Optional[tuple[int, int]] = typer.Option(
+        None,
+        "--target-size",
+        "-z",
+        help="The target size if `resize` is used (width, height)",
     ),
     remove_after: bool = typer.Option(
         False,
@@ -204,7 +218,8 @@ def get(
 
     # process
     if processing_options:
-        cli_process(dest / comic.metadata.title, processing_options)
+        config = ProcessConfig(target_size=target_size)
+        cli_process(dest / comic.metadata.title, processing_options, config)
 
     # convert
     if convert_to != ConvertFormats.NONE:
