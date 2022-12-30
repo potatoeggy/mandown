@@ -76,6 +76,13 @@ def cli_process(
         )
         raise typer.Exit(1) from err
 
+    if config.output_profile not in all_profiles:
+        typer.secho(
+            f"Invalid profile {config.output_profile}, must be one of {list(all_profiles.keys())}",
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
+
     typer.secho(
         f"Applying processing options: {', '.join(options)}", fg=typer.colors.GREEN
     )
@@ -133,9 +140,10 @@ def process(
     options: list[ProcessOps],
     folder_path: Path = typer.Argument(Path.cwd()),
     target_size: Optional[tuple[int, int]] = typer.Option(
-        None,
+        (0, 0),
         "--target-size",
         "-z",
+        show_default=False,
         help="RESIZE ONLY: The target size (width, height) (cannot be used with `profile`)",
     ),
     size_profile: Optional[str] = typer.Option(
@@ -148,12 +156,9 @@ def process(
     """
     Process a comic folder in-place.
     """
-    if size_profile not in all_profiles:
-        typer.secho(
-            f"Invalid profile {size_profile}, must be one of {all_profiles}",
-            fg=typer.colors.RED,
-        )
-        raise typer.Exit(1)
+    # work around typer bug (see mandown get)
+    if target_size == (0, 0):
+        target_size = None
 
     size_profile = cast(SupportedProfiles | None, size_profile)
 
@@ -196,9 +201,10 @@ def get(
         case_sensitive=True,
     ),
     target_size: Optional[tuple[int, int]] = typer.Option(
-        None,
+        (0, 0),
         "--target-size",
         "-z",
+        show_default=False,
         help="IF PROCESSING AND RESIZING: The target size (width, height)",
     ),
     size_profile: Optional[str] = typer.Option(
@@ -219,15 +225,12 @@ def get(
     Defaults to the first chapter and last chapter, respectively
     in the working directory.
     """
+    # work around typer bug (optional of tuples is not parsed correctly)
+    if target_size == (0, 0):
+        target_size = None
+
     if not dest.is_dir():
         raise ValueError(f"{dest} is not a valid folder path.")
-
-    if size_profile not in all_profiles:
-        typer.secho(
-            f"Invalid profile {size_profile}, must be one of {all_profiles}",
-            fg=typer.colors.RED,
-        )
-        raise typer.Exit(1)
 
     size_profile = cast(SupportedProfiles | None, size_profile)
 
