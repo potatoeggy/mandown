@@ -160,9 +160,8 @@ def process(
             target_size=target_size,
             output_profile=size_profile,
         )
-    except ValueError as err:
-        raise typer.Exit(1) from err
-    except KeyError as err:
+    except Exception as err:
+        typer.secho(f"Could not apply processing options: {err}", fg=typer.colors.RED)
         raise typer.Exit(1) from err
     cli_process(folder_path, options, config)
 
@@ -263,10 +262,17 @@ def get(
 
     # process
     if processing_options:
-        config = ProcessConfig(
-            target_size=target_size,
-            output_profile=size_profile,
-        )
+        try:
+            config = ProcessConfig(
+                target_size=target_size,
+                output_profile=size_profile,
+            )
+        except Exception as err:
+            typer.secho(
+                f"Could not apply processing options: {err}", fg=typer.colors.RED
+            )
+            raise typer.Exit(1) from err
+
         cli_process(dest / comic.metadata.title, processing_options, config)
 
     # convert

@@ -110,13 +110,12 @@ class Processor(ProcessContainer):
         if ProcessOps.NO_POSTPROCESSING in operations:
             return
 
-        target_size_with_resize = bool(self.config.target_size) ^ bool(
-            ProcessOps.RESIZE in operations
-        )
-        profile_with_resize = bool(self.config.output_profile) ^ bool(
-            ProcessOps.RESIZE in operations
-        )
-        if not target_size_with_resize and not profile_with_resize:
+        # TODO: move all the checks together
+        # there are some in ProcessConfig rn
+        resize_op_valid = bool(
+            self.config.output_profile or self.config.target_size
+        ) ^ bool(ProcessOps.RESIZE in operations)
+        if resize_op_valid:
             # if any of the following is true:
             # - target_size is set and resize is not
             # - profile is set and resize is not
