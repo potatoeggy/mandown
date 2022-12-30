@@ -8,6 +8,8 @@ from .api import (
     process_progress,
     query,
 )
+from .converter import ConvertFormats, get_converter
+from .processor import ProcessConfig, ProcessOps, Processor
 
 __version__ = (1, 1, 1)
 __version_str__ = ".".join(map(str, __version__))
