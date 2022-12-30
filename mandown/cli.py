@@ -9,8 +9,9 @@ from . import __version_str__, api, sources
 from .comic import BaseComic
 from .converter.base_converter import ConvertFormats
 from .io import MD_METADATA_FILE
-from .processor import ProcessOps
+from .processor import ProcessOps, ProcessOptionMismatchError
 from .processor.ops import ProcessConfig
+from .processor.profiles import SupportedProfilesEnum
 
 app = typer.Typer()
 
@@ -72,13 +73,17 @@ def cli_process(
     typer.secho(
         f"Applying processing options: {', '.join(options)}", fg=typer.colors.GREEN
     )
-    with typer.progressbar(
-        api.process_progress(comic_path, options, config),
-        length=len(comic.chapters),
-        label="Processing",
-    ) as progress:
-        for _ in progress:
-            pass
+    try:
+        with typer.progressbar(
+            api.process_progress(comic_path, options, config),
+            length=len(comic.chapters),
+            label="Processing",
+        ) as progress:
+            for _ in progress:
+                pass
+    except ProcessOptionMismatchError as err:
+        typer.secho(f"Could not apply processing options: {err}", fg=typer.colors.RED)
+        raise typer.Exit(1) from err
 
 
 @app.command()
@@ -125,13 +130,22 @@ def process(
         None,
         "--target-size",
         "-z",
-        help="The target size if `resize` is used (width, height)",
+        help="RESIZE ONLY: The target size (width, height) (cannot be used with `profile`)",
+    ),
+    size_profile: Optional[SupportedProfilesEnum] = typer.Option(
+        None,
+        "--profile",
+        "-p",
+        help="RESIZE ONLY: The device profile to use (cannot be used with `target-size`)",
     ),
 ) -> None:
     """
     Process a comic folder in-place.
     """
-    config = ProcessConfig(target_size=target_size)
+    config = ProcessConfig(
+        target_size=target_size,
+        output_profile=size_profile.value if size_profile else None,
+    )
     cli_process(folder_path, options, config)
 
 
@@ -170,13 +184,19 @@ def get(
         None,
         "--target-size",
         "-z",
-        help="The target size if `resize` is used (width, height)",
+        help="IF PROCESSING AND RESIZING: The target size (width, height)",
+    ),
+    size_profile: Optional[SupportedProfilesEnum] = typer.Option(
+        None,
+        "--profile",
+        "-p",
+        help="IF PROCESSING AND RESIZING: The device profile to use",
     ),
     remove_after: bool = typer.Option(
         False,
         "--remove-after",
         "-r",
-        help="Remove the downloaded folder after converting (requires --convert)",
+        help="IF CONVERTING: Remove the downloaded folder after converting",
     ),
 ) -> None:
     """
@@ -218,7 +238,10 @@ def get(
 
     # process
     if processing_options:
-        config = ProcessConfig(target_size=target_size)
+        config = ProcessConfig(
+            target_size=target_size,
+            output_profile=size_profile.value if size_profile else None,
+        )
         cli_process(dest / comic.metadata.title, processing_options, config)
 
     # convert

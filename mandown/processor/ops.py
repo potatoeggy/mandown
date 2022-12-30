@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from .profiles import all_profiles
+from .profiles import SupportedProfiles, all_profiles
 
 try:
     from PIL import Image, ImageChops
@@ -33,7 +33,7 @@ class ProcessConfig:
     target_size: tuple[int, int] | None = None
     """The target size for the image. Only used if `resize` is enabled. Mutually exclusive with `output_profile`."""
 
-    output_profile: str | None = None
+    output_profile: SupportedProfiles | None = None
     """The output size profile to use for the image. Only used if `resize` is enabled. Mutually exclusive with `target_size`."""
 
     def __post_init__(self) -> None:

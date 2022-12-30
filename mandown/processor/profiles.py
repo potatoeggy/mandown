@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from enum import Enum
+from typing import Literal
 
 
 @dataclass(slots=True, frozen=True)
@@ -8,15 +10,36 @@ class OutputProfile:
     size: tuple[int, int]
 
 
+SupportedProfiles = Literal[
+    "kindle",
+    "kintouch",
+    "paper",
+    "voyage",
+    "oasis2",
+    "kobotouch",
+    "glo",
+    "glohd",
+    "aura",
+    "aurahd",
+    "aurah2o",
+    "aurah2o2",
+    "auraone",
+    "clarahd",
+    "librah2o",
+    "nia",
+    "clara2e",
+    "libra2",
+    "sage",
+]
 _ProfileType = tuple[str, tuple[int, int]]
 
-__all_profiles_data: dict[str, _ProfileType] = {
+__all_profiles_data: dict[SupportedProfiles, _ProfileType] = {
     # Kindles
     "kindle": ("Kindle", (600, 800)),
     "kintouch": ("Kindle Touch", (600, 800)),
     "paper": ("Kindle Paperwhite 1/2", (758, 1024)),
     "voyage": ("Kindle Voyage, Oasis, Paperwhite 3/4", (1072, 1448)),
-    "oasis": ("Kindle Oasis 2/3", (1264, 1680)),
+    "oasis2": ("Kindle Oasis 2/3", (1264, 1680)),
     # Kobos
     "kobotouch": ("Kobo Mini/Touch", (600, 800)),
     "glo": ("Kobo Glo", (768, 1024)),
@@ -37,3 +60,7 @@ __all_profiles_data: dict[str, _ProfileType] = {
 all_profiles = {
     id: OutputProfile(id, *profile) for id, profile in __all_profiles_data.items()
 }
+
+SupportedProfilesEnum = Enum(
+    "SupportedProfilesEnum", {id: id for id in __all_profiles_data}
+)
