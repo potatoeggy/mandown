@@ -76,9 +76,9 @@ def cli_process(
         )
         raise typer.Exit(1) from err
 
-    if config.output_profile not in all_profiles:
+    if config.output_profile is not None and config.output_profile not in all_profiles:
         typer.secho(
-            f"Invalid profile {config.output_profile}, must be one of {list(all_profiles.keys())}",
+            f"Invalid processing profile {config.output_profile}, must be one of {list(all_profiles.keys())}",
             fg=typer.colors.RED,
         )
         raise typer.Exit(1)
