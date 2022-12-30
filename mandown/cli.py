@@ -149,7 +149,7 @@ def process(
     size_profile: Optional[str] = typer.Option(
         None,
         "--profile",
-        "-p",
+        "-r",
         help="RESIZE ONLY: The device profile to use (cannot be used with `target-size`)",
     ),
 ) -> None:
@@ -210,7 +210,7 @@ def get(
     size_profile: Optional[str] = typer.Option(
         None,
         "--profile",
-        "-p",
+        "-r",
         help="IF PROCESSING AND RESIZING: The device profile to use",
     ),
     remove_after: bool = typer.Option(
