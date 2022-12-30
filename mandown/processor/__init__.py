@@ -18,30 +18,6 @@ except ImportError:
                 pass
 
 
-class ProcessSizeProfiles(str, Enum):
-    """
-    A class for storing size profiles for processing images.
-    """
-
-    MOBILE = "mobile"
-    """A size profile for mobile devices."""
-
-    TABLET = "tablet"
-    """A size profile for tablet devices."""
-
-    DESKTOP = "desktop"
-    """A size profile for desktop devices."""
-
-    @property
-    def target_size(self) -> tuple[int, int]:
-        """The target size for the image. Only used if `resize` is enabled."""
-        return {
-            self.MOBILE: (1080, 1920),
-            self.TABLET: (1440, 2560),
-            self.DESKTOP: (1920, 1080),
-        }[self]
-
-
 class ProcessOps(str, Enum):
     ROTATE_DOUBLE_PAGES = "rotate_double_pages"
     """If page width is greater than its height, rotate it 90 degrees."""
