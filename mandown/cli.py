@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from typing import List, Optional, cast
+from typing import List, NoReturn, Optional, cast
 
 import typer
 
@@ -75,13 +75,6 @@ def cli_process(
             fg=typer.colors.RED,
         )
         raise typer.Exit(1) from err
-
-    if config.output_profile is not None and config.output_profile not in all_profiles:
-        typer.secho(
-            f"Invalid processing profile {config.output_profile}, must be one of {list(all_profiles.keys())}",
-            fg=typer.colors.RED,
-        )
-        raise typer.Exit(1)
 
     typer.secho(
         f"Applying processing options: {', '.join(options)}", fg=typer.colors.GREEN
@@ -162,10 +155,15 @@ def process(
 
     size_profile = cast(SupportedProfiles | None, size_profile)
 
-    config = ProcessConfig(
-        target_size=target_size,
-        output_profile=size_profile,
-    )
+    try:
+        config = ProcessConfig(
+            target_size=target_size,
+            output_profile=size_profile,
+        )
+    except ValueError as err:
+        raise typer.Exit(1) from err
+    except KeyError as err:
+        raise typer.Exit(1) from err
     cli_process(folder_path, options, config)
 
 

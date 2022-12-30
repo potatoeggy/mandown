@@ -27,7 +27,8 @@ class ProcessConfig:
 
     :param `target_size`: The target size for the image. Only used if `resize` is enabled. Mutually exclusive with `output_profile`.
     :param `output_profile`: The output size profile to use for the image. Only used if `resize` is enabled. Mutually exclusive with `target_size`.
-    :raises `ValueError`: If incompatible options are supplied or if the `output_profile` is not a real key (see mandown/processor/profiles.py).
+    :raises `ValueError`: If incompatible options are supplied
+    :raises `KeyError`: `output_profile` is not a real key (see mandown/processor/profiles.py).
     """
 
     target_size: tuple[int, int] | None = None
@@ -44,7 +45,9 @@ class ProcessConfig:
 
         if self.output_profile is not None:
             if self.output_profile not in all_profiles:
-                raise ValueError(f"Invalid output profile: {self.output_profile}.")
+                raise KeyError(
+                    f"Invalid output profile: {self.output_profile}. See mandown.all_profiles or mandown --list-profiles for a list of valid profiles."
+                )
             self.target_size = all_profiles[self.output_profile].size
 
 
