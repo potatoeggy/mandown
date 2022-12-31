@@ -321,7 +321,7 @@ def get(
     ),
     processing_options: Optional[List[ProcessOps]] = typer.Option(
         [],
-        "--processing-options",
+        "--process",
         "-p",
         help="Image processing options (in-place)",
         case_sensitive=True,
