@@ -20,5 +20,5 @@ from .processor import (
 )
 from .processor.profiles import SupportedProfiles, all_profiles
 
-__version__ = (1, 1, 1)
+__version__ = (1, 2, 0)
 __version_str__ = ".".join(map(str, __version__))
