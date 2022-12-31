@@ -60,7 +60,7 @@ def init_parse_comic(path: Path | str, source_url: str | None = None) -> BaseCom
 def convert_progress(
     comic: BaseComic,
     folder_path: Path | str,
-    convert_to: ConvertFormats,
+    to: ConvertFormats,
     dest_folder: Path | str | None = None,
     remove_after: bool = False,
 ) -> Iterator[str]:
@@ -76,14 +76,14 @@ def convert_progress(
 
     :returns An `Iterator` representing a progress bar up to the number of chapters in the comic.
     """
-    if convert_to == ConvertFormats.NONE:
+    if to == ConvertFormats.NONE:
         return
 
     # default to working directory
     dest_folder = dest_folder or Path(".").resolve()
 
     # obviously pylint is wrong because this is 100% callable
-    converter = get_converter(convert_to)(comic)  # pylint: disable=not-callable
+    converter = get_converter(to)(comic)  # pylint: disable=not-callable
     yield from converter.create_file_progress(folder_path, dest_folder)
 
     if remove_after:
@@ -93,7 +93,7 @@ def convert_progress(
 def convert(
     comic: BaseComic,
     folder_path: Path | str,
-    convert_to: ConvertFormats,
+    to: ConvertFormats,
     dest_folder: Path | str | None = None,
     remove_after: bool = False,
 ) -> None:
@@ -107,9 +107,7 @@ def convert(
     :param `dest_folder`: A folder to put the converted comic in
     :param `remove_after`: If `True`, delete the original folder after conversion
     """
-    for _ in convert_progress(
-        comic, folder_path, convert_to, dest_folder, remove_after
-    ):
+    for _ in convert_progress(comic, folder_path, to, dest_folder, remove_after):
         pass
 
 
