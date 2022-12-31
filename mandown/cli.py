@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, cast
 
 import typer
 
-from . import __version_str__, api, sources
-from .comic import BaseComic
-from .converter.base_converter import ConvertFormats
-from .io import MD_METADATA_FILE
-from .processor import ProcessOps
-from .processor.ops import ProcessConfig
+from . import (
+    MD_METADATA_FILE,
+    BaseComic,
+    ConvertFormats,
+    ProcessConfig,
+    ProcessOps,
+    ProcessOptionMismatchError,
+    SupportedProfiles,
+    __version_str__,
+    all_profiles,
+    api,
+    sources,
+)
 
 app = typer.Typer()
 
@@ -72,13 +79,17 @@ def cli_process(
     typer.secho(
         f"Applying processing options: {', '.join(options)}", fg=typer.colors.GREEN
     )
-    with typer.progressbar(
-        api.process_progress(comic_path, options, config),
-        length=len(comic.chapters),
-        label="Processing",
-    ) as progress:
-        for _ in progress:
-            pass
+    try:
+        with typer.progressbar(
+            api.process_progress(comic_path, options, config),
+            length=len(comic.chapters),
+            label="Processing",
+        ) as progress:
+            for _ in progress:
+                pass
+    except ProcessOptionMismatchError as err:
+        typer.secho(f"Could not apply processing options: {err}", fg=typer.colors.RED)
+        raise typer.Exit(1) from err
 
 
 @app.command()
@@ -122,16 +133,37 @@ def process(
     options: list[ProcessOps],
     folder_path: Path = typer.Argument(Path.cwd()),
     target_size: Optional[tuple[int, int]] = typer.Option(
-        None,
+        (0, 0),
         "--target-size",
         "-z",
-        help="The target size if `resize` is used (width, height)",
+        min=0,
+        show_default=False,
+        help="RESIZE ONLY: The target size (width, height) (cannot be used with `profile`)",
+    ),
+    size_profile: Optional[str] = typer.Option(
+        None,
+        "--profile",
+        "-r",
+        help="RESIZE ONLY: The device profile to use (cannot be used with `target-size`)",
     ),
 ) -> None:
     """
     Process a comic folder in-place.
     """
-    config = ProcessConfig(target_size=target_size)
+    # work around typer bug (see mandown get)
+    if target_size == (0, 0):
+        target_size = None
+
+    size_profile = cast(SupportedProfiles | None, size_profile)
+
+    try:
+        config = ProcessConfig(
+            target_size=target_size,
+            output_profile=size_profile,
+        )
+    except Exception as err:
+        typer.secho(f"Could not apply processing options: {err}", fg=typer.colors.RED)
+        raise typer.Exit(1) from err
     cli_process(folder_path, options, config)
 
 
@@ -167,16 +199,24 @@ def get(
         case_sensitive=True,
     ),
     target_size: Optional[tuple[int, int]] = typer.Option(
-        None,
+        (0, 0),
         "--target-size",
         "-z",
-        help="The target size if `resize` is used (width, height)",
+        show_default=False,
+        min=0,
+        help="IF PROCESSING AND RESIZING: The target size (width, height)",
+    ),
+    size_profile: Optional[str] = typer.Option(
+        None,
+        "--profile",
+        "-r",
+        help="IF PROCESSING AND RESIZING: The device profile to use",
     ),
     remove_after: bool = typer.Option(
         False,
         "--remove-after",
         "-r",
-        help="Remove the downloaded folder after converting (requires --convert)",
+        help="IF CONVERTING: Remove the downloaded folder after converting",
     ),
 ) -> None:
     """
@@ -184,8 +224,14 @@ def get(
     Defaults to the first chapter and last chapter, respectively
     in the working directory.
     """
+    # work around typer bug (optional of tuples is not parsed correctly)
+    if target_size == (0, 0):
+        target_size = None
+
     if not dest.is_dir():
         raise ValueError(f"{dest} is not a valid folder path.")
+
+    size_profile = cast(SupportedProfiles | None, size_profile)
 
     # get and save metadata
     comic = cli_query(url)
@@ -218,7 +264,17 @@ def get(
 
     # process
     if processing_options:
-        config = ProcessConfig(target_size=target_size)
+        try:
+            config = ProcessConfig(
+                target_size=target_size,
+                output_profile=size_profile,
+            )
+        except Exception as err:
+            typer.secho(
+                f"Could not apply processing options: {err}", fg=typer.colors.RED
+            )
+            raise typer.Exit(1) from err
+
         cli_process(dest / comic.metadata.title, processing_options, config)
 
     # convert
@@ -261,6 +317,13 @@ def callback(
         is_eager=True,
         help="Output a list of domains supported by mandown",
     ),
+    list_profiles: bool = typer.Option(
+        False,
+        "--list-profiles",
+        "-l",
+        help="List available device profiles and details",
+        is_eager=True,
+    ),
 ) -> None:
     if version:
         typer.echo(f"mandown {__version_str__}")
@@ -269,6 +332,16 @@ def callback(
     if supported_sites:
         for source in sources.get_all_classes():
             typer.echo(f"{source.name}: {', '.join(source.domains)}")
+        raise typer.Exit()
+
+    if list_profiles:
+        typer.echo("Available profiles:")
+        typer.echo(
+            "\n".join(
+                f' - {profile.name}: "{profile.id}"'
+                for profile in all_profiles.values()
+            )
+        )
         raise typer.Exit()
 
 

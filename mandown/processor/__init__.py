@@ -110,10 +110,18 @@ class Processor(ProcessContainer):
         if ProcessOps.NO_POSTPROCESSING in operations:
             return
 
-        if bool(self.config.target_size) ^ bool(ProcessOps.RESIZE in operations):
-            # if exactly one of target_size and resize is set
+        # TODO: move all the checks together
+        # there are some in ProcessConfig rn
+        resize_op_valid = bool(
+            self.config.output_profile or self.config.target_size
+        ) ^ bool(ProcessOps.RESIZE in operations)
+        if resize_op_valid:
+            # if any of the following is true:
+            # - target_size is set and resize is not
+            # - profile is set and resize is not
+            # - resize is set and neither target_size nor profile is set
             raise ProcessOptionMismatchError(
-                "target_size is set but resize is not in operations"
+                "resize must be used with target_size or profile"
             )
 
         for func in operations:
