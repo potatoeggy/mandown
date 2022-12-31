@@ -92,7 +92,7 @@ def cli_process(
         raise typer.Exit(1) from err
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 def convert(
     convert_to: ConvertFormats,
     folder_path: Path,
@@ -111,6 +111,9 @@ def convert(
 ) -> None:
     """
     Convert a comic folder into CBZ/EPUB/PDF.
+
+    eg. To convert to CBZ:
+    mandown convert cbz /path/to/comic/folder
     """
     try:
         comic = api.load(folder_path)
@@ -128,7 +131,7 @@ def convert(
     cli_convert(folder_path, convert_to, dest, remove_after)
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 def process(
     options: list[ProcessOps],
     folder_path: Path = typer.Argument(Path.cwd()),
@@ -149,6 +152,14 @@ def process(
 ) -> None:
     """
     Process a comic folder in-place.
+
+    eg. To trim borders and resize to 800x1200:
+    mandown process trim_borders resize -z 800 1200
+
+    eg. To split double pages and resize to a Kindle Paperwhite 2 profile:
+    mandown process split_double_pages resize -r paper
+
+    All profiles can be listed with "mandown --list-profiles".
     """
     # work around typer bug (see mandown get)
     if target_size == (0, 0):
@@ -167,7 +178,7 @@ def process(
     cli_process(folder_path, options, config)
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 def get(
     url: str,
     dest: Path = typer.Argument(
@@ -223,6 +234,18 @@ def get(
     Download from a URL chapters start_chapter to end_chapter.
     Defaults to the first chapter and last chapter, respectively
     in the working directory.
+
+    eg. To download all chapters of a comic to the current directory:
+    mandown get https://website.com/comic/1234
+
+    eg. To download chapters 1-10 of a comic to the current directory:
+    mandown get https://website.com/comic/1234 -s 1 -e 10
+
+    eg. To convert all chapters of a comic to EPUB:
+    mandown get https://website.com/comic/1234 -c epub
+
+    eg. To convert all chapters of a comic to CBZ after trimming borders:
+    mandown get https://website.com/comic/1234 -c cbz -p trim_borders
     """
     # work around typer bug (optional of tuples is not parsed correctly)
     if target_size == (0, 0):
@@ -282,7 +305,7 @@ def get(
         cli_convert(dest / comic.metadata.title, convert_to, dest, remove_after)
 
 
-@app.command(name="init-metadata")
+@app.command(name="init-metadata", no_args_is_help=True)
 def init_metadata(
     path: Path,
     source_url: Optional[str] = typer.Argument(
@@ -292,6 +315,8 @@ def init_metadata(
     """
     Initialise a folder with metadata to be converted with Mandown, optionally
     fetching metadata from an internet source.
+
+    eg. mandown init-metadata /path/to/folder https://website.com/comic/1234
     """
     if (path / MD_METADATA_FILE).is_file():
         return typer.echo(

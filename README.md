@@ -8,7 +8,18 @@
 [![Latest release](https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag)](https://github.com/potatoeggy/mandown/releases/latest)
 [![License](https://img.shields.io/github/license/potatoeggy/mandown)](/LICENSE)
 
-Comic downloader and converter to CBZ, EPUB, and/or PDF as a Python library and command line application.
+Mandown is a comic downloader and converter to CBZ, EPUB, and/or PDF. It also supports image post-processing to make them more readable on certain devices a la [KCC](https://github.com/ciromattia/kcc).
+
+## Features
+
+- Download comics from supported sites
+  - Supports downloading a range of chapters
+  - Supports multithreaded downloading
+- Process downloaded images
+  - Rotate or split double-page spreads
+  - Trim borders
+  - Resize images
+- Convert downloaded comics to CBZ, EPUB, or PDF
 
 ## Supported sites
 
@@ -56,7 +67,9 @@ poetry build
 pip3 install dist/mandown*.whl
 ```
 
-## Usage
+## Basic usage
+
+See the [docs](/docs/) for more information and examples.
 
 ```
 mandown get <URL>
@@ -88,7 +101,9 @@ Where `PROCESS_OPERATIONS` is an option found from running `mandown process --he
 
 Run `mandown --help` for more info.
 
-## Library usage
+## Basic library usage
+
+See the [docs](/docs/) for more information and examples.
 
 To just download the images:
 ```python
@@ -103,28 +118,5 @@ import mandown
 
 comic = mandown.query("https://comic-site.com/the-best-comic")
 mandown.download(comic)
-mandown.convert(comic, comic.metadata.title, "epub")
-```
-
-More advanced stuff:
-
-```python
-import mandown
-
-# load a previously downloaded comic...
-comic = mandown.load("path/to/comic/folder")
-print(comic.metadata, comic.chapters)
-
-# ...OR fetch a comic from a source by URL
-comic = mandown.query(url_to_comic)
-print(comic.metadata, comic.chapters)
-
-# download the first 10 chapters of comic to ./comic using 4 threads
-mandown.download(comic, "./comic/", threads=4, end=10)
-
-# apply image post-processing to comic images in ./comic
-mandown.process("./comic/", options=["rotate_double_pages", "trim_borders"])
-
-# convert comic located in ./comic to epub, storing it in ./epubs
-mandown.convert(comic, "./comic/", "epub", "./epubs")
+mandown.convert(comic, title=comic.metadata.title, to="epub")
 ```
