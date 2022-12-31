@@ -136,6 +136,7 @@ def process(
         (0, 0),
         "--target-size",
         "-z",
+        min=0,
         show_default=False,
         help="RESIZE ONLY: The target size (width, height) (cannot be used with `profile`)",
     ),
@@ -202,6 +203,7 @@ def get(
         "--target-size",
         "-z",
         show_default=False,
+        min=0,
         help="IF PROCESSING AND RESIZING: The target size (width, height)",
     ),
     size_profile: Optional[str] = typer.Option(
