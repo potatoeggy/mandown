@@ -41,24 +41,23 @@ def cli_init_metadata_interactive() -> None:
         raise typer.Exit(1) from err
     else:
         typer.secho(
-            f"There is already a comic at {path}. Remove md-metadata.json if you're sure you want to restart!",
+            f"There is already a comic at {path}. Remove md-metadata.json"
+            "if you're sure you want to restart!",
             fg=typer.colors.RED,
         )
         raise typer.Exit(2)
 
-    NO_URL_SENTINEL = "None"
+    no_url_sentinel = "None"
     source_url: str = typer.prompt(
-        "Automatically populate with the following source URL", default=NO_URL_SENTINEL
+        "Automatically populate with the following source URL", default=no_url_sentinel
     )
 
     metadata = BaseMetadata("", [], "", [], "", "")
     chapters: list[BaseChapter] = []
 
-    if source_url != NO_URL_SENTINEL:
+    if source_url != no_url_sentinel:
         comic = cli_query(source_url)
-        typer.echo(
-            f"Found {comic.metadata.title} from {comic.source.name} with {len(comic.chapters)} chapters"
-        )
+        typer.echo(f"Found {comic.metadata.title} with {len(comic.chapters)} chapters")
         metadata = comic.metadata
         chapters = comic.chapters
 
@@ -454,7 +453,11 @@ def init_metadata(
         )
 
     try:
-        comic = api.init_parse_comic(path, source_url)
+        if source_url is not None:
+            donor = api.query(source_url)
+            comic = api.init_parse_comic(path, donor, download_cover)
+        else:
+            comic = api.init_parse_comic(path)
     except AttributeError as err:
         typer.secho("--download-cover must be used with --source-url.")
         raise typer.Exit(1) from err

@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 import shutil
 from pathlib import Path
 from typing import Iterator
@@ -50,7 +51,8 @@ def init_parse_comic(
 
     :param `path`: A folder containing `md-metadata.json` or a comic structure
     :param `data`: A comic to fill metadata from if no metadata is found
-    :param `download_cover`: If `True` and `source_url` is set, download the cover image if no metadata is found
+    :param `download_cover`: If `True` and `source_url` is set, download
+    the cover image if no metadata is found
     :returns A comic with metadata and chapter data of that folder
     :raises `AttributeError` if the source URL is not set and `download_cover` is `True`
     """

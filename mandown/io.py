@@ -9,7 +9,6 @@ import filetype
 import requests
 from natsort import natsorted
 
-from . import sources
 from .base import BaseChapter, BaseMetadata
 from .comic import BaseComic
 
@@ -32,7 +31,7 @@ def async_download_image(
     name = filename or url.split("/")[-1]
     dest_file = dest_folder / name
 
-    res = requests.get(url, headers=headers)
+    res = requests.get(url, headers=headers, timeout=5)
     res.raise_for_status()
     with open(dest_file, "wb") as file:
         file.write(res.content)
