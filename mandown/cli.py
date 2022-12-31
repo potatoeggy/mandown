@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from typing import List, NoReturn, Optional, cast
+from typing import List, Optional, cast
 
 import typer
 

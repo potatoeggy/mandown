@@ -162,7 +162,8 @@ def download_progress(
     :param `start`: The first chapter to download (one-indexed, inclusive)
     :param `end`: The last chapter to download (one-indexed, inclusive)
     :param `threads`: The number of threads to use
-    :param `only_download_missing`: If `True`, do not download images already in the destination path
+    :param `only_download_missing`: If `True`, do not download
+    images already in the destination path
 
     :returns An `Iterator` representing a progress bar up to the number of chapters in the comic.
     """
@@ -253,7 +254,8 @@ def download(
     :param `start`: The first chapter to download (one-indexed, inclusive)
     :param `end`: The last chapter to download (one-indexed, inclusive)
     :param `threads`: The number of threads to use
-    :param `only_download_missing`: If `True`, do not download images already in the destination path
+    :param `only_download_missing`: If `True`, do not download images
+    already in the destination path
     """
     for _ in download_progress(
         comic,
