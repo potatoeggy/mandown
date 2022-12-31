@@ -88,10 +88,14 @@ def read_comic(path: Path | str) -> BaseComic:
 
     :param `path`: A folder containing `md-metadata.json`
     :returns A comic with metadata and chapter data of that folder
-    :raises `FileNotFoundError` if `md-metadata.json` is not found
+    :raises `FileNotFoundError` if `md-metadata.json` is not found.
+    :raises `IOError` if the path does not exist.
     """
     path = Path(path)
     json_path = path / MD_METADATA_FILE
+
+    if not path.exists():
+        raise IOError(f"Path {path} does not exist")
 
     with open(json_path, "r", encoding="utf-8") as file:
         data = json.load(file)

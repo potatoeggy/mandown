@@ -7,7 +7,9 @@ import typer
 
 from . import (
     MD_METADATA_FILE,
+    BaseChapter,
     BaseComic,
+    BaseMetadata,
     ConvertFormats,
     ProcessConfig,
     ProcessOps,
@@ -20,6 +22,116 @@ from . import (
 )
 
 app = typer.Typer()
+
+
+def cli_init_metadata_interactive() -> None:
+    path: Path = (
+        typer.prompt("Folder path", default=Path.cwd(), type=Path)
+        .expanduser()
+        .resolve()
+    )
+
+    try:
+        comic = api.load(path)
+    except FileNotFoundError:
+        # expected if no metadata exists
+        ...
+    except IOError as err:
+        typer.secho(f"{path} could not be found. Does it exist?", fg=typer.colors.RED)
+        raise typer.Exit(1) from err
+    else:
+        typer.secho(
+            f"There is already a comic at {path}. Remove md-metadata.json if you're sure you want to restart!",
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(2)
+
+    NO_URL_SENTINEL = "None"
+    source_url: str = typer.prompt(
+        "Automatically populate with the following source URL", default=NO_URL_SENTINEL
+    )
+
+    metadata = BaseMetadata("", [], "", [], "", "")
+    chapters: list[BaseChapter] = []
+
+    if source_url != NO_URL_SENTINEL:
+        comic = cli_query(source_url)
+        typer.echo(
+            f"Found {comic.metadata.title} from {comic.source.name} with {len(comic.chapters)} chapters"
+        )
+        metadata = comic.metadata
+        chapters = comic.chapters
+
+    metadata.title = typer.prompt("Title", default=metadata.title or None).strip()
+    metadata.__post_init__()  # regenerate slug
+
+    metadata.authors = [
+        s.strip()
+        for s in typer.prompt(
+            "Author(s) (comma-separated)",
+            default=", ".join(metadata.authors) or None,
+        ).split(",")
+    ]
+    metadata.genres = [
+        s.strip()
+        for s in typer.prompt(
+            "Genre(s) (comma-separated)",
+            default=", ".join(metadata.genres) or None,
+        ).split(",")
+    ]
+    metadata.cover_art = typer.prompt(
+        "Cover art URL (enter 'EXISTS' if cover.png/jpg already exists)",
+        default=metadata.cover_art or None,
+    ).strip()
+    metadata.description = typer.prompt(
+        "Description", default=metadata.description or None
+    ).strip()
+    metadata.url = metadata.url
+
+    typer.secho("Metadata collected, now adding chapters...", fg=typer.colors.GREEN)
+
+    if chapters:
+        # try to match up chapters with existing files
+        folders_in_cd = sorted(f for f in path.iterdir() if f.is_dir())
+        for folder, chapter in zip(folders_in_cd, chapters):
+            chapter.slug = folder.name
+
+        # print out the matches
+        typer.secho("Matches found:", fg=typer.colors.GREEN)
+        for folder, chapter in zip(folders_in_cd, chapters):
+            typer.echo(f"  {folder.name} -> {chapter.title}")
+
+        delta = len(folders_in_cd) - len(chapters)
+        if delta > 0:
+            res = typer.prompt(
+                f"Matches found with {delta} extra local chapters. Attempt to resolve? [Y/n]",
+                default=True,
+                show_choices=True,
+                show_default=False,
+            )
+            if res:
+                # if there are more folders than chapters, add them as new chapters
+                for folder in folders_in_cd[len(chapters) :]:
+                    chapters.append(BaseChapter(folder.name, ""))
+
+                # print out new matches
+                typer.secho("New matches:", fg=typer.colors.GREEN)
+                for folder, chapter in zip(folders_in_cd, chapters):
+                    typer.echo(f"  NEW: {folder.name}")
+
+        res = typer.prompt(
+            "Matches found. Finish and save? [Y/n]",
+            default=True,
+            show_choices=True,
+            show_default=False,
+        )
+        print(res)
+
+    typer.secho(
+        f"All done! Saving metadata to {path / MD_METADATA_FILE}...",
+        fg=typer.colors.GREEN,
+    )
+    api.init_parse_comic(path, metadata, metadata.cover_art != "EXISTS")
 
 
 def cli_query(url: str) -> BaseComic:
@@ -305,9 +417,9 @@ def get(
         cli_convert(dest / comic.metadata.title, convert_to, dest, remove_after)
 
 
-@app.command(name="init-metadata", no_args_is_help=True)
+@app.command(name="init-metadata")
 def init_metadata(
-    path: Path,
+    path: Optional[Path] = typer.Argument(None, help="The folder to initialise"),
     source_url: Optional[str] = typer.Argument(
         None, help="The url to get metadata from"
     ),
@@ -320,15 +432,21 @@ def init_metadata(
 ) -> None:
     """
     Initialise a folder with metadata to be converted with Mandown, optionally
-    fetching metadata from an internet source.
+    fetching metadata from an internet source. Pass with no arguments to
+    start an interactive session.
 
     eg. mandown init-metadata /path/to/folder https://website.com/comic/1234 --download-cover
     """
+
+    if path is None:
+        # interactive session
+        return cli_init_metadata_interactive()
 
     if (path / MD_METADATA_FILE).is_file():
         return typer.echo(
             "Metadata already found. Please remove it to create new metadata."
         )
+
     try:
         comic = api.init_parse_comic(path, source_url)
     except AttributeError as err:

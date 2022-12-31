@@ -25,7 +25,8 @@ def load(path: Path | str) -> BaseComic:
     :param `path`: A folder where mandown has created a comic
     :returns A comic with metadata and chapter data of that folder
 
-    :throws FileNotFoundError if `md-metadata.json` cannot be found.
+    :raises FileNotFoundError if `md-metadata.json` cannot be found
+    :raises IOError if the path does not exist
     """
     return io.read_comic(path)
 

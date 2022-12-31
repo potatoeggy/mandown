@@ -28,7 +28,7 @@ class BaseMetadata:
     def __post_init__(self) -> None:
         self.title_slug = slugify(self.title)
 
-    def asdict(self) -> dict:
+    def asdict(self) -> dict[str, str | list[str]]:
         """
         Return a dictionary representation of the metadata.
         """
