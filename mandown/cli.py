@@ -311,18 +311,33 @@ def init_metadata(
     source_url: Optional[str] = typer.Argument(
         None, help="The url to get metadata from"
     ),
+    download_cover: bool = typer.Option(
+        False,
+        "--download-cover",
+        "-d",
+        help="If --source-url is passed: Download the cover image from the source.",
+    ),
 ) -> None:
     """
     Initialise a folder with metadata to be converted with Mandown, optionally
     fetching metadata from an internet source.
 
-    eg. mandown init-metadata /path/to/folder https://website.com/comic/1234
+    eg. mandown init-metadata /path/to/folder https://website.com/comic/1234 --download-cover
     """
+
     if (path / MD_METADATA_FILE).is_file():
         return typer.echo(
             "Metadata already found. Please remove it to create new metadata."
         )
-    comic = api.init_parse_comic(path, source_url)
+    try:
+        comic = api.init_parse_comic(path, source_url)
+    except AttributeError as err:
+        typer.secho("--download-cover must be used with --source-url.")
+        raise typer.Exit(1) from err
+    except ValueError as err:
+        typer.secho("Source not found.")
+        raise typer.Exit(1) from err
+
     typer.secho(f"Found {comic.metadata.title}:", fg=typer.colors.BRIGHT_GREEN)
     typer.echo(comic)
 

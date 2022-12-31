@@ -8,7 +8,7 @@
 [![Latest release](https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag)](https://github.com/potatoeggy/mandown/releases/latest)
 [![License](https://img.shields.io/github/license/potatoeggy/mandown)](/LICENSE)
 
-Mandown is a comic downloader and converter to CBZ, EPUB, and/or PDF. It also supports image post-processing to make them more readable on certain devices a la [KCC](https://github.com/ciromattia/kcc).
+Mandown is a comic downloader and converter to CBZ, EPUB, and/or PDF. It also supports image post-processing to make them more readable on certain devices similarly to [KCC](https://github.com/ciromattia/kcc).
 
 ## Features
 
@@ -23,7 +23,7 @@ Mandown is a comic downloader and converter to CBZ, EPUB, and/or PDF. It also su
 
 ## Supported sites
 
-To request a new site, please file a [new issue](https://github.com/potatoeggy/mandown/issues/new).
+To request a new site, please file a [new issue](https://github.com/potatoeggy/mandown/issues/new?title=Source request:).
 
 - https://mangasee123.com
 - https://manganato.com
