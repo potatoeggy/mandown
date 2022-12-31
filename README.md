@@ -23,7 +23,7 @@ Mandown is a comic downloader and converter to CBZ, EPUB, and/or PDF. It also su
 
 ## Supported sites
 
-To request a new site, please file a [new issue](https://github.com/potatoeggy/mandown/issues/new?title=Source request:).
+To request a new site, please file a [new issue](https://github.com/potatoeggy/mandown/issues/new?title=Source%20request:).
 
 - https://mangasee123.com
 - https://manganato.com
