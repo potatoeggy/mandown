@@ -42,25 +42,25 @@ def save_metadata(comic: BaseComic, path: Path | str) -> None:
 
 
 def init_parse_comic(
-    path: Path | str, source_url: str | None = None, download_cover: bool = False
+    path: Path | str, donor_comic: BaseComic | None = None, download_cover: bool = False
 ) -> BaseComic:
     """
     Open a comic from a folder path, either via `md-metadata.json` or
     if that fails, parse the comic structure and create an `md-metadata.json`
 
     :param `path`: A folder containing `md-metadata.json` or a comic structure
-    :param `source_url`: A source URL to fill metadata from if no metadata is found
+    :param `data`: A comic to fill metadata from if no metadata is found
     :param `download_cover`: If `True` and `source_url` is set, download the cover image if no metadata is found
     :returns A comic with metadata and chapter data of that folder
     :raises `AttributeError` if the source URL is not set and `download_cover` is `True`
     """
-    if not source_url and download_cover:
-        raise AttributeError("Cannot download cover without source URL")
+    if not donor_comic and download_cover:
+        raise AttributeError("Cannot download cover without donor comic")
 
     try:
         comic = io.read_comic(path)
     except FileNotFoundError:
-        comic = io.parse_comic(path, source_url)
+        comic = io.parse_comic(path, donor_comic)
         io.save_comic(comic, path)
 
         if download_cover and comic.metadata.cover_art:

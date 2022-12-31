@@ -90,48 +90,54 @@ def cli_init_metadata_interactive() -> None:
 
     typer.secho("Metadata collected, now adding chapters...", fg=typer.colors.GREEN)
 
+    folders_in_cd = sorted(f for f in path.iterdir() if f.is_dir())
+    delta = len(folders_in_cd)  # #folders - #chapters
     if chapters:
         # try to match up chapters with existing files
-        folders_in_cd = sorted(f for f in path.iterdir() if f.is_dir())
         for folder, chapter in zip(folders_in_cd, chapters):
-            chapter.slug = folder.name
+            chapter.slug = folder.stem
 
         # print out the matches
         typer.secho("Matches found:", fg=typer.colors.GREEN)
         for folder, chapter in zip(folders_in_cd, chapters):
-            typer.echo(f"  {folder.name} -> {chapter.title}")
+            typer.echo(f"  {folder.stem} -> {chapter.title}")
 
         delta = len(folders_in_cd) - len(chapters)
-        if delta > 0:
-            res = typer.prompt(
-                f"Matches found with {delta} extra local chapters. Attempt to resolve? [Y/n]",
-                default=True,
-                show_choices=True,
-                show_default=False,
-            )
-            if res:
-                # if there are more folders than chapters, add them as new chapters
-                for folder in folders_in_cd[len(chapters) :]:
-                    chapters.append(BaseChapter(folder.name, ""))
 
-                # print out new matches
-                typer.secho("New matches:", fg=typer.colors.GREEN)
-                for folder, chapter in zip(folders_in_cd, chapters):
-                    typer.echo(f"  NEW: {folder.name}")
-
+    if delta > 0:
         res = typer.prompt(
-            "Matches found. Finish and save? [Y/n]",
+            f"Matching stalled with {delta} extra local chapters. Attempt to resolve? [Y/n]",
             default=True,
             show_choices=True,
             show_default=False,
         )
-        print(res)
+        if res:
+            # if there are more folders than chapters, add them as new chapters
+            for folder in folders_in_cd[len(chapters) :]:
+                chapters.append(BaseChapter(folder.stem, "", folder.stem))
+
+            # print out new matches
+            typer.secho("New chapters:", fg=typer.colors.GREEN)
+            for folder, chapter in zip(folders_in_cd, chapters):
+                typer.echo(f"  NEW: {folder.stem}")
+
+    res = typer.prompt(
+        "Matching completed. Finish and save? [Y/n]",
+        default=True,
+        show_choices=True,
+        show_default=False,
+    )
+
+    if not res:
+        raise typer.Abort()
 
     typer.secho(
         f"All done! Saving metadata to {path / MD_METADATA_FILE}...",
         fg=typer.colors.GREEN,
     )
-    api.init_parse_comic(path, metadata, metadata.cover_art != "EXISTS")
+    api.init_parse_comic(
+        path, BaseComic(metadata, chapters), metadata.cover_art != "EXISTS"
+    )
 
 
 def cli_query(url: str) -> BaseComic:

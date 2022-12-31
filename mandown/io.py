@@ -106,12 +106,12 @@ def read_comic(path: Path | str) -> BaseComic:
     )
 
 
-def parse_comic(path: Path | str, source_url: str | None = None) -> BaseComic:
+def parse_comic(path: Path | str, donor_comic: BaseComic | None = None) -> BaseComic:
     """
     Parse and return an incomplete comic (without most metadata)
 
     :param `path`: A folder containing images
-    :param `source_url`: A source URL to fill metadata from
+    :param `donor_comic`: A comic to fill unfilled metadata from
     :returns A `BaseComic` with metadata and chapter data of that folder
     """
     path = Path(path)
@@ -130,10 +130,9 @@ def parse_comic(path: Path | str, source_url: str | None = None) -> BaseComic:
         if inode.is_dir()
     ]
 
-    if source_url:
-        new_comic = sources.get_class_for(source_url)(source_url)
-        metadata = new_comic.metadata
-        for local, remote in zip(chapters, new_comic.chapters):
+    if donor_comic:
+        metadata = donor_comic.metadata
+        for local, remote in zip(chapters, donor_comic.chapters):
             local.title = remote.title
             local.url = remote.url
 
