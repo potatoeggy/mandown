@@ -75,7 +75,7 @@ See the [docs](/docs/) for more information and examples.
 mandown get <URL>
 ```
 
-To convert the download contents to CBZ/EPUB, append the `--convert` option. To apply image processing to the downloaded images, append the `--process` option.
+To convert the download contents to CBZ/EPUB/PDF, append the `--convert` option. To apply image processing to the downloaded images, append the `--process` option.
 
 ```
 mandown get <URL> --convert epub --process rotate_double_pages
