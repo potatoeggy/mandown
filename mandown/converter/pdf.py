@@ -27,11 +27,14 @@ class PdfConverter(BaseConverter):
         path = Path(path)
         save_to = Path(save_to)
 
-        images: list[Image.Image] = [
-            Image.open(f)
-            for f in sorted(Path.rglob(path, "*"))
-            if f.suffix in ACCEPTED_IMAGE_EXTENSIONS
-        ]
+        images: list[Image.Image] = []
+        for chap in self.comic.chapters:
+            images.extend([
+                Image.open(f)
+                for f in sorted((path / chap.slug).iterdir())
+                if f.suffix in ACCEPTED_IMAGE_EXTENSIONS
+            ])
+
 
         if len(images) < 0:
             raise IOError("No images to convert found")
