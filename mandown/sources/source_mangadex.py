@@ -84,7 +84,7 @@ class MangaDexSource(BaseSource):
         r = self._get(
             f"https://api.mangadex.org/manga/{self.id}/"
             f"feed?limit=500&translatedLanguage[]={self.lang_code}"
-            "&order[volume]=desc&order[chapter]=desc"
+            "&order[volume]=asc&order[chapter]=asc"
         ).json()
 
         chapters: list[BaseChapter] = []
