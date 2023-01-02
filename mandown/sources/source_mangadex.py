@@ -121,8 +121,19 @@ class MangaDexSource(BaseSource):
         A wrapper of requests.get for MangaDex with
         rudimentary rate-limit processing
         """
-        while (r := requests.get(url)).status_code != 200:
+        for _ in range(3):
+            r = requests.get(url, timeout=5)
+            if r.status_code == 200:
+                break
+            elif r.status_code == 404:
+                raise RuntimeError(
+                    "This chapter is not downloadable from MangaDex. If you believe this to be an error, please open a GitHub issue."
+                )
             time.sleep(1)
+        else:
+            raise RuntimeError(
+                "MangaDex is probably rate-limiting us, try again later?"
+            )
         return r
 
 
