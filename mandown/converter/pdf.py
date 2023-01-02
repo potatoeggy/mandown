@@ -44,14 +44,14 @@ class PdfConverter(BaseConverter):
         interval = round(
             min(
                 PDF_IMAGE_MAX_INTERVAL,
-                len(images) * PDF_IMAGE_MIN_INTERVAL_FACTOR,
+                max(1, len(images) * PDF_IMAGE_MIN_INTERVAL_FACTOR)
             )
         )
 
         dest_file = save_to / (self.comic.metadata.title + ".pdf")
         for i in range(0, len(images), interval):
             append_images = (
-                images[i + 1 : i + interval] if len(images) > i + 1 else None
+                images[i + 1 : i + interval] if len(images) > i + 1 else []
             )
             author = (
                 self.comic.metadata.authors[0] if self.comic.metadata.authors else ""
