@@ -9,6 +9,7 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
+from slugify import slugify
 
 from ..base import BaseChapter, BaseMetadata
 from .base_source import BaseSource
@@ -88,11 +89,16 @@ class MangaDexSource(BaseSource):
         ).json()
 
         chapters: list[BaseChapter] = []
-        for c in r["data"]:
+        for i, c in enumerate(r["data"]):
+            chapter_title: str = (
+                c["attributes"]["title"] or f"Chapter {c['attributes']['chapter']}"
+            )
+            chapter_slug: str = f"{i}-{slugify(chapter_title)}"
             chapters.append(
                 BaseChapter(
-                    c["attributes"]["title"] or f"Chapter {c['attributes']['chapter']}",
+                    chapter_title,
                     f"https://mangadex.org/chapter/{c['id']}",
+                    chapter_slug,
                 )
             )
         return chapters
