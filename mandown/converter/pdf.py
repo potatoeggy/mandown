@@ -27,11 +27,14 @@ class PdfConverter(BaseConverter):
         path = Path(path)
         save_to = Path(save_to)
 
-        images: list[Image.Image] = [
-            Image.open(f)
-            for f in sorted(Path.rglob(path, "*"))
-            if f.suffix in ACCEPTED_IMAGE_EXTENSIONS
-        ]
+        images: list[Image.Image] = []
+        for chap in self.comic.chapters:
+            images.extend([
+                Image.open(f)
+                for f in sorted((path / chap.slug).iterdir())
+                if f.suffix in ACCEPTED_IMAGE_EXTENSIONS
+            ])
+
 
         if len(images) < 0:
             raise IOError("No images to convert found")
@@ -41,14 +44,14 @@ class PdfConverter(BaseConverter):
         interval = round(
             min(
                 PDF_IMAGE_MAX_INTERVAL,
-                len(images) * PDF_IMAGE_MIN_INTERVAL_FACTOR,
+                max(1, len(images) * PDF_IMAGE_MIN_INTERVAL_FACTOR)
             )
         )
 
         dest_file = save_to / (self.comic.metadata.title + ".pdf")
         for i in range(0, len(images), interval):
             append_images = (
-                images[i + 1 : i + interval] if len(images) > i + 1 else None
+                images[i + 1 : i + interval] if len(images) > i + 1 else []
             )
             author = (
                 self.comic.metadata.authors[0] if self.comic.metadata.authors else ""
