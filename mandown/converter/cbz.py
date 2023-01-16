@@ -28,7 +28,7 @@ class CbzConverter(BaseConverter):
                     file.write(
                         outerpath,
                         # rename cover to appear first in the archive
-                        outerpath.with_stem("__cover").absolute().relative_to(path),
+                        outerpath.with_stem("--cover").absolute().relative_to(path),
                         zipfile.ZIP_DEFLATED,
                     )
 
