@@ -216,10 +216,13 @@ def convert(
     ),
 ) -> None:
     """
-    Convert a comic folder into CBZ/EPUB/PDF.
+    Convert a comic OR comic folder into CBZ/EPUB/PDF.
 
     eg. To convert to CBZ:
     mandown convert cbz /path/to/comic/folder
+
+    eg. To convert an existing PDF comic to EPUB:
+    mandown convert epub /path/to/comic.pdf
     """
     typer.echo(f"Converting to {convert_to}...")
     cli_convert(folder_path, convert_to, dest, remove_after)
