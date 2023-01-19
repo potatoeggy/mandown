@@ -150,7 +150,7 @@ def convert_progress(
     else:
         # it's a file, no conversion needed, let comicon do its inferencing
         yield from comicon.convert_progress(
-            folder_path, dest_folder / f"{comic.metadata.title}.{to.value}"
+            folder_path, dest_folder / f"{folder_path.stem}.{to.value}"
         )
 
     if remove_after:

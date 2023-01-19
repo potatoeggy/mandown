@@ -221,19 +221,7 @@ def convert(
     eg. To convert to CBZ:
     mandown convert cbz /path/to/comic/folder
     """
-    try:
-        comic = api.load(folder_path)
-    except FileNotFoundError as err:
-        typer.secho(
-            f"Comic not found at {folder_path}, is md-metadata.json missing?",
-            fg=typer.colors.RED,
-        )
-        raise typer.Exit(1) from err
-
-    typer.echo(
-        f"Found {comic.metadata.title} with {len(comic.chapters)} chapters, "
-        f"converting to {convert_to}..."
-    )
+    typer.echo(f"Converting to {convert_to}...")
     cli_convert(folder_path, convert_to, dest, remove_after)
 
 
