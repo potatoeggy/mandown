@@ -1,4 +1,5 @@
 from .api import (
+    ConvertFormats,
     convert,
     convert_progress,
     download,
@@ -10,7 +11,6 @@ from .api import (
 )
 from .base import BaseChapter, BaseMetadata
 from .comic import BaseComic
-from .converter import ConvertFormats, get_converter
 from .io import MD_METADATA_FILE
 from .processor import (
     ProcessConfig,

@@ -93,12 +93,12 @@ def cli_init_metadata_interactive() -> None:
     delta = len(folders_in_cd)  # #folders - #chapters
     if chapters:
         # try to match up chapters with existing files
-        for folder, chapter in zip(folders_in_cd, chapters):
+        for folder, chapter in zip(folders_in_cd, chapters, strict=False):
             chapter.slug = folder.stem
 
         # print out the matches
         typer.secho("Matches found:", fg=typer.colors.GREEN)
-        for folder, chapter in zip(folders_in_cd, chapters):
+        for folder, chapter in zip(folders_in_cd, chapters, strict=False):
             typer.echo(f"  {folder.stem} -> {chapter.title}")
 
         delta = len(folders_in_cd) - len(chapters)
@@ -117,7 +117,7 @@ def cli_init_metadata_interactive() -> None:
 
             # print out new matches
             typer.secho("New chapters:", fg=typer.colors.GREEN)
-            for folder, chapter in zip(folders_in_cd, chapters):
+            for folder, _ in zip(folders_in_cd, chapters, strict=False):
                 typer.echo(f"  NEW: {folder.stem}")
 
     res = typer.prompt(
@@ -156,25 +156,42 @@ def cli_convert(
     dest_folder: Path = Path.cwd(),
     remove_after: bool = False,
 ) -> None:
-    try:
-        comic = api.load(comic_path)
-    except FileNotFoundError as err:
-        typer.secho(
-            f"Comic not found at {comic_path}, is md-metadata.json missing?",
-            fg=typer.colors.RED,
-        )
-        raise typer.Exit(1) from err
+    iterator = api.convert_progress(
+        comic_path, target_format, dest_folder, remove_after
+    )
+
+    is_single_conversion = comic_path.is_dir()
+
+    len_first_conv = cast(int, next(iterator))
+    len_second_conv = -1
+
+    first_convert_message = (
+        f"Packing {target_format.value}"
+        if is_single_conversion
+        else "Pre-converting comic"
+    )
 
     with typer.progressbar(
-        api.convert_progress(
-            comic, comic_path, target_format, dest_folder, remove_after
-        ),
-        length=len(comic.chapters),
-        label="Converting",
+        iterator,
+        length=len_first_conv,
+        label=first_convert_message,
     ) as progress:
-        for _ in progress:
-            pass
-    dest_file = dest_folder / f"{comic.metadata.title}.{target_format.value}"
+        for res in progress:
+            if isinstance(res, int):
+                len_second_conv = res
+                break
+
+    if not is_single_conversion:
+        # it *should* be guaranteed len_second_conv exists
+        with typer.progressbar(
+            iterator,
+            length=len_second_conv,
+            label=f"Packing {target_format.value}",
+        ) as progress:
+            for _ in progress:
+                ...
+
+    dest_file = dest_folder / f"{comic_path.stem}.{target_format.value}"
     typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
 
 
@@ -227,24 +244,15 @@ def convert(
     ),
 ) -> None:
     """
-    Convert a comic folder into CBZ/EPUB/PDF.
+    Convert a comic OR comic folder into CBZ/EPUB/PDF.
 
     eg. To convert to CBZ:
     mandown convert cbz /path/to/comic/folder
-    """
-    try:
-        comic = api.load(folder_path)
-    except FileNotFoundError as err:
-        typer.secho(
-            f"Comic not found at {folder_path}, is md-metadata.json missing?",
-            fg=typer.colors.RED,
-        )
-        raise typer.Exit(1) from err
 
-    typer.echo(
-        f"Found {comic.metadata.title} with {len(comic.chapters)} chapters, "
-        f"converting to {convert_to}..."
-    )
+    eg. To convert an existing PDF comic to EPUB:
+    mandown convert epub /path/to/comic.pdf
+    """
+    typer.echo(f"Converting to {convert_to}...")
     cli_convert(folder_path, convert_to, dest, remove_after)
 
 
@@ -505,7 +513,7 @@ def callback(
         typer.echo("Available profiles:")
         typer.echo(
             "\n".join(
-                f' - {profile.name}: "{profile.id}"'
+                f" - {profile.name}: {profile.id!r}"
                 for profile in all_profiles.values()
             )
         )

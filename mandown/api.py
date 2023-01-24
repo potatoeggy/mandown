@@ -1,12 +1,26 @@
 # pylint: disable=invalid-name
 import shutil
+from enum import Enum
 from pathlib import Path
 from typing import Iterator
 
+import comicon
+
 from . import io, sources
 from .comic import BaseComic
-from .converter import ConvertFormats, get_converter
 from .processor import ProcessConfig, ProcessOps, Processor
+
+
+class ConvertFormats(str, Enum):
+    """
+    The formats that mandown can convert to. This is used for the `--format` option.
+    """
+
+    # for typing purposes
+    CBZ = "cbz"
+    EPUB = "epub"
+    PDF = "pdf"
+    NONE = "none"
 
 
 def query(url: str) -> BaseComic:
@@ -78,56 +92,89 @@ def init_parse_comic(
 
 
 def convert_progress(
-    comic: BaseComic,
-    folder_path: Path | str,
+    comic_path: Path | str,
     to: ConvertFormats,
     dest_folder: Path | str | None = None,
     remove_after: bool = False,
-) -> Iterator[str]:
+) -> Iterator[str | int]:
     """
-    From metadata in `comic`, convert the comic in `folder_path`
-    to `convert_to` and put it in `dest_folder` (defaults to workdir).
+    Convert the comic located at `folder_path` to `convert_to`
+    and put it in `dest_folder` (defaults to workdir).
 
-    :param `comic`: A comic with metadata to convert
-    :param `folder_path`: A folder containing the comic to convert
+    :param `comic_path`: The path to the comic to convert (may be in Mandown
+    folder form or any of the `mandown.ConvertFormats` such as EPUB)
     :param `convert_to`: The format to convert to
     :param `dest_folder`: A folder to put the converted comic in
-    :param `remove_after`: If `True`, delete the original folder after conversion
+    :param `remove_after`: If `True`, delete the original file/folder after conversion
 
-    :returns An `Iterator` representing a progress bar up to the number of chapters in the comic.
+    :returns An `Iterator` representing a progress bar. The first iteration returns
+    the remaining number of iterations. If converting between file formats, an
+    iteration after the first number of iterations ends will return the remaining
+    number of the second number of iterations.
     """
+    comic_path = Path(comic_path)
     if to == ConvertFormats.NONE:
         return
 
     # default to working directory
-    dest_folder = dest_folder or Path(".").resolve()
+    dest_folder = Path(dest_folder or ".").resolve()
 
-    # obviously pylint is wrong because this is 100% callable
-    converter = get_converter(to)(comic)  # pylint: disable=not-callable
-    yield from converter.create_file_progress(folder_path, dest_folder)
+    if comic_path.is_dir():
+        # it's a mandown comic, convert it to CIR
+        comic = load(comic_path)
+
+        # find cover
+        cover: str | None = None
+        for item in comic_path.iterdir():
+            if str(item).startswith("cover"):
+                cover = item.name
+                break
+
+        comicon_comic = comicon.Comic(
+            comicon.Metadata(
+                title=comic.metadata.title,
+                authors=comic.metadata.authors,
+                description=comic.metadata.description,
+                genres=comic.metadata.genres,
+                cover_path_rel=cover,
+            ),
+            [comicon.Chapter(chap.title, chap.slug) for chap in comic.chapters],
+        )
+
+        # save comicon.json
+        (comic_path / comicon.cirtools.IR_DATA_FILE).write_text(comicon_comic.to_json())
+
+        # now we have a properly formed CIR
+        yield from comicon.outputs.create_comic_progress(
+            comic_path, dest_folder / f"{comic.metadata.title}.{to.value}"
+        )
+    else:
+        # it's a file, no conversion needed, let comicon do its inferencing
+        yield from comicon.convert_progress(
+            comic_path, dest_folder / f"{comic_path.stem}.{to.value}"
+        )
 
     if remove_after:
-        shutil.rmtree(folder_path)
+        shutil.rmtree(comic_path)
 
 
 def convert(
-    comic: BaseComic,
-    folder_path: Path | str,
+    comic_path: Path | str,
     to: ConvertFormats,
     dest_folder: Path | str | None = None,
     remove_after: bool = False,
 ) -> None:
     """
-    From metadata in `comic`, convert the comic in `folder_path`
-    to `convert_to` and put it in `dest_folder` (defaults to workdir).
+    Convert the comic located at `folder_path` to `convert_to`
+    and put it in `dest_folder` (defaults to workdir).
 
-    :param `comic`: A comic with metadata to convert
-    :param `folder_path`: A folder containing the comic to convert
+    :param `comic_path`: The path to the comic to convert (may be in Mandown
+    folder form or any of the `mandown.ConvertFormats` such as EPUB)
     :param `convert_to`: The format to convert to
     :param `dest_folder`: A folder to put the converted comic in
-    :param `remove_after`: If `True`, delete the original folder after conversion
+    :param `remove_after`: If `True`, delete the original file/folder after conversion
     """
-    for _ in convert_progress(comic, folder_path, to, dest_folder, remove_after):
+    for _ in convert_progress(comic_path, to, dest_folder, remove_after):
         pass
 
 
@@ -239,7 +286,8 @@ def download_progress(
                 (link, str(i).rjust(io.NUM_LEFT_PAD_DIGITS, "0"))
                 for i, link in enumerate(image_urls, start=1)
                 if i not in skip_images
-            )
+            ),
+            strict=False,
         )
 
         chapter_path = full_path / chap.slug
