@@ -8,7 +8,7 @@
 [![Latest release](https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag)](https://github.com/potatoeggy/mandown/releases/latest)
 [![License](https://img.shields.io/github/license/potatoeggy/mandown)](/LICENSE)
 
-Mandown is a comic downloader and converter to CBZ, EPUB, and/or PDF. It also supports image post-processing to make them more readable on certain devices similarly to [KCC](https://github.com/ciromattia/kcc).
+Mandown is a comic downloader and a CBZ, EPUB, and/or PDF converter. It also supports image post-processing to make them more readable on certain devices similarly to [KCC](https://github.com/ciromattia/kcc).
 
 ## Features
 
@@ -25,12 +25,22 @@ Mandown is a comic downloader and converter to CBZ, EPUB, and/or PDF. It also su
 
 To request a new site, please file a [new issue](https://github.com/potatoeggy/mandown/issues/new?title=Source%20request:).
 
-- https://mangasee123.com
-- https://manganato.com
-- https://webtoons.com
-- https://mangadex.org
-- https://mangakakalot.com
-- https://readcomiconline.li
+- <https://mangasee123.com>
+- <https://manganato.com>
+- <https://webtoons.com>
+- <https://mangadex.org>
+- <https://mangakakalot.com>
+- <https://readcomiconline.li>
+
+## Supported conversions
+
+You can convert anything in the **Convert from?** column to anything in the **Convert to?** column!
+
+| Format | Convert from? | Convert to? |
+| --- | --- | --- |
+| CBZ | :heavy_check_mark: | :heavy_check_mark: |
+| EPUB | :heavy_check_mark: | :heavy_check_mark: |
+| PDF | :heavy_check_mark: | :heavy_check_mark: |
 
 ## Installation
 
@@ -41,6 +51,7 @@ pip3 install mandown
 ```
 
 Install the optional large dependencies for some features of Mandown:
+
 ```
 # image processing
 pip3 install Pillow
@@ -85,7 +96,7 @@ To download only a certain range of chapters, append the `--start` and/or `--end
 
 > **Note:** `--start` and `--end` are *inclusive*, i.e., using `--start 2 --end 3` will download chapters 2 and 3.
 
-To convert an existing folder without downloading anything (like a stripped-down version of https://github.com/ciromattia/kcc), use the `convert` command.
+To convert an existing folder without downloading anything (like a stripped-down version of <https://github.com/ciromattia/kcc>), use the `convert` command.
 
 ```
 mandown convert <FORMAT> <PATH_TO_FOLDER>
@@ -106,6 +117,7 @@ Run `mandown --help` for more info.
 See the [docs](/docs/) for more information and examples.
 
 To just download the images:
+
 ```python
 import mandown
 
@@ -113,6 +125,7 @@ mandown.download("https://comic-site.com/the-best-comic")
 ```
 
 To download and convert to EPUB:
+
 ```python
 import mandown
 
