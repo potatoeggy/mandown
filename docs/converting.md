@@ -36,6 +36,16 @@ mandown.convert(comic, "/path/to/comic", "epub", remove_after=True)
 
 ## Converting external comics
 
+If you just want to convert one comic file to another (e.g., CBZ to EPUB), Mandown supports that natively too!
+
+```
+mandown convert epub path/to/comic.cbz
+```
+
+If you want to manage your old comic completely through Mandown (including getting updates), see below.
+
+## Converting external comics (OLD)
+
 If you have a folder of images that you want to convert to CBZ/EPUB/PDF, you can still use Mandown's converter, as long as you initialize the folder with a `md-metadata.json` file. This can be generated with the *interactive* `init-metadata` command:
 
 ```
