@@ -156,13 +156,41 @@ def cli_convert(
     dest_folder: Path = Path.cwd(),
     remove_after: bool = False,
 ) -> None:
+    iterator = api.convert_progress(
+        comic_path, target_format, dest_folder, remove_after
+    )
+
+    is_single_conversion = comic_path.is_dir()
+
+    len_first_conv = cast(int, next(iterator))
+    len_second_conv = -1
+
+    first_convert_message = (
+        f"Packing {target_format.value}"
+        if is_single_conversion
+        else "Pre-converting comic"
+    )
+
     with typer.progressbar(
-        api.convert_progress(comic_path, target_format, dest_folder, remove_after),
-        length=50,  # TODO: fix
-        label="Converting",
+        iterator,
+        length=len_first_conv,
+        label=first_convert_message,
     ) as progress:
-        for _ in progress:
-            pass
+        for res in progress:
+            if isinstance(res, int):
+                len_second_conv = res
+                break
+
+    if not is_single_conversion:
+        # it *should* be guaranteed len_second_conv exists
+        with typer.progressbar(
+            iterator,
+            length=len_second_conv,
+            label=f"Packing {target_format.value}",
+        ) as progress:
+            for _ in progress:
+                ...
+
     dest_file = dest_folder / f"{comic_path.stem}.{target_format.value}"
     typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
 

@@ -96,7 +96,7 @@ def convert_progress(
     to: ConvertFormats,
     dest_folder: Path | str | None = None,
     remove_after: bool = False,
-) -> Iterator[str]:
+) -> Iterator[str | int]:
     """
     Convert the comic located at `folder_path` to `convert_to`
     and put it in `dest_folder` (defaults to workdir).
@@ -107,7 +107,10 @@ def convert_progress(
     :param `dest_folder`: A folder to put the converted comic in
     :param `remove_after`: If `True`, delete the original file/folder after conversion
 
-    :returns An `Iterator` representing a progress bar up to the number of chapters in the comic.
+    :returns An `Iterator` representing a progress bar. The first iteration returns
+    the remaining number of iterations. If converting between file formats, an
+    iteration after the first number of iterations ends will return the remaining
+    number of the second number of iterations.
     """
     comic_path = Path(comic_path)
     if to == ConvertFormats.NONE:
