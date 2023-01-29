@@ -133,7 +133,8 @@ class MangaDexSource(BaseSource):
                 break
             elif r.status_code == 404:
                 raise RuntimeError(
-                    "This chapter is not downloadable from MangaDex. If you believe this to be an error, please open a GitHub issue."
+                    "This chapter is not downloadable from MangaDex. If you "
+                    "believe this to be an error, please open a GitHub issue."
                 )
             time.sleep(1)
         else:

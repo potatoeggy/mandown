@@ -165,7 +165,7 @@ def discover_local_images(path: Path | str) -> dict[str, list[Path]]:
     path = Path(path)
 
     return {
-        chap.stem: list(sorted(chap.iterdir()))
+        chap.stem: sorted(chap.iterdir())
         for chap in sorted(path.iterdir())  # iterdir does not guarantee any order
         if chap.is_dir()  # force explosion for readability
     }

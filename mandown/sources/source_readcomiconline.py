@@ -81,8 +81,8 @@ class ReadComicOnlineSource(BaseSource):
     @staticmethod
     def beau(url: str) -> str:
         """
-        Deobfuscator
-        copied from https://github.com/mikf/gallery-dl/blob/master/gallery_dl/extractor/readcomiconline.py
+        Deobfuscator copied from
+        https://github.com/mikf/gallery-dl/blob/master/gallery_dl/extractor/readcomiconline.py
 
         i had to relicense to GPLv2 for this >:(
         """

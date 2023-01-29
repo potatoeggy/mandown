@@ -105,7 +105,8 @@ class Processor(ProcessContainer):
         :param filename: The filename to save the image as
         :raises NotImplementedError: If an operation is not implemented
         :raises OSError: If there is an error in saving the image
-        :raises ProcessOptionMismatchError: If an option is not valid for a given operation or there are missing options
+        :raises ProcessOptionMismatchError: If an option is not valid for a
+        given operation or there are missing options
         """
         if ProcessOps.NO_POSTPROCESSING in operations:
             return
