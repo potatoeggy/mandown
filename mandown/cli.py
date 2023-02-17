@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from typing import List, Optional, cast
+from typing import Optional, cast
 
 import typer
 
@@ -327,7 +327,7 @@ def get(
         "-t",
         help="The maximum number of images to download in parallel",
     ),
-    processing_options: Optional[List[ProcessOps]] = typer.Option(
+    processing_options: Optional[list[ProcessOps]] = typer.Option(
         [],
         "--process",
         "-p",
