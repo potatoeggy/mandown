@@ -8,11 +8,11 @@
 [![Latest release](https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag)](https://github.com/potatoeggy/mandown/releases/latest)
 [![License](https://img.shields.io/github/license/potatoeggy/mandown)](/LICENSE)
 
-Mandown is a comic downloader and a CBZ, EPUB, and/or PDF converter. It also supports image post-processing to make them more readable on certain devices similarly to [KCC](https://github.com/ciromattia/kcc).
+Mandown is a comic downloader and a CBZ, EPUB, and/or PDF converter. It also supports image post-processing to make them more readable on certain devices similarly to [Kindle Comic Converter](https://github.com/ciromattia/kcc).
 
 ## Features
 
-- Download comics from supported sites
+- Download comics from [supported sites](#supported-sites)
   - Supports downloading a range of chapters
   - Supports multithreaded downloading
 - Process downloaded images
@@ -20,6 +20,8 @@ Mandown is a comic downloader and a CBZ, EPUB, and/or PDF converter. It also sup
   - Trim borders
   - Resize images
 - Convert downloaded comics to CBZ, EPUB, or PDF
+  - Convert any other CBZ, EPUB, or PDF comic to CBZ, EPUB, or PDF
+- [A library to easily do all of this from other Python scripts](#basic-library-usage)
 
 ## Supported sites
 
@@ -32,55 +34,9 @@ To request a new site, please file a [new issue](https://github.com/potatoeggy/m
 - <https://mangakakalot.com>
 - <https://readcomiconline.li>
 
-## Supported conversions
+## Usage
 
-You can convert anything in the **Convert from?** column to anything in the **Convert to?** column!
-
-| Format | Convert from? | Convert to? |
-| --- | --- | --- |
-| CBZ | :heavy_check_mark: | :heavy_check_mark: |
-| EPUB | :heavy_check_mark: | :heavy_check_mark: |
-| PDF | :heavy_check_mark: | :heavy_check_mark: |
-
-## Installation
-
-Install the package from PyPI:
-
-```
-pip3 install mandown
-```
-
-Install the optional large dependencies for some features of Mandown:
-
-```
-# image processing
-pip3 install Pillow
-
-# graphical interface (GUI)
-pip3 install PySide6
-```
-
-Arch Linux users may also install the package from the [AUR](https://aur.archlinux.org/packages/mandown-git):
-
-```
-git clone https://aur.archlinux.org/mandown-git.git
-makepkg -si
-```
-
-Or, to build from source:
-
-Mandown depends on [poetry](https://github.com/python-poetry/poetry) for building.
-
-```
-git clone https://github.com/potatoeggy/mandown.git
-poetry install
-poetry build
-pip3 install dist/mandown*.whl
-```
-
-## Basic usage
-
-See the [docs](/docs/) for more information and examples.
+Run `mandown --help` or see the [docs](/docs/) for more information and examples.
 
 ```
 mandown get <URL>
@@ -96,10 +52,10 @@ To download only a certain range of chapters, append the `--start` and/or `--end
 
 > **Note:** `--start` and `--end` are *inclusive*, i.e., using `--start 2 --end 3` will download chapters 2 and 3.
 
-To convert an existing folder without downloading anything (like a stripped-down version of <https://github.com/ciromattia/kcc>), use the `convert` command.
+To convert an existing folder or comic file without downloading anything (like a stripped-down version of <https://github.com/ciromattia/kcc>), use the `convert` command.
 
 ```
-mandown convert <FORMAT> <PATH_TO_FOLDER>
+mandown convert <FORMAT> <PATH_TO_COMIC>
 ```
 
 To process an existing folder without downloading anything, use the `process` command.
@@ -110,8 +66,38 @@ mandown process <PROCESS_OPERATIONS> <PATH_TO_FOLDER>
 
 Where `PROCESS_OPERATIONS` is an option found from running `mandown process --help`.
 
-Run `mandown --help` for more info.
+## Installation
 
+Install the package from PyPI:
+
+```
+pip3 install mandown
+```
+
+Install the optional large dependencies for some features of Mandown:
+
+```
+# graphical interface (GUI)
+pip3 install PySide6
+```
+
+Arch Linux users may also install the package from the [AUR](https://aur.archlinux.org/packages/mandown-git):
+
+```
+git clone https://aur.archlinux.org/mandown-git.git
+makepkg -si
+```
+
+Or, to build from source:
+
+Mandown uses [poetry](https://github.com/python-poetry/poetry) for dependency management.
+
+```
+git clone https://github.com/potatoeggy/mandown.git
+poetry install
+poetry build
+pip3 install dist/mandown*.whl
+```
 ## Basic library usage
 
 See the [docs](/docs/) for more information and examples.
