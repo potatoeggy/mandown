@@ -12,7 +12,7 @@ def test_batman() -> None:
         "authors": ["StarBite", "CRC Payne"],
         "genres": ["Slice of life"],
         "description": BATMAN_DESCRIPTION,
-        "cover_art": "https://webtoon-phinf.pstatic.net/20210908_32/1631043278314jN45V_JPEG/3BatmanFamilyAdven_desktop_thumbnail.jpg?type=a306",
+        "cover_art": "https://swebtoon-phinf.pstatic.net/20210908_32/1631043278314jN45V_JPEG/3BatmanFamilyAdven_desktop_thumbnail.jpg",
         "url": batman_url,
     }
 
