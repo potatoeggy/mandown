@@ -21,7 +21,7 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Install deps
         run: poetry install
-      - name: Install extra deps
-        run: poetry install --extras postprocessing
+      #      - name: Install extra deps
+      #        run: poetry install --extras postprocessing
       - name: Run tests
         run: poetry run pytest
