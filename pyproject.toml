@@ -30,6 +30,7 @@ comicon = "^0.2.1"
 [tool.poetry.dev-dependencies]
 types-requests = "^2.26.3"
 types-lxml = "^2022.4.10"
+pytest = "^7.2.0"
 
 [tool.poetry.extras]
 gui = ["PySide6"]
