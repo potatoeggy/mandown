@@ -1,8 +1,10 @@
 import mandown
+from common import skip_in_ci
 
 PUNPUN_DESCRIPTION = "Witness the titular Punpun - who is depicted as a tiny, caricatured bird in an otherwise normal human setting - as he copes with his dysfunctional family and friends, his love interest, his oncoming adolescence and his hyperactive mind."
 
 
+@skip_in_ci
 def test_punpun() -> None:
     punpun_url = "https://chapmanganato.com/manga-fa957135"
 

@@ -1,8 +1,10 @@
 import mandown
+from common import skip_in_ci
 
 BATMAN_DESCRIPTION = "Batman needs a break. But with new vigilante Duke Thomas moving into Wayne Manor and an endless supply of adopted, fostered, and biological superhero children to manage, Bruce Wayne is going to have his hands full. Being a father can't be harder than being Batman, right?"
 
 
+@skip_in_ci
 def test_batman() -> None:
     batman_url = "https://www.webtoons.com/en/slice-of-life/batman-wayne-family-adventures/list?title_no=3180"
     comic = mandown.query(batman_url)
