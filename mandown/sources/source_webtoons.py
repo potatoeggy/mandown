@@ -6,7 +6,6 @@ Source file for webtoons.com
 
 import re
 
-import feedparser
 import requests
 from bs4 import BeautifulSoup
 
@@ -33,17 +32,21 @@ class WebtoonsSource(BaseSource):
         self._title_path = "/".join(url.split("/")[3:6])
 
     def fetch_metadata(self) -> BaseMetadata:
-        feed = feedparser.parse(
-            f"https://www.webtoons.com/{self._title_path}/rss?title_no={self._title_no}"
-        )
+        page = self._get_desktop_soup()
+        title = page.select_one('meta[property="og:title"]')["content"]
+        authors: list[str] = [
+            s.strip()
+            for s in page.select_one('meta[property="com-linewebtoon:webtoon:author"]')[
+                "content"
+            ].split("/")
+        ]
+        description: str = page.select_one("#content .summary").text
+        cover_art_el = page.select_one("#content .detail_body.banner")
+        art_start_idx = cover_art_el["style"].find("url(") + len("url(")
+        art_end_idx = cover_art_el["style"].find(")", art_start_idx)
 
-        page = self._get_soup()
+        cover_art = cover_art_el["style"][art_start_idx:art_end_idx]
 
-        authors: list[str] = feed["entries"][0].author.split("/")
-        authors = [s.strip() for s in authors]
-        title: str = feed["channel"]["title"]
-        cover_art: str = feed["channel"]["image"]["href"]
-        description: str = feed["channel"]["description"].strip()
         genre: str = page.select_one(".genre").text
 
         return BaseMetadata(
@@ -88,6 +91,12 @@ class WebtoonsSource(BaseSource):
             "lxml",
         )
         return self._soup
+
+    def _get_desktop_soup(self) -> BeautifulSoup:
+        desktop_url = f"https://www.webtoons.com/{self._title_path}/list?title_no={self._title_no}"
+        return BeautifulSoup(
+            requests.get(desktop_url, headers=self.headers).text, "lxml"
+        )
 
     @staticmethod
     def check_url(url: str) -> bool:

@@ -54,3 +54,4 @@ max-complexity = 18
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
 "mandown/cli.py" = ["B008"]
+"tests/*" = ["E501"]
