@@ -43,5 +43,5 @@ pre-commit install
 Run unit tests:
 
 ```
-poetry run pytest
+poetry run pytest tests
 ```
