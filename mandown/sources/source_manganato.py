@@ -14,7 +14,11 @@ from .base_source import BaseSource
 
 class MangaNatoSource(BaseSource):
     name = "MangaNato"
-    domains = ["https://manganato.com", "https://readmanganato.com"]
+    domains = [
+        "https://manganato.com",
+        "https://readmanganato.com",
+        "https://chapmanganato.com",
+    ]
     headers = {"Referer": "https://readmanganato.com/"}
 
     def __init__(self, url: str) -> None:
@@ -74,7 +78,10 @@ class MangaNatoSource(BaseSource):
 
     @staticmethod
     def check_url(url: str) -> bool:
-        return bool(re.match(r"https://readmanganato.com/.*", url))
+        return bool(
+            re.match(r"https://readmanganato.com/.*", url)
+            or re.match(r"https://chapmanganato.com/.*", url)
+        )
 
 
 def get_class() -> type[BaseSource]:
