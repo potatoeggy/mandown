@@ -36,7 +36,13 @@ class ReadComicOnlineSource(BaseSource):
         ]
         genres: list[str] = [str(e.text) for e in soup.select("a[href^='/Genre']")]
         description_maybe = soup.select_one("p[style='text-align: justify;']")
-        description = str(description_maybe.text if description_maybe else "")
+
+        if description_maybe is not None:
+            for br in description_maybe.find_all("br"):
+                br.replace_with("\n")
+            description = str(description_maybe.text)
+        else:
+            description = ""
         cover = self.domains[0] + str(soup.find("link")["href"])
 
         return BaseMetadata(title, author, self.url, genres, description, cover)
