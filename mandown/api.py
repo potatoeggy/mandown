@@ -253,7 +253,10 @@ def download_progress(
     # cover
     if comic.metadata.cover_art:
         for _ in io.download_images(
-            [comic.metadata.cover_art], full_path, filestems=["cover"]
+            [comic.metadata.cover_art],
+            full_path,
+            filestems=["cover"],
+            headers=comic.source.headers,
         ):
             pass
 
