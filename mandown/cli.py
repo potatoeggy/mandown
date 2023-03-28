@@ -385,7 +385,7 @@ def get(
     comic = cli_query(url)
 
     typer.echo(
-        f"Found item from source {sources.get_class_for(url).name}",
+        f'Found comic "{comic.metadata.title}" from source {sources.get_class_for(url).name}',
     )
 
     # get processing range
@@ -405,8 +405,10 @@ def get(
     ) as progress:
         for title in progress:
             progress.label = title
+
+    full_dest_folder = dest.absolute() / comic.metadata.title
     typer.secho(
-        f"Successfully downloaded {end_chapter - start_chapter} chapters.",
+        f"Successfully downloaded {end_chapter - start_chapter} chapter(s) to {full_dest_folder}.",
         fg=typer.colors.GREEN,
     )
 
