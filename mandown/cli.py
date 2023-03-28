@@ -398,7 +398,7 @@ def get(
     comic.set_chapter_range(start=start_chapter, end=end_chapter)
 
     # download
-    typer.echo("Downloading...")
+    typer.echo(f"Downloading {end_chapter - start_chapter} chapter(s)...")
     with typer.progressbar(
         api.download_progress(comic, dest, threads=maxthreads),
         length=len(comic.chapters),
