@@ -42,18 +42,33 @@ class WebtoonsSource(BaseSource):
         ]
         description: str = page.select_one("#content .summary").text
         cover_art_el = page.select_one("#content .detail_body.banner")
-        art_start_idx = cover_art_el["style"].find("url(") + len("url(")
-        art_end_idx = cover_art_el["style"].find(")", art_start_idx)
 
-        cover_art = cover_art_el["style"][art_start_idx:art_end_idx]
+        if cover_art_el is None:
+            # canvas challenge webtoons can have multiple genres
+            # and have different covers
+            cover_art_el = page.select_one("#content .detail_header.challenge img")
 
-        genre: str = page.select_one(".genre").text
+            cover_art = cover_art_el["src"]
+        else:
+            art_start_idx = cover_art_el["style"].find("url(") + len("url(")
+            art_end_idx = cover_art_el["style"].find(")", art_start_idx)
+
+            cover_art = cover_art_el["style"][art_start_idx:art_end_idx]
+
+        genres_els = list(page.select(".genre"))
+
+        for el in genres_els:
+            span = el.find_all("span")
+            for s in span:
+                s.replace_with("")
+
+        genres = [el.text for el in page.select(".genre")]
 
         return BaseMetadata(
             title,
             authors,
             f"https://www.webtoons.com/{self._title_path}/list?title_no={self._title_no}",
-            [genre],
+            genres,
             description,
             cover_art,
         )
