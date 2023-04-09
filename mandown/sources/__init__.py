@@ -1,4 +1,14 @@
 # pylint: disable=invalid-name
+
+"""
+This module contains all the source modules.
+
+The source modules are dynamically imported and added to the __class_list
+variable. This variable is used by the get_class_for() function to return
+the correct source class for a given URL.
+"""
+
+
 import sys
 import types
 
@@ -16,6 +26,9 @@ __class_list: list[type[BaseSource]] = []
 
 
 def _get_all_source_modules() -> list[str]:
+    """
+    Return a list of all source modules.
+    """
     out = []
     for _, val in globals().items():
         if isinstance(val, types.ModuleType) and val.__name__.startswith(
@@ -32,6 +45,8 @@ for i in _get_all_source_modules():
 def get_class_for(url: str) -> type[BaseSource]:
     """
     Return a source that matches the URL.
+
+    :raises ValueError: If no source matches the URL.
     """
     for c in __class_list:
         if c.check_url(url):

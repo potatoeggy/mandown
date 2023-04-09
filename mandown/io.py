@@ -60,7 +60,7 @@ def download_images(
     :param `filestems`: Specify the name of each downloaded file instead of the default.
     :param `headers`: Request headers
     :param `threads`: The number of processes to open
-    :returns An iterator that yields `None` for each downloaded file.
+    :returns An Iterator that yields `None` for each downloaded file.
     """
     dest_folder = Path(dest_folder)
 
@@ -107,10 +107,12 @@ def read_comic(path: Path | str) -> BaseComic:
 
 def parse_comic(path: Path | str, donor_comic: BaseComic | None = None) -> BaseComic:
     """
-    Parse and return an incomplete comic (without most metadata)
+    Attempt to construct a Mandown comic from a folder from the filesystem (without most metadata).
+    This function is non-destructive and does not modify the filesystem. If you want to save the
+    comic, call `save_comic` on the returned `BaseComic`.
 
     :param `path`: A folder containing images
-    :param `donor_comic`: A comic to fill unfilled metadata from
+    :param `donor_comic`: A comic to fill metadata from
     :returns A `BaseComic` with metadata and chapter data of that folder
     """
     path = Path(path)
@@ -140,7 +142,8 @@ def parse_comic(path: Path | str, donor_comic: BaseComic | None = None) -> BaseC
 
 def save_comic(comic: BaseComic, path: Path | str) -> None:
     """
-    Save an `md-metadata.json` from `comic` into `path`.
+    Save an `md-metadata.json` from `comic` into `path`. If `path` does not exist, it will
+    be created. THIS FUNCTION IS DESTRUCTIVE AND WILL OVERWRITE ANY EXISTING `md-metadata.json`.
 
     :param `comic`: A comic to save
     :param `path`: A folder to save `md-metadata.json` into
@@ -157,7 +160,7 @@ def save_comic(comic: BaseComic, path: Path | str) -> None:
 def discover_local_images(path: Path | str) -> dict[str, list[Path]]:
     """
     Given a comic path, return a dictionary of slugs: images.
-    Basically a slightly modified version of os.walk.
+    Basically a slightly modified version of os.walk. Only recurses one level deep.
 
     :param `path`: A folder containing images
     :returns A dictionary of {slugs: images}
