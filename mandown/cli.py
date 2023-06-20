@@ -155,9 +155,10 @@ def cli_convert(
     target_format: ConvertFormats,
     dest_folder: Path = Path.cwd(),
     remove_after: bool = False,
+    split_by_chapters: bool = False,
 ) -> None:
     iterator = api.convert_progress(
-        comic_path, target_format, dest_folder, remove_after
+        comic_path, target_format, dest_folder, remove_after, split_by_chapters
     )
 
     is_single_conversion = comic_path.is_dir()
@@ -166,7 +167,7 @@ def cli_convert(
     len_second_conv = -1
 
     first_convert_message = (
-        f"Packing {target_format.value}"
+        f"Packing {target_format.value}(s)"
         if is_single_conversion
         else "Pre-converting comic"
     )
@@ -180,6 +181,8 @@ def cli_convert(
             if isinstance(res, int):
                 len_second_conv = res
                 break
+            if split_by_chapters:
+                progress.label = res
 
     if not is_single_conversion:
         # it *should* be guaranteed len_second_conv exists
@@ -191,8 +194,11 @@ def cli_convert(
             for _ in progress:
                 ...
 
-    dest_file = dest_folder / f"{comic_path.stem}.{target_format.value}"
-    typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
+    if not split_by_chapters:
+        dest_file = dest_folder / f"{comic_path.stem}.{target_format.value}"
+        typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
+    else:
+        typer.secho(f"Successfully converted to {dest_folder}", fg=typer.colors.GREEN)
 
 
 def cli_process(
@@ -242,6 +248,13 @@ def convert(
         "-r",
         help="Remove the the original folder after conversion",
     ),
+    split_by_chapters: bool = typer.Option(
+        False,
+        "--split-by-chapters",
+        "-b",
+        help="Instead of returning one large comic file, create one comic"
+        "file for each chapter (applies only to Mandown-created comic folders)",
+    ),
 ) -> None:
     """
     Convert a comic OR comic folder into CBZ/EPUB/PDF.
@@ -253,7 +266,7 @@ def convert(
     mandown convert epub /path/to/comic.pdf
     """
     typer.echo(f"Converting to {convert_to}...")
-    cli_convert(folder_path, convert_to, dest, remove_after)
+    cli_convert(folder_path, convert_to, dest, remove_after, split_by_chapters)
 
 
 @app.command(no_args_is_help=True)
@@ -354,6 +367,13 @@ def get(
         "-r",
         help="IF CONVERTING: Remove the downloaded folder after converting",
     ),
+    split_by_chapters: bool = typer.Option(
+        False,
+        "--split-by-chapters",
+        "-b",
+        help="Instead of returning one large comic file, create one comic"
+        "file for each chapter (applies only to Mandown-created comic folders)",
+    ),
 ) -> None:
     """
     Download from a URL chapters start_chapter to end_chapter.
@@ -429,7 +449,13 @@ def get(
 
     # convert
     if convert_to != ConvertFormats.NONE:
-        cli_convert(dest / comic.metadata.title, convert_to, dest, remove_after)
+        cli_convert(
+            dest / comic.metadata.title,
+            convert_to,
+            dest,
+            remove_after,
+            split_by_chapters,
+        )
 
 
 @app.command(name="init-metadata")

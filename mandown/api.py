@@ -1,7 +1,6 @@
 # pylint: disable=invalid-name
 
 import shutil
-from enum import Enum
 from pathlib import Path
 from typing import Iterator
 
@@ -9,19 +8,8 @@ import comicon
 
 from . import io, sources
 from .comic import BaseComic
+from .convert_utils import ConvertFormats, convert_one
 from .processor import ProcessConfig, ProcessOps, Processor
-
-
-class ConvertFormats(str, Enum):
-    """
-    The formats that mandown can convert to. This is used for the `--format` option.
-    """
-
-    # for typing purposes
-    CBZ = "cbz"
-    EPUB = "epub"
-    PDF = "pdf"
-    NONE = "none"
 
 
 def query(url: str) -> BaseComic:
@@ -97,6 +85,7 @@ def convert_progress(
     to: ConvertFormats,
     dest_folder: Path | str | None = None,
     remove_after: bool = False,
+    split_by_chapters: bool = False,
 ) -> Iterator[str | int]:
     """
     Convert the comic located at `folder_path` to `convert_to`
@@ -107,6 +96,8 @@ def convert_progress(
     :param `convert_to`: The format to convert to
     :param `dest_folder`: A folder to put the converted comic in
     :param `remove_after`: If `True`, delete the original file/folder after conversion
+    :param `split_by_chapters`: Only applies to Mandown-created comics. If `True`,
+    output a comic file per chapter. Existing comic files will not be overwritten.
 
     :returns An `Iterator` representing a progress bar. The first iteration returns
     the remaining number of iterations. If converting between file formats, an
@@ -131,24 +122,41 @@ def convert_progress(
                 cover = item.name
                 break
 
-        comicon_comic = comicon.Comic(
-            comicon.Metadata(
-                title=comic.metadata.title,
-                authors=comic.metadata.authors,
-                description=comic.metadata.description,
-                genres=comic.metadata.genres,
-                cover_path_rel=cover,
-            ),
-            [comicon.Chapter(chap.title, chap.slug) for chap in comic.chapters],
-        )
+        if split_by_chapters:
+            comicon_comics = [
+                comicon.Comic(
+                    comicon.Metadata(
+                        title=f"{comic.metadata.title} - {chap.title}",
+                        authors=comic.metadata.authors,
+                        description=comic.metadata.description,
+                        genres=comic.metadata.genres,
+                        cover_path_rel=cover,
+                    ),
+                    [comicon.Chapter(chap.title, chap.slug)],
+                )
+                for chap in comic.chapters
+            ]
 
-        # save comicon.json
-        (comic_path / comicon.cirtools.IR_DATA_FILE).write_text(comicon_comic.to_json())
+            yield len(comicon_comics)
+            for comicomic in comicon_comics:
+                for _ in convert_one(comicomic, comic_path, to, dest_folder):
+                    ...
+                yield comicomic.metadata.title
 
-        # now we have a properly formed CIR
-        yield from comicon.outputs.create_comic_progress(
-            comic_path, dest_folder / f"{comic.metadata.title}.{to.value}"
-        )
+        else:
+            comicon_comic = comicon.Comic(
+                comicon.Metadata(
+                    title=comic.metadata.title,
+                    authors=comic.metadata.authors,
+                    description=comic.metadata.description,
+                    genres=comic.metadata.genres,
+                    cover_path_rel=cover,
+                ),
+                [comicon.Chapter(chap.title, chap.slug) for chap in comic.chapters],
+            )
+
+            yield from convert_one(comicon_comic, comic_path, to, dest_folder)
+
     else:
         # it's a file, no conversion needed, let comicon do its inferencing
         yield from comicon.convert_progress(
