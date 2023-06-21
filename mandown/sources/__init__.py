@@ -17,6 +17,7 @@ from . import (
     source_mangakakalot,
     source_manganato,
     source_mangasee,
+    source_manhuaes,
     source_readcomiconline,
     source_webtoons,
 )
