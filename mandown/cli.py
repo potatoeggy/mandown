@@ -371,7 +371,7 @@ def get(
         False,
         "--split-by-chapters",
         "-b",
-        help="Instead of returning one large comic file, create one comic"
+        help="IF CONVERTING: Instead of returning one large comic file, create one comic"
         "file for each chapter (applies only to Mandown-created comic folders)",
     ),
 ) -> None:
