@@ -118,7 +118,7 @@ def convert_progress(
         # find cover
         cover: str | None = None
         for item in comic_path.iterdir():
-            if str(item).startswith("cover"):
+            if item.name.startswith("cover"):
                 cover = item.name
                 break
 
