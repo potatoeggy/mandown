@@ -23,17 +23,6 @@ Mandown is a comic downloader and a CBZ, EPUB, and/or PDF converter. It also sup
   - Convert any other CBZ, EPUB, or PDF comic to CBZ, EPUB, or PDF
 - [A library to easily do all of this from other Python scripts](#basic-library-usage)
 
-## Supported sites
-
-To request a new site, please file a [new issue](https://github.com/potatoeggy/mandown/issues/new?title=Source%20request:).
-
-- <https://mangasee123.com>
-- <https://manganato.com>
-- <https://webtoons.com>
-- <https://mangadex.org>
-- <https://mangakakalot.com>
-- <https://readcomiconline.li>
-
 ## Usage
 
 Run `mandown --help` or see the [docs](/docs/) for more information and examples.
@@ -50,7 +39,7 @@ mandown get <URL> --convert epub --process rotate_double_pages
 
 To download only a certain range of chapters, append the `--start` and/or `--end` options.
 
-> **Note:** `--start` and `--end` are *inclusive*, i.e., using `--start 2 --end 3` will download chapters 2 and 3.
+> **Note:** `--start` and `--end` are _inclusive_, i.e., using `--start 2 --end 3` will download chapters 2 and 3.
 
 To convert an existing folder or comic file without downloading anything (like a stripped-down version of <https://github.com/ciromattia/kcc>), use the `convert` command.
 
@@ -98,6 +87,19 @@ poetry install
 poetry build
 pip3 install dist/mandown*.whl
 ```
+
+## Supported sites
+
+To request a new site, please file a [new issue](https://github.com/potatoeggy/mandown/issues/new?title=Source%20request:).
+
+- <https://mangasee123.com>
+- <https://manganato.com>
+- <https://webtoons.com>
+- <https://mangadex.org>
+- <https://mangakakalot.com>
+- <https://manhuaes.com>
+- <https://readcomiconline.li>
+
 ## Basic library usage
 
 See the [docs](/docs/) for more information and examples.
