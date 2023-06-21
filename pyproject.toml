@@ -16,15 +16,15 @@ mandown-gui = "mandown.ui.ui:main"
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
 typer = "^0.7.0"
-feedparser = "^6.0.8"
-beautifulsoup4 = "^4.10.0"
-requests = "^2.27.0"
+feedparser = "^6.0.10"
+beautifulsoup4 = "^4.12.2"
+requests = "^2.31.0"
 lxml = "^4.7.1"
-Pillow = "^9.0.1"
-python-slugify = "^6.1.2"
+Pillow = "^9.5.0"
+python-slugify = "^8.0.1"
 PySide6 = {version = "^6.4.0", optional = true}
 natsort = "^8.1.0"
-filetype = "^1.1.0"
+filetype = "^1.2.0"
 comicon = "^0.2.4"
 
 [tool.poetry.dev-dependencies]
