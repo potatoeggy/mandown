@@ -24,7 +24,7 @@ class ReadComicOnlineSource(BaseSource):
     def fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(
             requests.get(f"https://readcomiconline.li/Comic/{self.id}").text,
-            features="lxml",
+            "lxml",
         )
 
         title = str(soup.select_one("h3").text)
@@ -50,7 +50,7 @@ class ReadComicOnlineSource(BaseSource):
     def fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(
             requests.get(f"https://readcomiconline.li/Comic/{self.id}").text,
-            features="lxml",
+            "lxml",
         )
 
         chapters: list[BaseChapter] = []

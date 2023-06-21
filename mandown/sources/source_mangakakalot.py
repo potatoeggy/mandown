@@ -53,7 +53,7 @@ class MangaNatoSource(BaseSource):
         return chapters
 
     def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
-        soup = BeautifulSoup(requests.get(chapter.url).text)
+        soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         images = []
         for i in soup.select(".container-chapter-reader > img"):
             images.append(i["src"])
