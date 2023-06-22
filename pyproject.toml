@@ -25,7 +25,7 @@ python-slugify = "^8.0.1"
 PySide6 = {version = "^6.4.0", optional = true}
 natsort = "^8.1.0"
 filetype = "^1.2.0"
-comicon = "^0.2.4"
+comicon = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 types-requests = "^2.31.0.1"

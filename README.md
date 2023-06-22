@@ -8,7 +8,7 @@
 [![Latest release](https://img.shields.io/github/v/release/potatoeggy/mandown?display_name=tag)](https://github.com/potatoeggy/mandown/releases/latest)
 [![License](https://img.shields.io/github/license/potatoeggy/mandown)](/LICENSE)
 
-Mandown is a comic downloader and a CBZ, EPUB, and/or PDF converter. It also supports image post-processing to make them more readable on certain devices similarly to [Kindle Comic Converter](https://github.com/ciromattia/kcc).
+Mandown is a comic downloader and a CBZ, EPUB, MOBI, and/or PDF converter. It also supports image post-processing to make them more readable on certain devices similarly to [Kindle Comic Converter](https://github.com/ciromattia/kcc).
 
 ## Features
 
@@ -19,8 +19,8 @@ Mandown is a comic downloader and a CBZ, EPUB, and/or PDF converter. It also sup
   - Rotate or split double-page spreads
   - Trim borders
   - Resize images
-- Convert downloaded comics to CBZ, EPUB, or PDF
-  - Convert any other CBZ, EPUB, or PDF comic to CBZ, EPUB, or PDF
+- Convert downloaded comics to CBZ, EPUB, MOBI, or PDF
+  - Convert any other CBZ, EPUB, MOBI, or PDF comic to CBZ, EPUB, MOBI, or PDF
 - [A library to easily do all of this from other Python scripts](#basic-library-usage)
 
 ## Usage
@@ -31,7 +31,7 @@ Run `mandown --help` or see the [docs](/docs/) for more information and examples
 mandown get <URL>
 ```
 
-To convert the download contents to CBZ/EPUB/PDF, append the `--convert` option. To apply image processing to the downloaded images, append the `--process` option.
+To convert the downloaded contents to CBZ/EPUB/MOBI/PDF, append the `--convert` option. To apply image processing to the downloaded images, append the `--process` option.
 
 ```
 mandown get <URL> --convert epub --process rotate_double_pages

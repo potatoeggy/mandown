@@ -14,6 +14,7 @@ class ConvertFormats(str, Enum):
     CBZ = "cbz"
     EPUB = "epub"
     PDF = "pdf"
+    MOBI = "mobi"
     NONE = "none"
 
 

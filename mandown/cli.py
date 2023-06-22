@@ -163,7 +163,13 @@ def cli_convert(
 
     is_single_conversion = comic_path.is_dir()
 
-    len_first_conv = cast(int, next(iterator))
+    try:
+        len_first_conv = cast(int, next(iterator))
+    except RuntimeError as err:
+        # handle kindlegen errors
+        typer.secho(str(err), fg=typer.colors.RED)
+        raise typer.Abort() from None
+
     len_second_conv = -1
 
     first_convert_message = (
@@ -172,27 +178,37 @@ def cli_convert(
         else "Pre-converting comic"
     )
 
-    with typer.progressbar(
-        iterator,
-        length=len_first_conv,
-        label=first_convert_message,
-    ) as progress:
-        for res in progress:
-            if isinstance(res, int):
-                len_second_conv = res
-                break
-            if split_by_chapters:
-                progress.label = res
+    try:
+        with typer.progressbar(
+            iterator,
+            length=len_first_conv,
+            label=first_convert_message,
+        ) as progress:
+            for res in progress:
+                if isinstance(res, int):
+                    len_second_conv = res
+                    break
+                if split_by_chapters:
+                    progress.label = res
+    except RuntimeError as err:
+        # handle kindlegen errors
+        typer.secho(str(err), fg=typer.colors.RED)
+        raise typer.Abort() from None
 
     if not is_single_conversion:
         # it *should* be guaranteed len_second_conv exists
-        with typer.progressbar(
-            iterator,
-            length=len_second_conv,
-            label=f"Packing {target_format.value}",
-        ) as progress:
-            for _ in progress:
-                ...
+        try:
+            with typer.progressbar(
+                iterator,
+                length=len_second_conv,
+                label=f"Packing {target_format.value}",
+            ) as progress:
+                for _ in progress:
+                    ...
+        except RuntimeError as err:
+            # handle kindlegen errors
+            typer.secho(str(err), fg=typer.colors.RED)
+            raise typer.Abort() from None
 
     if not split_by_chapters:
         dest_file = dest_folder / f"{comic_path.stem}.{target_format.value}"

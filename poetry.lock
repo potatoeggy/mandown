@@ -140,13 +140,13 @@ files = [
 
 [[package]]
 name = "comicon"
-version = "0.2.4"
-description = "A simple comic conversion library between CBZ/EPUB/PDF"
+version = "1.0.0"
+description = "A simple comic conversion library between CBZ/EPUB/MOBI/PDF"
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "comicon-0.2.4-py3-none-any.whl", hash = "sha256:d336c7e40cc283efc1df2cc2cd260a23d15f6000779762175667bf1b1b180a50"},
-    {file = "comicon-0.2.4.tar.gz", hash = "sha256:9a984f8e0ec7ffc938e01e296cf04db6f781d5736fc2cd9acd51efadad5915e3"},
+    {file = "comicon-1.0.0-py3-none-any.whl", hash = "sha256:08509c442f5912cbd0fb1b5cde488d4b9c54eb94e9171afb8b0b71dcc6e6d66e"},
+    {file = "comicon-1.0.0.tar.gz", hash = "sha256:95109e3cc57fe457ae23cb6fb30e423ad9f204d764609db65696d1f50f4d76c2"},
 ]
 
 [package.dependencies]
@@ -504,13 +504,13 @@ tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "pa
 
 [[package]]
 name = "pluggy"
-version = "1.0.0"
+version = "1.2.0"
 description = "plugin and hook calling mechanisms for python"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "pluggy-1.0.0-py2.py3-none-any.whl", hash = "sha256:74134bbf457f031a36d68416e1509f34bd5ccc019f0bcc952c7b909d06b37bd3"},
-    {file = "pluggy-1.0.0.tar.gz", hash = "sha256:4224373bacce55f955a878bf9cfa763c1e360858e330072059e10bad68531159"},
+    {file = "pluggy-1.2.0-py3-none-any.whl", hash = "sha256:c2fd55a7d7a3863cba1a013e4e2414658b1d07b6bc57b3919e0c63c9abb99849"},
+    {file = "pluggy-1.2.0.tar.gz", hash = "sha256:d12f0c4b579b15f5e054301bb226ee85eeeba08ffec228092f8defbaa3a4c4b3"},
 ]
 
 [package.extras]
@@ -852,4 +852,4 @@ gui = ["PySide6"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "9cdc64145446ac5a8ef9c90cc188478a1ac25d25a7630170d76237ef9af44f58"
+content-hash = "9caf4625da7b9ccd31ece1b670c8326519b28b49bd342ccacb3ed9cc2bebe670"
