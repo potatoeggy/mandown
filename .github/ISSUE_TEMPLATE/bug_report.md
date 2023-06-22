@@ -1,10 +1,9 @@
 ---
-name: Bug report
-about: 'Something went wrong? '
-title: "[BUG]"
+name: "Bug report"
+about: "Something went wrong? "
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **What broke?**

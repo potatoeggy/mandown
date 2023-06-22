@@ -1,10 +1,9 @@
 ---
-name: 'Source request '
-about: 'Suggest a new site for mandown to support '
-title: 'Source request:'
+name: "Source request"
+about: "Suggest a new site for mandown to support"
+title: "Source request:"
 labels: sources
-assignees: ''
-
+assignees: ""
 ---
 
 Source URL:
