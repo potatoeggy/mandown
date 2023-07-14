@@ -1,5 +1,6 @@
-import mandown
 from common import skip_in_ci
+
+import mandown
 
 PUNPUN_DESCRIPTION = "Witness the titular Punpun - who is depicted as a tiny, caricatured bird in an otherwise normal human setting - as he copes with his dysfunctional family and friends, his love interest, his oncoming adolescence and his hyperactive mind."
 
@@ -27,3 +28,4 @@ def test_punpun() -> None:
     }
 
     assert comic.metadata.asdict() == expected_res
+    assert comic.chapters

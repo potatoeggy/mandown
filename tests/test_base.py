@@ -86,5 +86,5 @@ def test_basecomic() -> None:
     comic.set_chapter_range(start=0, end=5)
     assert comic.asdict() == {
         "metadata": metadata.asdict(),
-        "chapters": [c.asdict() for c in chapters[:6]],
+        "chapters": [c.asdict() for c in chapters[:5]],
     }

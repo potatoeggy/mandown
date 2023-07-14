@@ -22,6 +22,7 @@ def test_batman() -> None:
     }
 
     assert comic.metadata.asdict() == expected_res
+    assert comic.chapters
 
 
 @skip_in_ci

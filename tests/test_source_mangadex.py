@@ -1,5 +1,6 @@
-import mandown
 from common import skip_in_ci
+
+import mandown
 
 URL = "https://mangadex.org/title/a3d681d7-a239-45a9-8446-5bfc61ca48fa"
 COVER_URL = "https://uploads.mangadex.org/covers/a3d681d7-a239-45a9-8446-5bfc61ca48fa/f6c8523e-cc60-410a-8709-99fd3020c6e3.jpg"
@@ -26,3 +27,4 @@ def test_ibarahime() -> None:
     }
 
     assert comic.metadata.asdict() == expected_res
+    assert comic.chapters

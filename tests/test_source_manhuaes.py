@@ -20,3 +20,4 @@ def test_undefeatable() -> None:
     }
 
     assert comic.metadata.asdict() == expected_res
+    assert comic.chapters
