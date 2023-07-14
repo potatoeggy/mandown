@@ -36,7 +36,7 @@ def test_reyn() -> None:
         "authors": ["erlance"],
         "genres": ["Supernatural", "Drama"],
         "description": REYN_DESCRIPTION,
-        "cover_art": "https://webtoon-phinf.pstatic.net/20230325_139/1679675474657wrY4J_JPEG/7c50c2cf-80dd-4124-9ec7-8f9fc27658d5603660173559717648.jpg",
+        "cover_art": "https://webtoon-phinf.pstatic.net/20230703_36/1688394256514spH74_JPEG/20f96dd9-008b-4fe9-bf68-4b6ed37e49f12435456437735264238.jpeg",
         "url": reyn_url,
     }
 
