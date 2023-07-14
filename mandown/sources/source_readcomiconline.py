@@ -53,11 +53,10 @@ class ReadComicOnlineSource(BaseSource):
             "lxml",
         )
 
-        chapters: list[BaseChapter] = []
-        for e in soup.select("ul.list > li > a"):
-            chapters.append(
-                BaseChapter(next(e.children).text, self.domains[0] + e["href"])
-            )
+        chapters: list[BaseChapter] = [
+            BaseChapter(e.text.strip(), f'{self.domains[0]}{e["href"]}')
+            for e in soup.select("ul.list > li > div > a")
+        ]
         return list(reversed(chapters))
 
     def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
