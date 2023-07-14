@@ -53,7 +53,7 @@ class BaseComic:
         `start` and `end` are zero-indexed.
 
         :param `start`: The index of the first chapter to keep
-        :param `end`: The index of the last chapter to keep
+        :param `end`: The index of the last chapter to keep (exclusive)
         """
         self.chapters = self.chapters[start:end]
 

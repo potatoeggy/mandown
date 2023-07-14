@@ -240,8 +240,8 @@ def download_progress(
 
     :param `comic`: A comic or URL to download
     :param `path`: A folder to download the comic to
-    :param `start`: The first chapter to download (one-indexed, inclusive)
-    :param `end`: The last chapter to download (one-indexed, inclusive)
+    :param `start`: The first chapter to download (zero-indexed, inclusive)
+    :param `end`: The last chapter to download (zero-indexed, exclusive)
     :param `threads`: The number of threads to use
     :param `only_download_missing`: If `True`, do not download
     images already in the destination path
