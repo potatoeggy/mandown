@@ -5,6 +5,8 @@ from typer import Exit
 
 from mandown import BaseComic, __version_str__, cli
 
+from .common import skip_in_ci
+
 
 def assert_expected_output(capsys, input: str, output: str) -> None:
     sys.argv = input.split()
@@ -16,6 +18,7 @@ def assert_expected_output(capsys, input: str, output: str) -> None:
     assert output in captured.out
 
 
+@skip_in_ci
 def test_cli_query(capsys) -> None:
     url = "https://mangasee123.com/manga/Kaguya-Wants-To-Be-Confessed-To"
 
