@@ -13,6 +13,7 @@ import sys
 import types
 
 from . import (
+    source_blogtruyenmoi,
     source_mangadex,
     source_mangakakalot,
     source_manganato,
