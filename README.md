@@ -92,6 +92,7 @@ pip3 install dist/mandown*.whl
 
 To request a new site, please file a [new issue](https://github.com/potatoeggy/mandown/issues/new?title=Source%20request:).
 
+- <https://blogtruyenmoi.com>
 - <https://mangasee123.com>
 - <https://manganato.com>
 - <https://webtoons.com>
