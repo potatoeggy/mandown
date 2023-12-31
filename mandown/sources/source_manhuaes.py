@@ -13,14 +13,14 @@ from .base_source import BaseSource
 
 
 class ManhuaESSource(BaseSource):
-    name = "ManhuaES"
-    domains = ["https://manhuaes.com"]
+    name = "ManhuaAZ"
+    domains = ["https://manhuaaz.com"]
     # headers = {"Referer": "https://mangakakalot.com/"}
 
     def __init__(self, url: str) -> None:
         super().__init__(url)
         self.id = self.url_to_id(url)
-        self.url = f"https://manhuaes.com/manga/{self.id}"
+        self.url = f"https://manhuaaz.com/manga/{self.id}"
         self.numerical_id: str | None = None
         self._scripts: str | None = None
 
@@ -51,7 +51,7 @@ class ManhuaESSource(BaseSource):
 
         soup = BeautifulSoup(
             requests.post(
-                "https://manhuaes.com/wp-admin/admin-ajax.php",
+                "https://manhuaaz.com/wp-admin/admin-ajax.php",
                 data={"action": "manga_get_chapters", "manga": self.numerical_id},
             ).text,
             "lxml",
@@ -83,7 +83,7 @@ class ManhuaESSource(BaseSource):
 
     @staticmethod
     def check_url(url: str) -> bool:
-        return bool(re.match(r"https://manhuaes.com/manga/.*", url))
+        return bool(re.match(r"https://manhua(es|az).com/manga/.*", url))
 
 
 def get_class() -> type[BaseSource]:
