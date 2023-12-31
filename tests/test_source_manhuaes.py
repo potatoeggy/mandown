@@ -7,7 +7,7 @@ DESCRIPTION = "This is the story of Song Woo Mun. The village Inn owner’s son,
 
 @skip_in_ci
 def test_undefeatable() -> None:
-    url = "https://manhuaes.com/manga/the-undefeatable-swordsman-all"
+    url = "https://manhuaaz.com/manga/the-undefeatable-swordsman-all"
     comic = mandown.query(url)
 
     expected_res = {
@@ -15,7 +15,7 @@ def test_undefeatable() -> None:
         "authors": ["TUS"],
         "genres": ["Action", "Adventure", "Fantasy"],
         "description": DESCRIPTION,
-        "cover_art": "https://manhuaes.com/wp-content/uploads/2023/03/the-undefeatable-swordsman-193x278.jpg",
+        "cover_art": "https://manhuaaz.com/wp-content/uploads/2023/03/the-undefeatable-swordsman-193x278.jpg",
         "url": url,
     }
 
