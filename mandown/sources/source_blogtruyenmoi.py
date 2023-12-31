@@ -32,7 +32,7 @@ class BlogTruyenMoiSource(BaseSource):
             .strip()
         )
         authors: list[str] = [
-            soup.select_one("div.description > p:nth-child(1) > span").text
+            soup.select_one('div.description > p > a[href^="/tac-gia"]').text
         ]
         genres: list[str] = [
             string.text.strip() for string in soup.select("span.category > a")
@@ -40,8 +40,12 @@ class BlogTruyenMoiSource(BaseSource):
         cover_art: str = soup.select_one(".thumbnail > img")["src"]
 
         description_list: list[str] = []
-        for para in soup.select("div.detail > div.content > div.content > p"):
-            stripped = para.text.strip()
+        for child in soup.select_one("div.detail > div.content").children:
+            if child.name and child.name.lower() == "br":
+                # br tags usually indicate the end of the description
+                break
+
+            stripped = child.text.strip()
             if not stripped:
                 break
             description_list.append(stripped)
