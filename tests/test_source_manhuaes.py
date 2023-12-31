@@ -22,3 +22,6 @@ def test_undefeatable() -> None:
 
     assert comic.metadata.asdict() == expected_res
     assert comic.chapters
+
+    first_chapter = comic.get_chapter_image_urls(comic.chapters[0])
+    assert first_chapter

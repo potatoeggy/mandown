@@ -51,6 +51,9 @@ class MangaDexSource(BaseSource):
 
         if metadata["attributes"]["description"]:
             description: str = metadata["attributes"]["description"][self.lang_code]
+
+            # strip trailing spaces on each line
+            description = "\n".join(s.strip() for s in description.split("\n"))
         else:
             description = ""
 
@@ -68,7 +71,8 @@ class MangaDexSource(BaseSource):
 
         genres: list[str] = []
         for d in metadata["attributes"]["tags"]:
-            if d["attributes"]["group"] == "genre":
+            tag = d["attributes"]["group"]
+            if tag == "genre" or tag == "theme":
                 genres.append(d["attributes"]["name"][self.lang_code])
 
         return BaseMetadata(
