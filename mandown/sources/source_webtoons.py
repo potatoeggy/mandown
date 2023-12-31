@@ -55,14 +55,14 @@ class WebtoonsSource(BaseSource):
 
             cover_art = cover_art_el["style"][art_start_idx:art_end_idx]
 
-        genres_els = list(page.select(".genre"))
+        genres_els = list(page.select(".info .genre"))
 
         for el in genres_els:
             span = el.find_all("span")
             for s in span:
                 s.replace_with("")
 
-        genres = [el.text for el in page.select(".genre")]
+        genres = [el.text for el in page.select(".info .genre")]
 
         return BaseMetadata(
             title,
