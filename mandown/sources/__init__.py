@@ -20,6 +20,7 @@ from . import (
     source_mangasee,
     source_manhuaes,
     source_readcomiconline,
+    source_thecomicseries,
     source_webtoons,
 )
 from .base_source import BaseSource
