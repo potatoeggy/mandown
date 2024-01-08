@@ -278,6 +278,7 @@ def download_progress(
 
     # for each chapter
     for chap in comic.chapters[start:end]:
+        yield chap.title
         image_urls = comic.get_chapter_image_urls(chap)
         chapter_path = full_path / chap.slug
         chapter_path.mkdir(exist_ok=True)
@@ -295,7 +296,6 @@ def download_progress(
 
         if not image_urls or len(skip_images) == len(image_urls):
             # move to next chapter if there's nothing to download for this one
-            yield chap.title
             continue
 
         # name them 00001.png, 00002.png, etc
@@ -319,7 +319,6 @@ def download_progress(
             threads=threads,
         ):
             pass
-        yield chap.title
 
 
 def download(
