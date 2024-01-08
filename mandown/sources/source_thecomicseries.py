@@ -64,17 +64,60 @@ class MangaNatoSource(BaseSource):
         # /comic.php?action=addsubscription&amp;cid=number
         comic_id = soup.select_one(".webcomic-subscribe")["href"].split("=")[-1]
 
-        # call their api
-        data = requests.get(
-            f"https://comicfury.com/api.php?url=webcomic/id/{comic_id}/comicid/{first_page_id}/getonsitereadercomics"
-        ).json()
-        if not data["status"] or data["error_code"]:
-            raise RuntimeError(
-                "ComicFury did not give an expected response. Please report this issue to GitHub."
+        # we need the total number of pages
+        page_list_urls = soup.select("div.archive-pages .vfpage")
+        index = None
+        if page_list_urls:
+            for i, el in enumerate(page_list_urls):
+                if i == 0:
+                    continue
+                if "vfpagecurrent" in el["class"]:
+                    # these appear twice so this is how we differentiate them
+                    index = i - 1
+                    break
+
+        if index is None:
+            num_pages = len(pages)
+        else:
+            soup3 = BeautifulSoup(
+                requests.get(
+                    f"https://comicfury.com{page_list_urls[index]['href']}"
+                ).text,
+                "lxml",
+            )
+            # index is zero-indexed
+            num_pages = len(pages) * (index + 1) + len(
+                soup3.select(".archive-comics > a")
             )
 
-        soup2 = BeautifulSoup(data["data"]["html"], "lxml")
-        return [img["src"] for img in soup2.select(".is--comic-content img")]
+        # their api only returns images after the first page
+        # so we have to fetch it ourselves
+        soup4 = BeautifulSoup(
+            requests.get(f"https://comicfury.com{pages[0]['href']}").text,
+            "lxml",
+        )
+        first_page = soup4.select_one(".is--comic-content img")["src"]
+
+        # call their api
+        page_id = first_page_id
+        all_images: list[str] = [first_page]
+        while len(all_images) < num_pages:
+            data = requests.get(
+                f"https://comicfury.com/api.php?url=webcomic/id/{comic_id}/comicid/{page_id}/getonsitereadercomics"
+            ).json()
+            if not data["status"] or data["error_code"]:
+                raise RuntimeError(
+                    "ComicFury did not give an expected response."
+                    "Please report this issue to GitHub."
+                )
+            page_id = data["data"]["newLastComicId"]
+
+            soup2 = BeautifulSoup(data["data"]["html"], "lxml")
+            cur_images = [img["src"] for img in soup2.select(".is--comic-content img")]
+            all_images.extend(cur_images)
+            if data["data"]["endsAtLastComic"]:
+                break
+        return all_images
 
     @classmethod
     def url_to_id(cls, url: str) -> str:
@@ -93,7 +136,7 @@ class MangaNatoSource(BaseSource):
         return bool(
             re.match(r"https://comicfury\.com/comicprofile\.php.*", url)
             or re.match(r"https://.*\.thecomicseries\.com.*", url)
-            or re.match(r"https://comicfury.com/read/*/comics/*", url)
+            or re.match(r"https://comicfury.com/read/.*/comics/*", url)
         )
 
 
