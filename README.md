@@ -94,6 +94,7 @@ To request a new site, please file a [new issue](https://github.com/potatoeggy/m
 
 - <https://blogtruyenmoi.com>
 - <https://comicfury.com>
+- https://*.thecomicseries.com
 - <https://mangasee123.com>
 - <https://manganato.com>
 - <https://webtoons.com>
