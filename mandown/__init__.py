@@ -8,6 +8,7 @@ from .api import (
     process,
     process_progress,
     query,
+    save_metadata,
 )
 from .base import BaseChapter, BaseMetadata
 from .comic import BaseComic
