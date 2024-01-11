@@ -56,3 +56,11 @@ max-complexity = 18
 "__init__.py" = ["F401"]
 "mandown/cli.py" = ["B008"]
 "tests/*" = ["E501"]
+
+[tool.coverage.run]
+concurrency = ["multiprocessing"]
+parallel = true
+sigterm = true
+
+[tool.pylint.MASTER]
+extension-pkg-allow-list = ["lxml", "PySide6"]
