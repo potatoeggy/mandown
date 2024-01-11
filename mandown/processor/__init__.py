@@ -121,6 +121,7 @@ class Processor(ProcessContainer):
             # - target_size is set and resize is not
             # - profile is set and resize is not
             # - resize is set and neither target_size nor profile is set
+            # testing if only one of them is set is done in the resize op itself
             raise ProcessOptionMismatchError(
                 "resize must be used with target_size or profile"
             )
