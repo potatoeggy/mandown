@@ -1,6 +1,4 @@
-from common import skip_in_ci
-
-import mandown
+from common import skip_in_ci, is_source_working
 
 URL = "https://blogtruyenmoi.com/9600/kobayashi-san-chi-no-maid-dragon"
 REDUCED_URL = "https://blogtruyenmoi.com/9600"
@@ -10,12 +8,11 @@ DESCRIPTION = "truyện kể về nhân vật Kobayashi - một nữ kĩ sư ph�
 
 @skip_in_ci
 def test_kobayashi() -> None:
-    comic = mandown.query(URL)
-
-    expected_res = {
-        "title": "Kobayashi-san Chi no Maid Dragon",
-        "authors": ["Cool Kyoushinja"],
-        "genres": [
+    return is_source_working(
+        URL,
+        title="Kobayashi-san Chi no Maid Dragon",
+        authors=["Cool Kyoushinja"],
+        genres=[
             "Comedy",
             "Seinen",
             "Slice of life",
@@ -24,13 +21,7 @@ def test_kobayashi() -> None:
             "Fantasy",
             "Yuri",
         ],
-        "description": DESCRIPTION,
-        "cover_art": COVER_URL,
-        "url": REDUCED_URL,
-    }
-
-    assert comic.metadata.asdict() == expected_res
-    assert comic.chapters
-
-    first_chapter = comic.get_chapter_image_urls(comic.chapters[0])
-    assert first_chapter
+        description=DESCRIPTION,
+        cover_art=COVER_URL,
+        refined_url=REDUCED_URL,
+    )
