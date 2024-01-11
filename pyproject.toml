@@ -30,6 +30,7 @@ comicon = "^1.0.1"
 [tool.poetry.group.dev.dependencies]
 types-requests = "^2.31.0.20240106"
 types-lxml = "^2023.10.21"
+pytest-xdist = "^3.5.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.4"
