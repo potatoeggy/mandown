@@ -73,8 +73,7 @@ def test_basecomic() -> None:
     )
 
     chapters = [
-        mandown.BaseChapter(title=f"Test chapter {i}", url="https://example.com")
-        for i in range(10)
+        mandown.BaseChapter(title=f"Test chapter {i}", url="https://example.com") for i in range(10)
     ]
 
     comic = mandown.BaseComic(metadata=metadata, chapters=chapters)

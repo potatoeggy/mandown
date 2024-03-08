@@ -9,7 +9,6 @@ try:
     if not hasattr(Image, "Resampling"):  # Pillow<9.0
         Image.Resampling = Image
 except ImportError:
-
     if not TYPE_CHECKING:
 
         class Image:
@@ -47,9 +46,7 @@ class ProcessConfig:
 
     def __post_init__(self) -> None:
         if self.target_size is not None and self.output_profile is not None:
-            raise ValueError(
-                "Only one of `target_size` or `output_profile` can be specified."
-            )
+            raise ValueError("Only one of `target_size` or `output_profile` can be specified.")
 
         if self.output_profile is not None:
             if self.output_profile not in all_profiles:
@@ -87,9 +84,7 @@ class ProcessContainer:
             return image.rotate(90, expand=1)
         return None
 
-    def split_double_pages(
-        self, image: Image.Image
-    ) -> tuple[Image.Image, Image.Image] | None:
+    def split_double_pages(self, image: Image.Image) -> tuple[Image.Image, Image.Image] | None:
         """
         Split the image into two separate images if it is a double page.
         """

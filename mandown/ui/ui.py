@@ -3,6 +3,7 @@
 Generate mainwin.py while in mandown/ui/ with
 `uic -g python -o mainwin.py form.ui`
 """
+
 import sys
 from pathlib import Path
 
@@ -95,9 +96,7 @@ class MandownQtUi(QWidget):
         # refresh screen w/metadata et al here
         if comic.metadata.cover_art:
             r = requests.get(comic.metadata.cover_art)
-            self.img_cover = QPixmap(
-                QImage.fromData(r.content).scaledToHeight(COVER_IMG_HEIGHT)
-            )
+            self.img_cover = QPixmap(QImage.fromData(r.content).scaledToHeight(COVER_IMG_HEIGHT))
             self.ui.label_image.setPixmap(self.img_cover)
 
     @property
@@ -110,9 +109,7 @@ class MandownQtUi(QWidget):
 
     def hook_from_folder(self) -> None:
         # TODO: directly look for md-metadata.json instead
-        self.source_path = QFileDialog.getExistingDirectory(
-            self, "Open Comic Folder", "~"
-        )
+        self.source_path = QFileDialog.getExistingDirectory(self, "Open Comic Folder", "~")
         self.ui.text_source.setText(self.source_path)
         self.ui.text_dest.setText(str(Path(self.source_path).parent))
 
@@ -141,9 +138,7 @@ class MandownQtUi(QWidget):
         self.comic = comic
 
     def hook_set_dest(self) -> None:
-        self.dest_path = QFileDialog.getExistingDirectory(
-            self, "Set Destination Folder", "~"
-        )
+        self.dest_path = QFileDialog.getExistingDirectory(self, "Set Destination Folder", "~")
         self.ui.text_dest.setText(self.dest_path)
 
     def hook_go(self) -> None:
@@ -213,9 +208,7 @@ class MandownQtUi(QWidget):
                 self.ui.label_progress.setText(text)
                 self.ui.progress_bar.setValue(int(i / max_size * 100))
 
-        res = QMessageBox.information(
-            self, "Done", "All operations complete.", QMessageBox.Ok
-        )
+        res = QMessageBox.information(self, "Done", "All operations complete.", QMessageBox.Ok)
 
         self.ui.progress_bar.setDisabled(True)
 

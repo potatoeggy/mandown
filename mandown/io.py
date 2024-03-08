@@ -17,9 +17,7 @@ FILE_PADDING = f"0{NUM_LEFT_PAD_DIGITS}"
 MD_METADATA_FILE = "md-metadata.json"
 
 
-def async_download_image(
-    data: tuple[str, Path | str, str | None, dict[str, str] | None]
-) -> None:
+def async_download_image(data: tuple[str, Path | str, str | None, dict[str, str] | None]) -> None:
     """
     Download an image from a URL to a destination folder, fixing the file extension if necessary.
 

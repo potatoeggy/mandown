@@ -138,9 +138,7 @@ def convert_progress(
             ]
 
             yield len(comicon_comics)
-            existing_filenames = {
-                file.name for file in dest_folder.iterdir() if file.is_file()
-            }
+            existing_filenames = {file.name for file in dest_folder.iterdir() if file.is_file()}
             for comicomic in comicon_comics:
                 yield comicomic.metadata.title
 

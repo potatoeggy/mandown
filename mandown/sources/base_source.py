@@ -14,7 +14,6 @@ class BaseSource:
     _chapters: list[BaseChapter] = []
 
     def __init__(self, url: str):
-
         self.url = url
 
     @property

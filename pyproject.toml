@@ -44,16 +44,16 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
-select = ["B", "C", "E", "F", "W"]
-ignore = ["B905"]
-exclude = ["mandown/ui/*", "build/*"]
 target-version = "py310"
 line-length = 100
 
-[tool.ruff.mccabe]
-max-complexity = 18
+[tool.ruff.lint]
+mccabe.max-complexity = 18
+select = ["B", "C", "E", "F", "W"]
+ignore = ["B905"]
+exclude = ["mandown/ui/*", "build/*"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 "mandown/cli.py" = ["B008"]
 "tests/*" = ["E501"]

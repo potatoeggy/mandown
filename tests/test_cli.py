@@ -44,8 +44,6 @@ def test_callbacks(capsys) -> None:
     assert_expected_output(capsys, "mandown --help", "Usage: mandown [OPTIONS] COMMAND")
     assert_expected_output(capsys, "mandown", "Usage: mandown [OPTIONS] COMMAND")
 
-    assert_expected_output(
-        capsys, "mandown --supported-sites", "Webtoons: https://webtoons.com"
-    )
+    assert_expected_output(capsys, "mandown --supported-sites", "Webtoons: https://webtoons.com")
 
     assert_expected_output(capsys, "mandown -l", " - Kobo Sage: 'sage'")

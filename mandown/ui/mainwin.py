@@ -162,33 +162,19 @@ class Ui_Widget(object):
 
     def retranslateUi(self, Widget):
         Widget.setWindowTitle(QCoreApplication.translate("Widget", "Widget", None))
-        self.label_4.setText(
-            QCoreApplication.translate("Widget", "Source Folder / URL:", None)
-        )
-        self.button_from_url.setText(
-            QCoreApplication.translate("Widget", "Search URL", None)
-        )
-        self.button_from_folder.setText(
-            QCoreApplication.translate("Widget", "Open Folder", None)
-        )
+        self.label_4.setText(QCoreApplication.translate("Widget", "Source Folder / URL:", None))
+        self.button_from_url.setText(QCoreApplication.translate("Widget", "Search URL", None))
+        self.button_from_folder.setText(QCoreApplication.translate("Widget", "Open Folder", None))
         self.label_5.setText(QCoreApplication.translate("Widget", "Save to:", None))
         self.pushButton_3.setText(QCoreApplication.translate("Widget", "Browse", None))
         self.label_2.setText(QCoreApplication.translate("Widget", "Metadata", None))
         self.label.setText(QCoreApplication.translate("Widget", "Chapters", None))
         self.label_3.setText(QCoreApplication.translate("Widget", "Convert?", None))
         self.radio_no_convert.setText(QCoreApplication.translate("Widget", "No", None))
-        self.radio_convert_epub.setText(
-            QCoreApplication.translate("Widget", "EPUB", None)
-        )
-        self.radio_convert_pdf.setText(
-            QCoreApplication.translate("Widget", "PDF", None)
-        )
-        self.radio_convert_cbz.setText(
-            QCoreApplication.translate("Widget", "CBZ", None)
-        )
-        self.label_progress.setText(
-            QCoreApplication.translate("Widget", "Downloading...", None)
-        )
+        self.radio_convert_epub.setText(QCoreApplication.translate("Widget", "EPUB", None))
+        self.radio_convert_pdf.setText(QCoreApplication.translate("Widget", "PDF", None))
+        self.radio_convert_cbz.setText(QCoreApplication.translate("Widget", "CBZ", None))
+        self.label_progress.setText(QCoreApplication.translate("Widget", "Downloading...", None))
         self.button_start.setText(QCoreApplication.translate("Widget", "Start!", None))
 
     # retranslateUi

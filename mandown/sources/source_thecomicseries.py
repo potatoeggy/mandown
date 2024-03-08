@@ -80,15 +80,11 @@ class MangaNatoSource(BaseSource):
             num_pages = len(pages)
         else:
             soup3 = BeautifulSoup(
-                requests.get(
-                    f"https://comicfury.com{page_list_urls[index]['href']}"
-                ).text,
+                requests.get(f"https://comicfury.com{page_list_urls[index]['href']}").text,
                 "lxml",
             )
             # index is zero-indexed
-            num_pages = len(pages) * (index + 1) + len(
-                soup3.select(".archive-comics > a")
-            )
+            num_pages = len(pages) * (index + 1) + len(soup3.select(".archive-comics > a"))
 
         # their api only returns images after the first page
         # so we have to fetch it ourselves

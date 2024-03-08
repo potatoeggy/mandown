@@ -56,6 +56,4 @@ __all_profiles_data: dict[SupportedProfiles, _ProfileType] = {
     "sage": ("Kobo Sage", (1440, 1920)),
 }
 
-all_profiles = {
-    id: OutputProfile(id, *profile) for id, profile in __all_profiles_data.items()
-}
+all_profiles = {id: OutputProfile(id, *profile) for id, profile in __all_profiles_data.items()}

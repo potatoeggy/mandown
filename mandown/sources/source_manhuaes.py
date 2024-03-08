@@ -57,8 +57,7 @@ class ManhuaESSource(BaseSource):
             "lxml",
         )
         chapters = [
-            BaseChapter(c.text.strip(), c["href"])
-            for c in soup.select(".wp-manga-chapter a")
+            BaseChapter(c.text.strip(), c["href"]) for c in soup.select(".wp-manga-chapter a")
         ]
         chapters.reverse()
         return chapters

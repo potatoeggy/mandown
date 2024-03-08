@@ -3,7 +3,6 @@ Source file for webtoons.com
 """
 # pylint: disable=invalid-name
 
-
 import re
 
 import requests
@@ -75,9 +74,7 @@ class WebtoonsSource(BaseSource):
 
     def fetch_chapter_list(self) -> list[BaseChapter]:
         soup = self._get_soup()
-        titles = [
-            str(e.next_element) for e in soup.select("p.sub_title > span.ellipsis")
-        ]
+        titles = [str(e.next_element) for e in soup.select("p.sub_title > span.ellipsis")]
 
         links: list[str] = [e["href"] for e in soup.select('a[class^="NPI=a:list"]')]
 
@@ -97,9 +94,7 @@ class WebtoonsSource(BaseSource):
             return self._soup
 
         # mobile serves all chapters in one page
-        mobile_url = (
-            f"https://m.webtoons.com/{self._title_path}/list?title_no={self._title_no}"
-        )
+        mobile_url = f"https://m.webtoons.com/{self._title_path}/list?title_no={self._title_no}"
 
         self._soup = BeautifulSoup(
             requests.get(mobile_url, headers=self.headers).text,
@@ -109,9 +104,7 @@ class WebtoonsSource(BaseSource):
 
     def _get_desktop_soup(self) -> BeautifulSoup:
         desktop_url = f"https://www.webtoons.com/{self._title_path}/list?title_no={self._title_no}"
-        return BeautifulSoup(
-            requests.get(desktop_url, headers=self.headers).text, "lxml"
-        )
+        return BeautifulSoup(requests.get(desktop_url, headers=self.headers).text, "lxml")
 
     @staticmethod
     def check_url(url: str) -> bool:

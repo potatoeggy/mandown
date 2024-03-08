@@ -41,18 +41,13 @@ class MangaNatoSource(BaseSource):
         cover_img = next(iter(soup.select("span.info-image > img.img-loading")))
         cover_art: str = cover_img["src"]
 
-        description = soup.select_one(
-            "#panel-story-info-description > h3"
-        ).nextSibling.text.strip()
+        description = soup.select_one("#panel-story-info-description > h3").nextSibling.text.strip()
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
     def fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
-        chapters = [
-            BaseChapter(c.next_element, c["href"])
-            for c in soup.select("a.chapter-name")
-        ]
+        chapters = [BaseChapter(c.next_element, c["href"]) for c in soup.select("a.chapter-name")]
         chapters.reverse()
         return chapters
 

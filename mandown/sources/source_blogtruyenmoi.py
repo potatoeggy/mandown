@@ -27,16 +27,10 @@ class BlogTruyenMoiSource(BaseSource):
         soup = BeautifulSoup(self._get_scripts(), "lxml")
 
         title: str = (
-            soup.select_one("div#breadcrumbs > span:nth-child(2)")
-            .text.split(" > ")[-1]
-            .strip()
+            soup.select_one("div#breadcrumbs > span:nth-child(2)").text.split(" > ")[-1].strip()
         )
-        authors: list[str] = [
-            soup.select_one('div.description > p > a[href^="/tac-gia"]').text
-        ]
-        genres: list[str] = [
-            string.text.strip() for string in soup.select("span.category > a")
-        ]
+        authors: list[str] = [soup.select_one('div.description > p > a[href^="/tac-gia"]').text]
+        genres: list[str] = [string.text.strip() for string in soup.select("span.category > a")]
         cover_art: str = soup.select_one(".thumbnail > img")["src"]
 
         description_list: list[str] = []

@@ -3,7 +3,6 @@ Source file for mangadex.org
 """
 # pylint: disable=invalid-name
 
-
 import re
 import time
 
@@ -27,9 +26,9 @@ class MangaDexSource(BaseSource):
         # https://api.mangadex.org/manga/de4b3c43-5243-4399-9fc3-68a3c0747138
         self.id = self.url.split("/")[4]
         if self.url.startswith("https://mangadex.org/chapter"):
-            r: dict = self._get(f"https://api.mangadex.org/chapter/{self.id}").json()[
-                "data"
-            ]["relationships"]
+            r: dict = self._get(f"https://api.mangadex.org/chapter/{self.id}").json()["data"][
+                "relationships"
+            ]
             self.id: str = next(filter(lambda i: i["type"] == "manga", r))["id"]  # type: ignore
 
     def fetch_metadata(self) -> BaseMetadata:
@@ -94,9 +93,7 @@ class MangaDexSource(BaseSource):
 
         chapters: list[BaseChapter] = []
         for i, c in enumerate(r["data"]):
-            chapter_title: str = (
-                c["attributes"]["title"] or f"Chapter {c['attributes']['chapter']}"
-            )
+            chapter_title: str = c["attributes"]["title"] or f"Chapter {c['attributes']['chapter']}"
             chapter_slug: str = f"{i}-{slugify(chapter_title)}"
             chapters.append(
                 BaseChapter(
@@ -142,9 +139,7 @@ class MangaDexSource(BaseSource):
                 )
             time.sleep(1)
         else:
-            raise RuntimeError(
-                "MangaDex is probably rate-limiting us, try again later?"
-            )
+            raise RuntimeError("MangaDex is probably rate-limiting us, try again later?")
         return r
 
 

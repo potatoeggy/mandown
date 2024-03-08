@@ -17,9 +17,7 @@ from .base_source import BaseSource
 class MangaSeeSource(BaseSource):
     name = "MangaSee"
     domains = ["https://mangasee123.com"]
-    USER_AGENT = (
-        "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0"
-    )
+    USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0"
 
     def __init__(self, url: str) -> None:
         super().__init__(url)
@@ -44,16 +42,12 @@ class MangaSeeSource(BaseSource):
         description_html = soup.select_one("div.top-5.Content")
         description = str(description_html.next_element).strip()
 
-        cover_art = soup.select_one('div[style="padding-right:0px;"] img.bottom-5')[
-            "src"
-        ]
+        cover_art = soup.select_one('div[style="padding-right:0px;"] img.bottom-5')["src"]
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
     def fetch_chapter_list(self) -> list[BaseChapter]:
-        feed = feedparser.parse(
-            f"https://mangasee123.com/rss/{self.id}.xml", agent=self.USER_AGENT
-        )
+        feed = feedparser.parse(f"https://mangasee123.com/rss/{self.id}.xml", agent=self.USER_AGENT)
 
         chapters = []
         for c in feed["entries"]:
@@ -66,9 +60,7 @@ class MangaSeeSource(BaseSource):
     def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         full_js = str(
-            soup.find("script", type="application/ld+json")
-            .find_next("script")
-            .next_element
+            soup.find("script", type="application/ld+json").find_next("script").next_element
         )
 
         index_start = full_js.index("vm.CurChapter =") + len("vm.CurChapter =")

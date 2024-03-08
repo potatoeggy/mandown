@@ -8,7 +8,6 @@ variable. This variable is used by the get_class_for() function to return
 the correct source class for a given URL.
 """
 
-
 import sys
 import types
 
@@ -34,9 +33,7 @@ def _get_all_source_modules() -> list[str]:
     """
     out = []
     for _, val in globals().items():
-        if isinstance(val, types.ModuleType) and val.__name__.startswith(
-            "mandown.sources.source_"
-        ):
+        if isinstance(val, types.ModuleType) and val.__name__.startswith("mandown.sources.source_"):
             out.append(val.__name__)
     return out
 

@@ -50,13 +50,9 @@ class Processor(ProcessContainer):
     a given operation or there are missing options
     """
 
-    def __init__(
-        self, image_path: Path | str, config: ProcessConfig | None = None
-    ) -> None:
+    def __init__(self, image_path: Path | str, config: ProcessConfig | None = None) -> None:
         if not HAS_PILLOW:
-            raise ImportError(
-                "Pillow was not found and is needed for processing. Is it installed?"
-            )
+            raise ImportError("Pillow was not found and is needed for processing. Is it installed?")
 
         super().__init__(config)
         self.image_path = Path(image_path)
@@ -92,9 +88,7 @@ class Processor(ProcessContainer):
             filename = filename.with_stem(filename.stem + "a")
             image.save(filename)
 
-    def process(
-        self, operations: list[ProcessOps], filename: Path | str | None = None
-    ) -> None:
+    def process(self, operations: list[ProcessOps], filename: Path | str | None = None) -> None:
         """
         Perform the operations in `operations` on the image in sequence
         and save it to disk. If `filename` is not None, it will be saved
@@ -113,24 +107,22 @@ class Processor(ProcessContainer):
 
         # TODO: move all the checks together
         # there are some in ProcessConfig rn
-        resize_op_valid = bool(
-            self.config.output_profile or self.config.target_size
-        ) ^ bool(ProcessOps.RESIZE in operations)
+        resize_op_valid = bool(self.config.output_profile or self.config.target_size) ^ bool(
+            ProcessOps.RESIZE in operations
+        )
         if resize_op_valid:
             # if any of the following is true:
             # - target_size is set and resize is not
             # - profile is set and resize is not
             # - resize is set and neither target_size nor profile is set
             # testing if only one of them is set is done in the resize op itself
-            raise ProcessOptionMismatchError(
-                "resize must be used with target_size or profile"
-            )
+            raise ProcessOptionMismatchError("resize must be used with target_size or profile")
 
         for func in operations:
             try:
-                images: tuple[Image.Image, ...] | Image.Image | None = getattr(
-                    self, func
-                )(self.image)
+                images: tuple[Image.Image, ...] | Image.Image | None = getattr(self, func)(
+                    self.image
+                )
 
                 if images is None:
                     continue
