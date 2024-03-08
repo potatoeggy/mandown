@@ -1,7 +1,6 @@
 # mandown
 
 ![Supported Python versions](https://img.shields.io/pypi/pyversions/mandown)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Download from PyPI](https://img.shields.io/pypi/v/mandown)](https://pypi.org/project/mandown)
 [![Download from the AUR](https://img.shields.io/aur/version/mandown-git)](https://aur.archlinux.org/packages/mandown-git)
@@ -94,7 +93,7 @@ To request a new site, please file a [new issue](https://github.com/potatoeggy/m
 
 - <https://blogtruyenmoi.com>
 - <https://comicfury.com>
-- https://*.thecomicseries.com
+- https://\*.thecomicseries.com
 - <https://mangasee123.com>
 - <https://manganato.com>
 - <https://webtoons.com>
