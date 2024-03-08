@@ -49,7 +49,7 @@ line-length = 100
 
 [tool.ruff.lint]
 mccabe.max-complexity = 18
-select = ["B", "C", "E", "F", "W"]
+select = ["B", "C", "E", "F", "I", "W"]
 ignore = ["B905"]
 exclude = ["mandown/ui/*", "build/*"]
 

@@ -1,4 +1,4 @@
-from common import skip_in_ci, is_source_working
+from common import is_source_working, skip_in_ci
 
 DESCRIPTION = "Several heroes rose and fell without much attention and this is where their stories are woven together. Most of the characters in this series are in the public domain but the stories and depictions are original."
 

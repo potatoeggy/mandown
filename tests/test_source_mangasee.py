@@ -1,4 +1,4 @@
-from common import skip_in_ci, is_source_working
+from common import is_source_working, skip_in_ci
 
 KAGUYA_DESCRIPTION = "Kaguya Shinomiya and Miyuki Shirogane are the members of the incredibly prestigious Shuichi'in Academy's student council, asserting their positions as geniuses among geniuses. All the time they spend together has caused the two of them to develop feelings for each other, but their pride will not allow them to be the one to confess and become the submissive one in the relationship! Love is war, and their battle to make the other confess begins now!"
 

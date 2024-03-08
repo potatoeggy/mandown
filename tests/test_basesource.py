@@ -1,5 +1,6 @@
-from mandown.sources import BaseSource
 import pytest
+
+from mandown.sources import BaseSource
 
 
 def test_init() -> None:
@@ -16,7 +17,7 @@ def test_unimplemented() -> None:
     url = "test.test"
     testee = BaseSource(url)
     with pytest.raises(NotImplementedError):
-        testee.metadata
+        testee.metadata  # noqa: B018
 
     with pytest.raises(NotImplementedError):
-        testee.chapters
+        testee.chapters  # noqa: B018

@@ -1,7 +1,8 @@
 import os
-import pytest
-import mandown
 
+import pytest
+
+import mandown
 
 skip_in_ci = pytest.mark.skipif(
     os.environ.get("GITHUB_ACTIONS") == "true", reason="Do not run network tests in CI"

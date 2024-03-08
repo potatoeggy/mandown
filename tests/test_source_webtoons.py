@@ -1,4 +1,4 @@
-from common import skip_in_ci, is_source_working
+from common import is_source_working, skip_in_ci
 
 BATMAN_DESCRIPTION = "Batman needs a break. But with new vigilante Duke Thomas moving into Wayne Manor and an endless supply of adopted, fostered, and biological superhero children to manage, Bruce Wayne is going to have his hands full. Being a father can't be harder than being Batman, right?"
 

@@ -1,4 +1,4 @@
-from common import skip_in_ci, is_source_working
+from common import is_source_working, skip_in_ci
 
 DESCRIPTION = """All’s fair when love is war!
 

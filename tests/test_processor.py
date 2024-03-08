@@ -1,6 +1,8 @@
-import pytest
 from pathlib import Path
-from mandown import Processor, ProcessOptionMismatchError, ProcessConfig
+
+import pytest
+
+from mandown import ProcessConfig, ProcessOptionMismatchError, Processor
 
 SMALL_IMAGE = b"GIF89a\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x01D\x00;"
 

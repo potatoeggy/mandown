@@ -1,4 +1,4 @@
-from common import skip_in_ci, is_source_working
+from common import is_source_working, skip_in_ci
 
 PUNPUN_DESCRIPTION = "Witness the titular Punpun - who is depicted as a tiny, caricatured bird in an otherwise normal human setting - as he copes with his dysfunctional family and friends, his love interest, his oncoming adolescence and his hyperactive mind."
 

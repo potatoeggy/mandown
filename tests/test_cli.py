@@ -1,11 +1,10 @@
 import sys
 
 import pytest
+from common import skip_in_ci
 from typer import Exit
 
 from mandown import BaseComic, __version_str__, cli
-
-from common import skip_in_ci
 
 
 def assert_expected_output(capsys, input: str, output: str) -> None:

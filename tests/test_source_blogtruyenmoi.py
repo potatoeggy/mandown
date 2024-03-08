@@ -1,4 +1,4 @@
-from common import skip_in_ci, is_source_working
+from common import is_source_working, skip_in_ci
 
 URL = "https://blogtruyenmoi.com/9600/kobayashi-san-chi-no-maid-dragon"
 REDUCED_URL = "https://blogtruyenmoi.com/9600"
