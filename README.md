@@ -99,7 +99,7 @@ To request a new site, please file a [new issue](https://github.com/potatoeggy/m
 - <https://webtoons.com>
 - <https://mangadex.org>
 - <https://mangakakalot.com>
-- <https://manhuaes.com>
+- <https://manhuaaz.com>
 - <https://readcomiconline.li>
 
 ## Basic library usage

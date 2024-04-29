@@ -6,7 +6,7 @@ DESCRIPTION = "This is the story of Song Woo Mun. The village Inn owner’s son,
 @skip_in_ci
 def test_undefeatable() -> None:
     return is_source_working(
-        "https://manhuaes.com/manga/the-undefeatable-swordsman",
+        "https://manhuaaz.com/manga/the-undefeatable-swordsman",
         title="The Undefeatable Swordsman",
         authors=["TUS"],
         genres=["Action", "Adventure", "Fantasy"],
