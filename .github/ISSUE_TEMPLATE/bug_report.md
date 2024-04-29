@@ -1,6 +1,6 @@
 ---
 name: "Bug report"
-about: "Something went wrong? "
+about: "Something went wrong?"
 title: ""
 labels: bug
 assignees: ""
@@ -12,6 +12,9 @@ assignees: ""
 - [ ] Processor
 - [ ] Converter
 - [ ] Other
+
+**Mandown version**
+Output of `mandown --version`:
 
 **Describe the bug**
 A clear and concise description of what the bug is.
