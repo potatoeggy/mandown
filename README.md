@@ -101,6 +101,7 @@ To request a new site, please file a [new issue](https://github.com/potatoeggy/m
 - <https://mangakakalot.com>
 - <https://manhuaaz.com>
 - <https://readcomiconline.li>
+- <https://www.kuaikanmanhua.com>
 
 ## Basic library usage
 
