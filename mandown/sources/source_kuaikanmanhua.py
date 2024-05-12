@@ -28,11 +28,11 @@ class KuaiKanManhuaSource(BaseSource):
         soup = BeautifulSoup(self._get_scripts(), "lxml")
 
         title: str = soup.select_one("h3.title").text
-        authors: list[str] = [soup.select_one("div.nickname").text]
+        authors: list[str] = [soup.select_one("div.nickname").text.strip()]
         genres: list[str] = []  # no genres accessible from the list page on this site
         cover_art: str = soup.select_one("img.img")["src"]
 
-        description = soup.select_one("div.detailsBox > p").text.lstrip("漫画简介:")
+        description = soup.select_one("div.detailsBox > p").text.strip().lstrip("漫画简介:").strip()
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
