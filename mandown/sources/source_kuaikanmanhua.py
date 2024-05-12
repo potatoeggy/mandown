@@ -100,9 +100,8 @@ class KuaiKanManhuaSource(BaseSource):
 
         if "topic" in items:
             return int(items[4])
-        else:
-            soup = BeautifulSoup(requests.get(url).text, "lxml")
-            return soup.select_one(".tools-step > a.step-topic").attrs["href"].split("/")[-1]
+        soup = BeautifulSoup(requests.get(url).text, "lxml")
+        return soup.select_one(".tools-step > a.step-topic").attrs["href"].split("/")[-1]
 
     @staticmethod
     def check_url(url: str) -> bool:
