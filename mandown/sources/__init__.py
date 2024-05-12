@@ -13,6 +13,7 @@ import types
 
 from . import (
     source_blogtruyenmoi,
+    source_kuaikanmanhua,
     source_mangadex,
     source_mangakakalot,
     source_manganato,
