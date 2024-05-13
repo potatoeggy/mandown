@@ -25,5 +25,5 @@ def convert_one(
     (comic_path / comicon.cirtools.IR_DATA_FILE).write_text(comic.to_json())
 
     yield from comicon.outputs.create_comic_progress(
-        comic_path, dest_folder / f"{comic.metadata.title}.{to.value}"
+        comic_path, dest_folder / f"{comic.metadata.title_slug}.{to.value}"
     )

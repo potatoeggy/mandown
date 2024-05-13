@@ -426,7 +426,7 @@ def get(
         for title in progress:
             progress.label = title
 
-    full_dest_folder = dest.absolute() / comic.metadata.title
+    full_dest_folder = dest.absolute() / comic.metadata.title_slug
     typer.secho(
         f"Successfully downloaded {end_chapter - start_chapter} chapter(s) to {full_dest_folder}.",
         fg=typer.colors.GREEN,
@@ -443,12 +443,12 @@ def get(
             typer.secho(f"Could not apply processing options: {err}", fg=typer.colors.RED)
             raise typer.Exit(1) from err
 
-        cli_process(dest / comic.metadata.title, processing_options, config)
+        cli_process(dest / comic.metadata.title_slug, processing_options, config)
 
     # convert
     if convert_to != ConvertFormats.NONE:
         cli_convert(
-            dest / comic.metadata.title,
+            dest / comic.metadata.title_slug,
             convert_to,
             dest,
             remove_after,

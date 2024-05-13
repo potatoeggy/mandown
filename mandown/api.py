@@ -143,7 +143,7 @@ def convert_progress(
                 yield comicomic.metadata.title
 
                 # do not overwrite existing cache
-                if f"{comicomic.metadata.title}.{to.value}" in existing_filenames:
+                if f"{comicomic.metadata.title_slug}.{to.value}" in existing_filenames:
                     continue
                 for _ in convert_one(comicomic, comic_path, to, dest_folder):
                     ...
@@ -252,12 +252,7 @@ def download_progress(
     if isinstance(comic, str):
         comic = query(comic)
 
-    # create dir
-    try:
-        full_path = path / comic.metadata.title
-    except IOError:
-        # invalid filename
-        full_path = path / comic.metadata.title_slug
+    full_path = path / comic.metadata.title_slug
     full_path.mkdir(exist_ok=True)
 
     # save metadata json
