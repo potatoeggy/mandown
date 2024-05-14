@@ -286,7 +286,7 @@ def process(
     size_profile: Optional[str] = typer.Option(
         None,
         "--profile",
-        "-r",
+        "-o",
         help="RESIZE ONLY: The device profile to use (cannot be used with `target-size`)",
     ),
 ) -> None:
@@ -297,7 +297,7 @@ def process(
     mandown process trim_borders resize -z 800 1200
 
     eg. To split double pages and resize to a Kindle Paperwhite 2 profile:
-    mandown process split_double_pages resize -r paper
+    mandown process split_double_pages resize -o paper
 
     All profiles can be listed with "mandown --list-profiles".
     """
@@ -358,7 +358,7 @@ def get(
     size_profile: Optional[str] = typer.Option(
         None,
         "--profile",
-        "-r",
+        "-o",
         help="IF PROCESSING AND RESIZING: The device profile to use",
     ),
     remove_after: bool = typer.Option(
