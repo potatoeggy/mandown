@@ -18,6 +18,7 @@ class MangaNatoSource(BaseSource):
         "https://manganato.com",
         "https://readmanganato.com",
         "https://chapmanganato.com",
+        "https://chapmanganato.to",
     ]
     headers = {"Referer": "https://readmanganato.com/"}
 
@@ -76,6 +77,7 @@ class MangaNatoSource(BaseSource):
         return bool(
             re.match(r"https://readmanganato.com/.*", url)
             or re.match(r"https://chapmanganato.com/.*", url)
+            or re.match(r"https://chapmanganato.to/.*", url)
         )
 
 
