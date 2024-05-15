@@ -10,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
+from ..errors import NoImagesFoundError
 from .base_source import BaseSource
 
 
@@ -69,6 +70,11 @@ class ReadComicOnlineSource(BaseSource):
             e_index = text.find(");", s_index) - 1  # could be single or double quotes
             images.append(self.beau(text[s_index:e_index]))
             start = e_index
+        if not images:
+            raise NoImagesFoundError(
+                "No images found in the current chapter. Try visiting the URL in your browser "
+                "and solving any CAPTCHAs before trying again."
+            )
         return images
 
     @classmethod
