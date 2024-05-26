@@ -9,6 +9,7 @@ import comicon
 from . import io, sources
 from .comic import BaseComic
 from .convert_utils import ConvertFormats, convert_one
+from .errors import ImageDownloadError
 from .processor import ProcessConfig, ProcessOps, Processor
 
 
@@ -232,6 +233,7 @@ def download_progress(
     end: int | None = None,
     threads: int = 4,
     only_download_missing: bool = True,
+    raise_on_failed_download: bool = True,
 ) -> Iterator[str]:
     """
     Download comic or comic URL `comic` to `path` using `threads` threads.
@@ -313,6 +315,15 @@ def download_progress(
         ):
             pass
 
+        # check if every image was downloaded
+        if count := len([f for f in chapter_path.iterdir() if f.is_file()]) != len(
+            processed_image_urls
+        ):
+            if raise_on_failed_download:
+                raise ImageDownloadError(
+                    f"Failed to download {len(processed_image_urls) - count} images"
+                )
+
 
 def download(
     comic: BaseComic | str,
@@ -322,6 +333,7 @@ def download(
     end: int | None = None,
     threads: int = 4,
     only_download_missing: bool = True,
+    raise_on_failed_download: bool = True,
 ) -> None:
     """
     Download comic or comic URL `comic` to `path` using `threads` threads.

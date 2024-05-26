@@ -20,6 +20,7 @@ from . import (
     api,
     sources,
 )
+from .errors import ImageDownloadError
 
 app = typer.Typer()
 
@@ -419,12 +420,18 @@ def get(
 
     # download
     typer.echo(f"Downloading {end_chapter - start_chapter} chapter(s)...")
-    with typer.progressbar(
-        api.download_progress(comic, dest, threads=maxthreads),
-        length=len(comic.chapters),
-    ) as progress:
-        for title in progress:
-            progress.label = title
+    try:
+        with typer.progressbar(
+            api.download_progress(comic, dest, threads=maxthreads),
+            length=len(comic.chapters),
+        ) as progress:
+            for title in progress:
+                progress.label = title
+    except ImageDownloadError as err:
+        typer.secho(
+            "Some image links on the host site were broken, ignoring...", fg=typer.colors.ORANGE
+        )
+        typer.secho(f"Error: {err}", fg=typer.colors.RED)
 
     full_dest_folder = dest.absolute() / comic.metadata.title_slug
     typer.secho(
