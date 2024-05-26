@@ -16,8 +16,10 @@ NUM_LEFT_PAD_DIGITS = 5
 FILE_PADDING = f"0{NUM_LEFT_PAD_DIGITS}"
 MD_METADATA_FILE = "md-metadata.json"
 
+AsyncDownloadImageInput = tuple[str, Path | str, str | None, dict[str, str] | None]
 
-def async_download_image(data: tuple[str, Path | str, str | None, dict[str, str] | None]) -> None:
+
+def async_download_image(data: AsyncDownloadImageInput) -> None:
     """
     Download an image from a URL to a destination folder, fixing the file extension if necessary.
 
@@ -30,7 +32,12 @@ def async_download_image(data: tuple[str, Path | str, str | None, dict[str, str]
     dest_file = dest_folder / name
 
     res = requests.get(url, headers=headers, timeout=5)
-    res.raise_for_status()
+
+    if res.status_code != 200:
+        # there is no clean way to raise an error in a pool
+        # so we just return early and check it later
+        return
+
     with open(dest_file, "wb") as file:
         file.write(res.content)
 
@@ -66,7 +73,7 @@ def download_images(
     dest_folder.mkdir(exist_ok=True)
 
     # args to async_download
-    map_pool: list[tuple[str, Path | str, str | None, dict[str, str] | None]] = []
+    map_pool: list[AsyncDownloadImageInput] = []
 
     if filestems is None:
         filestems = [f"{i+1:FILE_PADDING}" for i in range(len(urls))]
