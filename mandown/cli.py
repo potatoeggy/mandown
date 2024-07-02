@@ -429,7 +429,8 @@ def get(
                 progress.label = title
     except ImageDownloadError as err:
         typer.secho(
-            "Some image links on the host site were broken, ignoring...", fg=typer.colors.ORANGE
+            "Some image links on the host site were broken, ignoring...",
+            fg=typer.colors.BRIGHT_YELLOW,
         )
         typer.secho(f"Error: {err}", fg=typer.colors.RED)
 

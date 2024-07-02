@@ -33,7 +33,7 @@ def _get_all_source_modules() -> list[str]:
     """
     Return a list of all source modules.
     """
-    out = []
+    out = list[str]()
     for _, val in globals().items():
         if isinstance(val, types.ModuleType) and val.__name__.startswith("mandown.sources.source_"):
             out.append(val.__name__)
