@@ -13,7 +13,7 @@ from .base_source import BaseSource
 
 class ComixExtraSource(BaseSource):
     name = "Comix Extra"
-    domains = ["https://comixextra.com.com"]
+    domains = ["https://comixextra.com"]
 
     def __init__(self, url: str) -> None:
         super().__init__(url)
