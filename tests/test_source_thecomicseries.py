@@ -18,5 +18,5 @@ def test_retcon() -> None:
             "Public Domain",
         ],
         description=DESCRIPTION,
-        cover_art="https://comicfury.com/comicavatars/275/56926_1487018262.png",
+        cover_art="https://comicfury.com/comicavatars/346/56926_501151667.png",
     )
