@@ -12,6 +12,7 @@ import sys
 import types
 
 from . import (
+    source_batoto,
     source_blogtruyenmoi,
     source_comixextra,
     source_kuaikanmanhua,
