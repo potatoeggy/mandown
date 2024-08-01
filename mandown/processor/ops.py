@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .profiles import SupportedProfiles, all_profiles
@@ -120,3 +121,29 @@ class ProcessContainer:
         if target_size is None or image.size == target_size:
             return None
         return image.resize(target_size, resample=Image.Resampling.LANCZOS)
+
+
+class OutputProcessContainer:
+    """
+    Add output processing functions here!
+    Name them by their Enum string in ProcessOps.
+    They should all return None.
+    """
+
+    def __init__(self, image: Image.Image, filename: str | Path) -> None:
+        self.image = image
+        self.filename = filename
+
+    def default(self) -> None:
+        """
+        Write the image to disk.
+        """
+        self.image.save(self.filename)
+
+    def webp_to_png(self) -> None:
+        """
+        Convert any WEBP images to PNG.
+        """
+        path = Path(self.filename)
+        self.image.save(path.with_suffix(".png"), "PNG")
+        path.unlink()

@@ -2,7 +2,7 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from .ops import ProcessConfig, ProcessContainer
+from .ops import OutputProcessContainer, ProcessConfig, ProcessContainer
 
 try:
     from PIL import Image
@@ -33,6 +33,23 @@ class ProcessOps(str, Enum):
 
     RESIZE = "resize"
     """Resize images to a maximum width and height."""
+
+    WEBP_TO_PNG = "webp_to_png"
+    """Convert any WEBP images to PNG."""
+
+
+"""A list of operations that can be chained."""
+IN_MEM_PROCESS_OPS = {
+    ProcessOps.ROTATE_DOUBLE_PAGES,
+    ProcessOps.SPLIT_DOUBLE_PAGES,
+    ProcessOps.TRIM_BORDERS,
+    ProcessOps.RESIZE,
+}
+
+"""A list of operations that must be run last."""
+OUTPUT_PROCESS_OPS = {
+    ProcessOps.WEBP_TO_PNG,
+}
 
 
 class ProcessOptionMismatchError(Exception):
@@ -78,15 +95,20 @@ class Processor(ProcessContainer):
         self._image = image
         self.is_modified = True
 
-    def write(self, filename: Path | str | None = None) -> None:
+    def write(
+        self, filename: Path | str | None = None, output_process_op: ProcessOps | None = None
+    ) -> None:
         """Save the processed image(s) manually"""
         filename = Path(filename or self.image_path)
-        self.image.save(filename)
+
+        writer = OutputProcessContainer(self.image, filename)
+        getattr(writer, output_process_op or "default")()  # this is so janky
 
         for image in self.new_images:
             # increment by one "a" each time
             filename = filename.with_stem(filename.stem + "a")
-            image.save(filename)
+            writer = OutputProcessContainer(image, filename)
+            getattr(writer, output_process_op or "default")()
 
     def process(self, operations: list[ProcessOps], filename: Path | str | None = None) -> None:
         """
@@ -118,7 +140,19 @@ class Processor(ProcessContainer):
             # testing if only one of them is set is done in the resize op itself
             raise ProcessOptionMismatchError("resize must be used with target_size or profile")
 
+        output_op: ProcessOps | None = None
+
         for func in operations:
+            if func in OUTPUT_PROCESS_OPS:
+                if output_op:
+                    # only one output operation can be run
+                    raise ProcessOptionMismatchError(
+                        "Only one output operation can be run."
+                        f"{output_op} and {func} were both found."
+                    )
+                output_op = func
+                continue
+
             try:
                 images: tuple[Image.Image, ...] | Image.Image | None = getattr(self, func)(
                     self.image
@@ -143,6 +177,6 @@ class Processor(ProcessContainer):
             except OSError as err:
                 raise OSError(f"Error in {self.image_path}") from err
 
-        if self.is_modified:
+        if self.is_modified or output_op:
             # only write to disk if something has actually changed
-            self.write(filename)
+            self.write(filename, output_op)
