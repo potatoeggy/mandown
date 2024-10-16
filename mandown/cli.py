@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from typing import Optional, cast
+from typing import cast
 
 import typer
 
@@ -276,7 +276,7 @@ def convert(
 def process(
     options: list[ProcessOps],
     folder_path: Path = typer.Argument(Path.cwd()),
-    target_size: Optional[tuple[int, int]] = typer.Option(
+    target_size: tuple[int, int] | None = typer.Option(
         (0, 0),
         "--target-size",
         "-z",
@@ -284,7 +284,7 @@ def process(
         show_default=False,
         help="RESIZE ONLY: The target size (width, height) (cannot be used with `profile`)",
     ),
-    size_profile: Optional[str] = typer.Option(
+    size_profile: str | None = typer.Option(
         None,
         "--profile",
         "-o",
@@ -326,13 +326,13 @@ def get(
     convert_to: ConvertFormats = typer.Option(
         "none", "--convert", "-c", help="The format to download the comic as"
     ),
-    start: Optional[int] = typer.Option(
+    start: int | None = typer.Option(
         None,
         "--start",
         "-s",
         help="The first chapter to download [default: first found]",
     ),
-    end: Optional[int] = typer.Option(
+    end: int | None = typer.Option(
         None, "--end", "-e", help="The last chapter to download [default: last found]"
     ),
     maxthreads: int = typer.Option(
@@ -341,14 +341,14 @@ def get(
         "-t",
         help="The maximum number of images to download in parallel",
     ),
-    processing_options: Optional[list[ProcessOps]] = typer.Option(
+    processing_options: list[ProcessOps] | None = typer.Option(
         [],
         "--process",
         "-p",
         help="Image processing options (in-place)",
         case_sensitive=True,
     ),
-    target_size: Optional[tuple[int, int]] = typer.Option(
+    target_size: tuple[int, int] | None = typer.Option(
         (0, 0),
         "--target-size",
         "-z",
@@ -356,7 +356,7 @@ def get(
         min=0,
         help="IF PROCESSING AND RESIZING: The target size (width, height)",
     ),
-    size_profile: Optional[str] = typer.Option(
+    size_profile: str | None = typer.Option(
         None,
         "--profile",
         "-o",
@@ -466,8 +466,8 @@ def get(
 
 @app.command(name="init-metadata")
 def init_metadata(
-    path: Optional[Path] = typer.Argument(None, help="The folder to initialise"),
-    source_url: Optional[str] = typer.Argument(None, help="The url to get metadata from"),
+    path: Path | None = typer.Argument(None, help="The folder to initialise"),
+    source_url: str | None = typer.Argument(None, help="The url to get metadata from"),
     download_cover: bool = typer.Option(
         False,
         "--download-cover",
@@ -509,14 +509,14 @@ def init_metadata(
 
 @app.callback(invoke_without_command=True, no_args_is_help=True)
 def callback(
-    version: Optional[bool] = typer.Option(
+    version: bool | None = typer.Option(
         None,
         "--version",
         "-v",
         is_eager=True,
         help="Display the current version of mandown",
     ),
-    supported_sites: Optional[bool] = typer.Option(
+    supported_sites: bool | None = typer.Option(
         None,
         "--supported-sites",
         is_eager=True,
