@@ -30,7 +30,9 @@ def is_source_working(
     }
     comic = mandown.query(url)
 
-    assert comic.metadata.asdict() == expected_res
+    assert (
+        comic.metadata.asdict() == expected_res
+    ), f"Expected:\n{expected_res}\n\nGot:\n{comic.metadata.asdict()}"
     assert comic.chapters
 
     first_chapter = comic.get_chapter_image_urls(comic.chapters[0])
