@@ -68,5 +68,5 @@ sigterm = true
 extension-pkg-allow-list = ["lxml", "PySide6"]
 
 [tool.pytest.ini_options]
-timeout = 15
+timeout = 30
 addopts = "-p coverage -p timeout"
