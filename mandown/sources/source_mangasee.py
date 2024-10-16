@@ -11,10 +11,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class MangaSeeSource(BaseSource):
+class MangaSeeSource(CommonSource):
     name = "MangaSee"
     domains = ["https://mangasee123.com"]
     USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0"
@@ -86,13 +86,6 @@ class MangaSeeSource(BaseSource):
     def check_url(url: str) -> bool:
         return bool(re.match(r"https://mangasee123.com/manga/.*", url))
 
-    def _get_scripts(self) -> str:
-        if self._scripts:
-            return self._scripts
-
-        self._scripts = requests.get(self.url).text
-        return self._scripts
-
     @classmethod
     def url_to_id(cls, url: str) -> str:
         # converts page url to id
@@ -102,5 +95,5 @@ class MangaSeeSource(BaseSource):
         return last_item
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return MangaSeeSource

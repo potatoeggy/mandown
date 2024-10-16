@@ -25,9 +25,9 @@ from . import (
     source_thecomicseries,
     source_webtoons,
 )
-from .base_source import BaseSource
+from .common_source import CommonSource
 
-__class_list: list[type[BaseSource]] = []
+__class_list: list[type[CommonSource]] = []
 
 
 def _get_all_source_modules() -> list[str]:
@@ -45,7 +45,7 @@ for i in _get_all_source_modules():
     __class_list.append(sys.modules[i].get_class())
 
 
-def get_class_for(url: str) -> type[BaseSource]:
+def get_class_for(url: str) -> type[CommonSource]:
     """
     Return a source that matches the URL.
 
@@ -57,7 +57,7 @@ def get_class_for(url: str) -> type[BaseSource]:
     raise ValueError("No sources found matched the URL query.")
 
 
-def get_all_classes() -> list[type[BaseSource]]:
+def get_all_classes() -> list[type[CommonSource]]:
     """
     Return all imported source module classes. Best used for manual poking.
     """

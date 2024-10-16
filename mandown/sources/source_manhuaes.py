@@ -9,10 +9,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class ManhuaESSource(BaseSource):
+class ManhuaESSource(CommonSource):
     name = "ManhuaAZ"
     domains = ["https://manhuaaz.com"]
     # headers = {"Referer": "https://mangakakalot.com/"}
@@ -66,13 +66,6 @@ class ManhuaESSource(BaseSource):
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         return [el["data-src"] for el in soup.select("img.wp-manga-chapter-img")]
 
-    def _get_scripts(self) -> str:
-        if self._scripts:
-            return self._scripts
-
-        self._scripts = requests.get(self.url).text or ""
-        return self._scripts
-
     @classmethod
     def url_to_id(cls, url: str) -> str:
         items = list(filter(None, url.split("/")))
@@ -85,5 +78,5 @@ class ManhuaESSource(BaseSource):
         return bool(re.match(r"https://manhua(es|az).com/manga/.*", url))
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return ManhuaESSource

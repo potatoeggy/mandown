@@ -4,14 +4,14 @@ Source file for comixextra.com
 
 import re
 
-import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from ..request_utils import requests
+from .common_source import CommonSource
 
 
-class ComixExtraSource(BaseSource):
+class ComixExtraSource(CommonSource):
     name = "Comix Extra"
     domains = ["https://comixextra.com"]
 
@@ -58,13 +58,6 @@ class ComixExtraSource(BaseSource):
 
         return [i["src"] for i in BeautifulSoup(text, "lxml").select(".chapter-container img")]
 
-    def _get_scripts(self) -> str:
-        if self._scripts:
-            return self._scripts
-
-        self._scripts = requests.get(self.url).text or ""
-        return self._scripts
-
     @classmethod
     def url_to_id(cls, url: str) -> str:
         items = list(filter(None, url.split("/")))
@@ -82,5 +75,5 @@ class ComixExtraSource(BaseSource):
         return bool(re.match(r"https://comixextra.com/.*", url))
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return ComixExtraSource

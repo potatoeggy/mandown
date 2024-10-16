@@ -11,10 +11,10 @@ from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
 from ..errors import NoImagesFoundError
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class ReadComicOnlineSource(BaseSource):
+class ReadComicOnlineSource(CommonSource):
     name = "ReadComicOnline"
     domains = ["https://readcomiconline.li"]
 
@@ -113,5 +113,5 @@ class ReadComicOnlineSource(BaseSource):
         return f"https://2.bp.blogspot.com/{url}{sep}{rest}"
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return ReadComicOnlineSource

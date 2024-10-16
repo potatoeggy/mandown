@@ -9,10 +9,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class WebtoonsSource(BaseSource):
+class WebtoonsSource(CommonSource):
     name = "Webtoons"
     domains = ["https://webtoons.com"]
     headers = {"Referer": "https://webtoons.com/"}
@@ -115,5 +115,5 @@ class WebtoonsSource(BaseSource):
         )
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return WebtoonsSource

@@ -11,10 +11,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class BatotoSource(BaseSource):
+class BatotoSource(CommonSource):
     name = "Bato.to"
     domains = ["https://bato.to"]
 
@@ -71,13 +71,6 @@ class BatotoSource(BaseSource):
             images.append(image[1])
         return images
 
-    def _get_scripts(self) -> str:
-        if self._scripts:
-            return self._scripts
-
-        self._scripts = requests.get(self.url).text or ""
-        return self._scripts
-
     @classmethod
     def url_to_id(cls, url: str) -> str:
         items = list(filter(None, url.split("/")))
@@ -92,7 +85,7 @@ class BatotoSource(BaseSource):
         return bool(re.match(r"https://bato.to/title/.*", url))
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return BatotoSource
 
 

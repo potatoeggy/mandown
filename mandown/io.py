@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Iterator, Sequence
 
 import filetype
-import requests
+import requests as RealRequests
 from natsort import natsorted
 
 from .base import BaseChapter, BaseMetadata
@@ -31,7 +31,7 @@ def async_download_image(data: AsyncDownloadImageInput) -> None:
     name = filename or url.split("/")[-1]
     dest_file = dest_folder / name
 
-    res = requests.get(url, headers=headers, timeout=5)
+    res = RealRequests.get(url, headers=headers, timeout=5)
 
     if res.status_code != 200:
         # there is no clean way to raise an error in a pool

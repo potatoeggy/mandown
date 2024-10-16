@@ -9,10 +9,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class MangaNatoSource(BaseSource):
+class MangaNatoSource(CommonSource):
     name = "MangaNato"
     domains = [
         "https://manganato.com",
@@ -60,13 +60,6 @@ class MangaNatoSource(BaseSource):
                 images.append(i["src"])
         return images
 
-    def _get_scripts(self) -> str:
-        if self._scripts:
-            return self._scripts
-
-        self._scripts = requests.get(self.url).text
-        return self._scripts
-
     @classmethod
     def url_to_id(cls, url: str) -> str:
         *_, last_item = filter(None, url.split("/"))
@@ -81,5 +74,5 @@ class MangaNatoSource(BaseSource):
         )
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return MangaNatoSource

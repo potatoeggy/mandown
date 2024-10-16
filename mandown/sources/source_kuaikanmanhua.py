@@ -10,10 +10,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class KuaiKanManhuaSource(BaseSource):
+class KuaiKanManhuaSource(CommonSource):
     name = "快看漫画 (Kuaikan Manhua)"
     domains = ["https://www.kuaikanmanhua.com"]
     # headers = {"Referer": "https://www.kuaikanmanhua.com/"}
@@ -83,13 +83,6 @@ class KuaiKanManhuaSource(BaseSource):
         strings: list[str] = json.loads(constructed)
         return [s for s in strings if isinstance(s, str)]  # there may be ints
 
-    def _get_scripts(self) -> str:
-        if self._scripts:
-            return self._scripts
-
-        self._scripts = requests.get(self.url).text or ""
-        return self._scripts
-
     @classmethod
     def url_to_id(cls, url: str) -> str:
         items = list(filter(None, url.split("/")))
@@ -112,5 +105,5 @@ class KuaiKanManhuaSource(BaseSource):
         )
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return KuaiKanManhuaSource

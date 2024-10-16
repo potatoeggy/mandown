@@ -9,10 +9,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class BlogTruyenMoiSource(BaseSource):
+class BlogTruyenMoiSource(CommonSource):
     name = "Blog Truyen"
     domains = ["https://blogtruyenmoi.com"]
     headers = {"Referer": "https://blogtruyenmoi.com/"}
@@ -61,13 +61,6 @@ class BlogTruyenMoiSource(BaseSource):
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         return [el["src"] for el in soup.select("article#content > img")]
 
-    def _get_scripts(self) -> str:
-        if self._scripts:
-            return self._scripts
-
-        self._scripts = requests.get(self.url).text or ""
-        return self._scripts
-
     @classmethod
     def url_to_id(cls, url: str) -> str:
         items = list(filter(None, url.split("/")))
@@ -91,5 +84,5 @@ class BlogTruyenMoiSource(BaseSource):
         return bool(re.match(r"https://blogtruyenmoi.com/(\d*(/.*)?)|(c.\d*/.*)", url))
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return BlogTruyenMoiSource

@@ -1,11 +1,11 @@
 import pytest
 
-from mandown.sources import BaseSource
+from mandown.sources.common_source import CommonSource
 
 
 def test_init() -> None:
     url = "test.test"
-    testee = BaseSource(url)
+    testee = CommonSource(url)
     assert testee.url == url
 
 
@@ -15,7 +15,7 @@ def test_unimplemented() -> None:
     that functions must be properly defined.
     """
     url = "test.test"
-    testee = BaseSource(url)
+    testee = CommonSource(url)
     with pytest.raises(NotImplementedError):
         testee.metadata  # noqa: B018
 

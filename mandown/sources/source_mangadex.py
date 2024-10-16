@@ -11,10 +11,10 @@ from bs4 import BeautifulSoup
 from slugify import slugify
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class MangaDexSource(BaseSource):
+class MangaDexSource(CommonSource):
     name = "MangaDex"
     domains = ["https://mangadex.org"]
 
@@ -143,5 +143,5 @@ class MangaDexSource(BaseSource):
         return r
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return MangaDexSource

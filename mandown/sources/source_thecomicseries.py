@@ -10,10 +10,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from ..base import BaseChapter, BaseMetadata
-from .base_source import BaseSource
+from .common_source import CommonSource
 
 
-class MangaNatoSource(BaseSource):
+class MangaNatoSource(CommonSource):
     name = "ComicFury"
     domains = [
         "https://thecomicseries.com",
@@ -136,5 +136,5 @@ class MangaNatoSource(BaseSource):
         )
 
 
-def get_class() -> type[BaseSource]:
+def get_class() -> type[CommonSource]:
     return MangaNatoSource
