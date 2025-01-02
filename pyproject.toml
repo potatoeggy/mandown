@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mandown"
-version = "1.10.0"
+version = "1.10.1"
 description = "Comic/manga/webtoon downloader and CBZ/EPUB/MOBI/PDF converter"
 authors = ["potatoeggy <eggyrules@gmail.com>"]
 license = "AGPL-3.0-only"
