@@ -150,6 +150,7 @@ def cli_convert(
     remove_after: bool = False,
     split_by_chapters: bool = False,
 ) -> None:
+    comic = api.load(comic_path)
     iterator = api.convert_progress(
         comic_path, target_format, dest_folder, remove_after, split_by_chapters
     )
@@ -202,7 +203,7 @@ def cli_convert(
             raise typer.Abort() from None
 
     if not split_by_chapters:
-        dest_file = dest_folder / f"{comic_path.stem}.{target_format.value}"
+        dest_file = dest_folder / f"{comic.metadata.title_slug}.{target_format.value}"
         typer.secho(f"Successfully converted to {dest_file}", fg=typer.colors.GREEN)
     else:
         typer.secho(f"Successfully converted to {dest_folder}", fg=typer.colors.GREEN)

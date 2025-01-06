@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from comicon import SLUGIFY_ARGS
 from slugify import slugify
 
 
@@ -26,7 +27,7 @@ class BaseMetadata:
     title_slug: str = ""
 
     def __post_init__(self) -> None:
-        self.title_slug = slugify(self.title)
+        self.title_slug = slugify(self.title, **SLUGIFY_ARGS)
 
     def asdict(self) -> dict[str, str | list[str]]:
         """
@@ -59,7 +60,7 @@ class BaseChapter:
 
     def __post_init__(self) -> None:
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.title, **SLUGIFY_ARGS)
 
     def asdict(self) -> dict:
         """
