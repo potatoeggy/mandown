@@ -10,7 +10,7 @@ def test_basemetadata() -> None:
     genres = ["Test genre", "Test genre 2"]
     description = "Test description"
     cover_art = "https://example.com/cover.jpg"
-    title_slug = "test-title"
+    title_slug = "Test title"
 
     metadata = mandown.BaseMetadata(
         title=title,
@@ -35,7 +35,7 @@ def test_basemetadata() -> None:
 def test_basechapter() -> None:
     title = "Test title"
     url = "https://example.com"
-    slug = "test-title"
+    slug = "Test title"
 
     chapter = mandown.BaseChapter(title=title, url=url)
 
