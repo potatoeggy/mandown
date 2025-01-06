@@ -144,6 +144,9 @@ class OutputProcessContainer:
         """
         Convert any WEBP images to PNG.
         """
+        if Path(self.filename).suffix != ".webp":
+            return
+
         path = Path(self.filename)
         self.image.save(path.with_suffix(".png"), "PNG")
         path.unlink()

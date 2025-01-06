@@ -175,5 +175,5 @@ def discover_local_images(path: Path | str) -> dict[str, list[Path]]:
     return {
         chap.stem: sorted(chap.iterdir())
         for chap in sorted(path.iterdir())  # iterdir does not guarantee any order
-        if chap.is_dir() or chap.stem == "cover"
-    }
+        if chap.is_dir()
+    } | {"cover": [cover for cover in path.iterdir() if cover.is_file() and cover.stem == "cover"]}

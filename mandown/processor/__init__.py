@@ -1,11 +1,13 @@
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from .ops import OutputProcessContainer, ProcessConfig, ProcessContainer
 
 try:
-    from PIL import Image
+    from PIL import Image, ImageFile
+
+    ImageFile.LOAD_TRUNCATED_IMAGES = True
 
     HAS_PILLOW = True
 except ImportError:
