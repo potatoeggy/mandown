@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import cast
 
+import comicon
 import typer
 
 from . import (
@@ -159,6 +160,15 @@ def cli_convert(
 
     try:
         len_first_conv = cast(int, next(iterator))
+    except comicon.errors.BadImageError as err:
+        typer.secho(str(err), fg=typer.colors.RED)
+        if "webp" in str(err):
+            typer.secho(
+                "WebP images cannot be converted. Consider"
+                " first applying the processing option `webp_to_png`.",
+                fg=typer.colors.RED,
+            )
+            raise typer.Exit(2) from None
     except RuntimeError as err:
         # handle kindlegen errors
         typer.secho(str(err), fg=typer.colors.RED)
