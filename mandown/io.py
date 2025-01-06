@@ -164,7 +164,7 @@ def save_comic(comic: BaseComic, path: Path | str) -> None:
 
 def discover_local_images(path: Path | str) -> dict[str, list[Path]]:
     """
-    Given a comic path, return a dictionary of slugs: images.
+    Given a comic path, return a dictionary of chapter_slugs OR cover: images.
     Basically a slightly modified version of os.walk. Only recurses one level deep.
 
     :param `path`: A folder containing images
@@ -175,5 +175,5 @@ def discover_local_images(path: Path | str) -> dict[str, list[Path]]:
     return {
         chap.stem: sorted(chap.iterdir())
         for chap in sorted(path.iterdir())  # iterdir does not guarantee any order
-        if chap.is_dir()  # force explosion for readability
+        if chap.is_dir() or chap.stem == "cover"
     }
