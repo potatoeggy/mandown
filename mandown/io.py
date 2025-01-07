@@ -3,6 +3,7 @@ import multiprocessing as mp
 import os
 import urllib.parse
 from pathlib import Path
+from time import sleep
 from typing import Iterator, Sequence
 
 import filetype
@@ -31,12 +32,14 @@ def async_download_image(data: AsyncDownloadImageInput) -> None:
     name = filename or url.split("/")[-1]
     dest_file = dest_folder / name
 
-    res = RealRequests.get(url, headers=headers, timeout=5)
-
-    if res.status_code != 200:
+    times = 0
+    while (res := RealRequests.get(url, headers=headers, timeout=5)).status_code == 429:
         # there is no clean way to raise an error in a pool
         # so we just return early and check it later
-        return
+        times += 1
+        sleep(1)
+        if times >= 3:
+            return
 
     with open(dest_file, "wb") as file:
         file.write(res.content)
