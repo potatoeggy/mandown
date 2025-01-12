@@ -9,7 +9,7 @@ import comicon
 from . import io, sources
 from .comic import BaseComic
 from .convert_utils import ConvertFormats, convert_one
-from .errors import ImageDownloadError
+from .errors import ChapterImageCountMismatchError, ImageDownloadError
 from .processor import ProcessConfig, ProcessOps, Processor
 
 
@@ -295,14 +295,24 @@ def download_progress(
 
         # name them 00001.png, 00002.png, etc
         # skipping ones that already exist
-        processed_image_urls, filestems = zip(
-            *(
-                (link, str(i).rjust(io.NUM_LEFT_PAD_DIGITS, "0"))
-                for i, link in enumerate(image_urls, start=1)
-                if i not in skip_images
-            ),
-            strict=False,
-        )
+        try:
+            processed_image_urls, filestems = zip(
+                *(
+                    (link, str(i).rjust(io.NUM_LEFT_PAD_DIGITS, "0"))
+                    for i, link in enumerate(image_urls, start=1)
+                    if i not in skip_images
+                ),
+                strict=False,
+            )
+        except ValueError:
+            # ValueError is raised when `zip` is given no arguments and thus
+            # no images to download
+            processed_image_urls, filestems = [], []
+
+            raise ChapterImageCountMismatchError(
+                "There are more images in the filesystem than in present in the chapter index."
+                " You should never see this message."
+            ) from None
 
         chapter_path = full_path / chap.slug
 

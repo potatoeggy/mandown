@@ -8,3 +8,7 @@ class NoImagesFoundError(MandownError):
 
 class ImageDownloadError(MandownError):
     pass
+
+
+class ChapterImageCountMismatchError(MandownError):
+    pass
