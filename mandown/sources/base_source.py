@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import final
 
 from ..base import BaseChapter, BaseMetadata
@@ -56,9 +57,13 @@ class BaseSource:
         """
         chapters = self._fetch_chapter_list()
 
-        for c in chapters:  # this is O(n^2) but n is small
-            if any(c.slug == x.slug for x in chapters):
-                c.slug = f"{c.slug}-2"
+        chapter_dupes = defaultdict[str, int](lambda: 1)  # slug -> count
+        for i, c in enumerate(chapters):  # this is O(n^2) but n is small
+            if any(c.slug == x.slug or c.title == x.title for x in chapters[:i]):
+                chapter_dupes[c.slug] += 1
+                c.slug = f"{c.slug}-{chapter_dupes[c.slug]}"
+                c.title = f"{c.title} ({chapter_dupes[c.slug]})"
+
         return chapters
 
     @final
