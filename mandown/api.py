@@ -363,5 +363,6 @@ def download(
         end=end,
         threads=threads,
         only_download_missing=only_download_missing,
+        raise_on_failed_download=raise_on_failed_download,
     ):
         pass
