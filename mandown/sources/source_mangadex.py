@@ -31,7 +31,7 @@ class MangaDexSource(CommonSource):
             ]
             self.id: str = next(filter(lambda i: i["type"] == "manga", r))["id"]  # type: ignore
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         # TODO: support non-English downloads
         r = self._get(
             f"https://api.mangadex.org/manga/{self.id}"
@@ -83,7 +83,7 @@ class MangaDexSource(CommonSource):
             cover_art,
         )
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         # for some reason *sometimes* it goes all name/service not found
         r = self._get(
             f"https://api.mangadex.org/manga/{self.id}/"
@@ -104,7 +104,7 @@ class MangaDexSource(CommonSource):
             )
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         *_, chapter_id = chapter.url.split("/")
         r = self._get(f"https://api.mangadex.org/at-home/server/{chapter_id}").json()
         base_url = r["baseUrl"]

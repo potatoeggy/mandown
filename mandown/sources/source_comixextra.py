@@ -21,7 +21,7 @@ class ComixExtraSource(CommonSource):
         self.url = f"https://comixextra.com/comic/{self.id}"
         self._scripts: str | None = None
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
 
         title: str = soup.select_one(".mobile-hide span.title-1").text.strip()
@@ -41,7 +41,7 @@ class ComixExtraSource(CommonSource):
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
 
         return list(
@@ -53,7 +53,7 @@ class ComixExtraSource(CommonSource):
             )
         )
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         text = requests.get(chapter.url).text
 
         return [i["src"] for i in BeautifulSoup(text, "lxml").select(".chapter-container img")]

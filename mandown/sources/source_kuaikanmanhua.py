@@ -24,7 +24,7 @@ class KuaiKanManhuaSource(CommonSource):
         self.url = f"https://www.kuaikanmanhua.com/web/topic/{self.id}"
         self._scripts: str | None = None
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
 
         title: str = soup.select_one("h3.title").text
@@ -36,7 +36,7 @@ class KuaiKanManhuaSource(CommonSource):
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         text = self._get_scripts()
         soup = BeautifulSoup(text, "lxml")
         array_start = text.index("Array(")
@@ -72,7 +72,7 @@ class KuaiKanManhuaSource(CommonSource):
                 )
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         text = requests.get(chapter.url).text
         js_start = text.index("config:{_app:")
         next_sign = text.index("?sign=", js_start)

@@ -24,7 +24,7 @@ class MangaSeeSource(CommonSource):
         self.id = self.url_to_id(url)
         self._scripts: str | None = None
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         # all of the metadata is available in the <script type="application/ld+json"> element
         # so are the chapters
         soup = BeautifulSoup(self._get_scripts(), "lxml")
@@ -46,7 +46,7 @@ class MangaSeeSource(CommonSource):
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         feed = feedparser.parse(f"https://mangasee123.com/rss/{self.id}.xml", agent=self.USER_AGENT)
 
         chapters = []
@@ -57,7 +57,7 @@ class MangaSeeSource(CommonSource):
         chapters.reverse()
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         full_js = str(
             soup.find("script", type="application/ld+json").find_next("script").next_element

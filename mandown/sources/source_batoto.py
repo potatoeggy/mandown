@@ -24,7 +24,7 @@ class BatotoSource(CommonSource):
         self.url = f"https://bato.to/title/{self.id}"
         self._scripts: str | None = None
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
 
         cover_art_el = soup.select_one("img.not-prose")
@@ -41,7 +41,7 @@ class BatotoSource(CommonSource):
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
 
         chapters: list[BaseChapter] = []
@@ -51,7 +51,7 @@ class BatotoSource(CommonSource):
             chapters.append(BaseChapter(title, f"https://bato.to{link}?load=2"))
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
 
         """

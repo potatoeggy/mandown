@@ -27,7 +27,7 @@ class MangaNatoSource(CommonSource):
         self.id = self.url_to_id(url)
         self._scripts: str | None = None
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
         title: str = soup.h1.next_element
         authors_genres = soup.select("td > a.a-h")
@@ -46,13 +46,13 @@ class MangaNatoSource(CommonSource):
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
         chapters = [BaseChapter(c.next_element, c["href"]) for c in soup.select("a.chapter-name")]
         chapters.reverse()
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         images = []
         for i in soup.find_all("img"):

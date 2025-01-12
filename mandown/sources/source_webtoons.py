@@ -30,7 +30,7 @@ class WebtoonsSource(CommonSource):
 
         self._title_path = "/".join(url.split("/")[3:6])
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         page = self._get_desktop_soup()
         title = page.select_one('meta[property="og:title"]')["content"]
         authors: list[str] = [
@@ -72,7 +72,7 @@ class WebtoonsSource(CommonSource):
             cover_art,
         )
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         soup = self._get_soup()
         titles = [str(e.next_element) for e in soup.select("p.sub_title > span.ellipsis")]
 
@@ -82,7 +82,7 @@ class WebtoonsSource(CommonSource):
         chapters.reverse()
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         images: list[str] = []
         for c in soup.select("div#_imageList > img"):

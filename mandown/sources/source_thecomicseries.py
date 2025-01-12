@@ -24,7 +24,7 @@ class MangaNatoSource(CommonSource):
         super().__init__(url)
         self.id = self.url_to_id(url)
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(
             requests.get(f"https://comicfury.com/comicprofile.php?url={self.id}").text,
             "lxml",
@@ -43,7 +43,7 @@ class MangaNatoSource(CommonSource):
 
         return BaseMetadata(title, authors, self.url, genres, description, cover)
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(
             requests.get(f"https://comicfury.com/read/{self.id}/archive").text,
             "lxml",
@@ -55,7 +55,7 @@ class MangaNatoSource(CommonSource):
         ]
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         pages = soup.select(".archive-comics > a")
         # href is of form /read/title/comics/number

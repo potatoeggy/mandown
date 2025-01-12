@@ -1,3 +1,5 @@
+from typing import final
+
 from ..base import BaseChapter, BaseMetadata
 
 
@@ -16,6 +18,7 @@ class BaseSource:
     def __init__(self, url: str):
         self.url = url
 
+    @final
     @property
     def metadata(self) -> BaseMetadata:
         """
@@ -26,6 +29,7 @@ class BaseSource:
         self._metadata = self.fetch_metadata()
         return self._metadata
 
+    @final
     @property
     def chapters(self) -> list[BaseChapter]:
         """
@@ -36,19 +40,49 @@ class BaseSource:
         self._chapters = self.fetch_chapter_list()
         return self._chapters
 
+    @final
     def fetch_metadata(self) -> BaseMetadata:
+        """
+        Fetch and return title, author, and url of the comic.
+        """
+        return self._fetch_metadata()
+
+    @final
+    def fetch_chapter_list(self) -> list[BaseChapter]:
+        """
+        Fetch and return a list of chapter titles and their URL in ascending order.
+
+        Check for duplicate chapters and disambiguate them.
+        """
+        chapters = self._fetch_chapter_list()
+
+        for c in chapters:  # this is O(n^2) but n is small
+            if any(c.slug == x.slug for x in chapters):
+                c.slug = f"{c.slug}-2"
+        return chapters
+
+    @final
+    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+        """
+        Given a chapter link, fetch and return a list of image URLs in ascending
+        order for that chapter.
+        """
+        return self._fetch_chapter_image_list(chapter)
+
+    # override these below!
+    def _fetch_metadata(self) -> BaseMetadata:
         """
         Fetch and return title, author, and url of the comic.
         """
         raise NotImplementedError("Metadata getter not overridden")
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         """
         Fetch and return a list of chapter titles and their URL in ascending order.
         """
         raise NotImplementedError("Chapter list getter not overridden")
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         """
         Given a chapter link, fetch and return a list of image URLs in ascending
         order for that chapter.

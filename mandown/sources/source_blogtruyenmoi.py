@@ -23,7 +23,7 @@ class BlogTruyenMoiSource(CommonSource):
         self.url = f"https://blogtruyenmoi.com/{self.id}"
         self._scripts: str | None = None
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
 
         title: str = (
@@ -47,7 +47,7 @@ class BlogTruyenMoiSource(CommonSource):
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
 
         chapters = [
@@ -57,7 +57,7 @@ class BlogTruyenMoiSource(CommonSource):
         chapters.reverse()
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         return [el["src"] for el in soup.select("article#content > img")]
 

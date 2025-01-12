@@ -22,7 +22,7 @@ class ReadComicOnlineSource(CommonSource):
         super().__init__(url)
         self.id = self.url_to_id(url)
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(
             requests.get(f"https://readcomiconline.li/Comic/{self.id}").text,
             "lxml",
@@ -48,7 +48,7 @@ class ReadComicOnlineSource(CommonSource):
 
         return BaseMetadata(title, author, self.url, genres, description, cover)
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         soup = BeautifulSoup(
             requests.get(f"https://readcomiconline.li/Comic/{self.id}").text,
             "lxml",
@@ -60,7 +60,7 @@ class ReadComicOnlineSource(CommonSource):
         ]
         return list(reversed(chapters))
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         text = requests.get(chapter.url).text
 
         images: list[str] = []

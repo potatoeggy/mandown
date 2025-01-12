@@ -24,7 +24,7 @@ class ManhuaESSource(CommonSource):
         self.numerical_id: str | None = None
         self._scripts: str | None = None
 
-    def fetch_metadata(self) -> BaseMetadata:
+    def _fetch_metadata(self) -> BaseMetadata:
         soup = BeautifulSoup(self._get_scripts(), "lxml")
         self.numerical_id = soup.select_one("input.rating-post-id")["value"]
 
@@ -44,7 +44,7 @@ class ManhuaESSource(CommonSource):
 
         return BaseMetadata(title, authors, self.url, genres, description, cover_art)
 
-    def fetch_chapter_list(self) -> list[BaseChapter]:
+    def _fetch_chapter_list(self) -> list[BaseChapter]:
         if not self.numerical_id:
             soup = BeautifulSoup(self._get_scripts(), "lxml")
             self.numerical_id = soup.select_one("input.rating-post-id")["value"]
@@ -62,7 +62,7 @@ class ManhuaESSource(CommonSource):
         chapters.reverse()
         return chapters
 
-    def fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
+    def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
         soup = BeautifulSoup(requests.get(chapter.url).text, "lxml")
         return [el["data-src"] for el in soup.select("img.wp-manga-chapter-img")]
 
