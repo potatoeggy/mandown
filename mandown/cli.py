@@ -440,10 +440,11 @@ def get(
                 progress.label = title
     except ImageDownloadError as err:
         typer.secho(
-            "Some image links on the host site were broken, ignoring...",
+            "Some image links on the host site were broken, exiting...",
             fg=typer.colors.BRIGHT_YELLOW,
         )
         typer.secho(f"Error: {err}", fg=typer.colors.RED)
+        raise typer.Abort(3) from err
 
     full_dest_folder = dest.absolute() / comic.metadata.title_slug
     typer.secho(
