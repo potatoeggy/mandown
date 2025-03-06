@@ -49,8 +49,8 @@ class WebtoonsSource(CommonSource):
 
             cover_art = cover_art_el["src"]
         else:
-            art_start_idx = cover_art_el["style"].find("url(") + len("url(")
-            art_end_idx = cover_art_el["style"].find(")", art_start_idx)
+            art_start_idx = cover_art_el["style"].find("url('") + len("url('")
+            art_end_idx = cover_art_el["style"].find("')", art_start_idx)
 
             cover_art = cover_art_el["style"][art_start_idx:art_end_idx]
 
