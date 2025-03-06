@@ -19,7 +19,7 @@ def assert_expected_output(capsys, input: str, output: str) -> None:
 
 @skip_in_ci
 def test_cli_query(capsys) -> None:
-    url = "https://mangasee123.com/manga/Kaguya-Wants-To-Be-Confessed-To"
+    url = "https://www.webtoons.com/en/slice-of-life/batman-wayne-family-adventures/list?title_no=3180"
 
     res = cli.cli_query(url)
     assert isinstance(res, BaseComic)
