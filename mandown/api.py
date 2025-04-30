@@ -127,7 +127,8 @@ def convert_progress(
             comicon_comics = [
                 comicon.Comic(
                     comicon.Metadata(
-                        title=f"{comic.metadata.title} - {chap.title}",
+                        # pad to 5 leading zeroes
+                        title=f"{comic.metadata.title} #{i:05}: {chap.title}",
                         authors=comic.metadata.authors,
                         description=comic.metadata.description,
                         genres=comic.metadata.genres,
@@ -135,7 +136,7 @@ def convert_progress(
                     ),
                     [comicon.Chapter(chap.title, chap.slug)],
                 )
-                for chap in comic.chapters
+                for i, chap in enumerate(comic.chapters, start=1)
             ]
 
             yield len(comicon_comics)
