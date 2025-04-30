@@ -18,6 +18,8 @@ class BaseComic:
     ):
         self.metadata = metadata
         self.chapters = chapters
+        BaseChapter.sync_slug_order(self.chapters)
+
         try:
             self.source = sources.get_class_for(self.metadata.url)(self.metadata.url)
         except ValueError as err:
@@ -66,6 +68,7 @@ class BaseComic:
         """
         if chapters:
             self.chapters = self.source.fetch_chapter_list()
+            BaseChapter.sync_slug_order(self.chapters)
 
         if metadata:
             self.metadata = self.source.fetch_metadata()

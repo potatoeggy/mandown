@@ -71,3 +71,14 @@ class BaseChapter:
             "url": self.url,
             "slug": self.slug,
         }
+
+    @staticmethod
+    def sync_slug_order(
+        chapters: list["BaseChapter"],
+    ) -> None:
+        """
+        Given a list of chapters, prefix their slugs with their index in the list.
+        This is useful for sorting chapters in a comic.
+        """
+        for i, chapter in enumerate(chapters, start=1):
+            chapter.slug = f"{i:05}-{chapter.slug}"
