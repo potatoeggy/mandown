@@ -15,26 +15,26 @@ mandown-gui = "mandown.ui.ui:main"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.14"
-typer-slim = "^0.15.1"
+typer-slim = "^0.15.3"
 feedparser = "^6.0.11"
-beautifulsoup4 = "^4.12.3"
+beautifulsoup4 = "^4.13.4"
 requests = "^2.32.3"
-lxml = "^5.3.0"
-pillow = "^11.1.0"
+lxml = "^5.4.0"
+pillow = "^11.2.1"
 python-slugify = "^8.0.4"
 PySide6 = { version = "^6.8.1.1", optional = true }
 natsort = "^8.4.0"
 filetype = "^1.2.0"
-comicon = "^1.4.0"
+comicon = "^1.5.0"
 
 [tool.poetry.group.dev.dependencies]
-types-requests = "^2.32.0"
-types-lxml = "^2024.9.16"
+types-requests = "^2.32.0.20250328"
+types-lxml = "^2025.3.30"
 pytest-xdist = "^3.6.1"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^8.3.3"
-pytest-cov = "^6.0.0"
+pytest = "^8.3.5"
+pytest-cov = "^6.1.1"
 pytest-timeout = "^2.3.1"
 
 [tool.poetry.extras]
