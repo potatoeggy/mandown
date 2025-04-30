@@ -77,8 +77,12 @@ class BaseChapter:
         chapters: list["BaseChapter"],
     ) -> None:
         """
-        Given a list of chapters, prefix their slugs with their index in the list.
-        This is useful for sorting chapters in a comic.
+        Given a list of chapters, prefix their slugs with their index in the list if they are not
+        already sorted. This is useful for sorting chapters in a comic.
         """
+        if sorted(chapters, key=lambda c: c.slug) == chapters:
+            # already sorted, no need to prefix
+            print("sorted")
+            return
         for i, chapter in enumerate(chapters, start=1):
             chapter.slug = f"{i:05}-{chapter.slug}"

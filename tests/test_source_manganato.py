@@ -6,7 +6,7 @@ PUNPUN_DESCRIPTION = "Witness the titular Punpun - who is depicted as a tiny, ca
 @skip_in_ci
 def test_punpun() -> None:
     return is_source_working(
-        "https://chapmanganato.com/manga-fa957135",
+        "https://www.natomanga.com/manga/oyasumi-punpun",
         title="Oyasumi Punpun",
         authors=["Asano Inio"],
         genres=[
@@ -18,5 +18,5 @@ def test_punpun() -> None:
             "Slice of life",
         ],
         description=PUNPUN_DESCRIPTION,
-        cover_art="https://avt.mkklcdnv6temp.com/36/c/4-1583471170.jpg",
+        cover_art="https://imgs-2.2xstorage.com/thumb/oyasumi-punpun.webp",
     )

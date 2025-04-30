@@ -13,14 +13,9 @@ import types
 
 from . import (
     source_batoto,
-    source_blogtruyenmoi,
-    source_comixextra,
     source_kuaikanmanhua,
     source_mangadex,
-    source_mangakakalot,
     source_manganato,
-    source_mangasee,
-    source_manhuaes,
     source_readcomiconline,
     source_thecomicseries,
     source_webtoons,
