@@ -27,7 +27,7 @@ class BaseMetadata:
     title_slug: str = ""
 
     def __post_init__(self) -> None:
-        self.title_slug = slugify(self.title, **SLUGIFY_ARGS)
+        self.title_slug = slugify(self.title, **SLUGIFY_ARGS).strip()
 
     def asdict(self) -> dict[str, str | list[str]]:
         """
@@ -60,7 +60,7 @@ class BaseChapter:
 
     def __post_init__(self) -> None:
         if not self.slug:
-            self.slug = slugify(self.title, **SLUGIFY_ARGS)
+            self.slug = slugify(self.title, **SLUGIFY_ARGS).strip()
 
     def asdict(self) -> dict:
         """

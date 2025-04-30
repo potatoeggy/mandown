@@ -94,7 +94,7 @@ class MangaDexSource(CommonSource):
         chapters: list[BaseChapter] = []
         for i, c in enumerate(r["data"]):
             chapter_title: str = c["attributes"]["title"] or f"Chapter {c['attributes']['chapter']}"
-            chapter_slug: str = f"{i}-{slugify(chapter_title)}"
+            chapter_slug: str = f"{i}-{slugify(chapter_title).strip()}"
             chapters.append(
                 BaseChapter(
                     chapter_title,
