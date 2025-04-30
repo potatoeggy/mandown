@@ -85,4 +85,4 @@ class BaseChapter:
             print("sorted")
             return
         for i, chapter in enumerate(chapters, start=1):
-            chapter.slug = f"{i:05}-{chapter.slug}"
+            chapter.slug = f"{i:05}. {chapter.slug}"
