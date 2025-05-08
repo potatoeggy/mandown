@@ -11,7 +11,7 @@ Kaguya Shinomiya and Miyuki Shirogane are two geniuses who stand atop their pres
 def test_kaguya_mangadex() -> None:
     return is_source_working(
         "https://mangadex.org/title/37f5cce0-8070-4ada-96e5-fa24b1bd4ff9",
-        title="Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen",
+        title="Kaguya-sama: Love Is War",
         authors=["Akasaka Aka"],
         genres=[
             "Romance",

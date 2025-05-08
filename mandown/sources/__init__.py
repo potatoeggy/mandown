@@ -15,6 +15,7 @@ from . import (
     source_batoto,
     source_kuaikanmanhua,
     source_mangadex,
+    source_mangago,
     source_manganato,
     source_readcomiconline,
     source_thecomicseries,
