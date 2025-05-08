@@ -82,7 +82,9 @@ class BatotoSource(CommonSource):
 
     @staticmethod
     def check_url(url: str) -> bool:
-        return bool(re.match(r"https://bato.to/title/.*", url))
+        return bool(
+            re.match(r"https://bato.to/title/.*", url) or re.match(r"https://bato.to/series/*", url)
+        )
 
 
 def get_class() -> type[CommonSource]:
