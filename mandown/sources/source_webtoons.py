@@ -29,39 +29,23 @@ class WebtoonsSource(CommonSource):
         self._title_no = int(url[title_no_index:title_no_end_index])
 
         self._title_path = "/".join(url.split("/")[3:6])
+        self.webtoon_type = "canvas" if "/canvas/" in url or "/challenge/" in url else "webtoon"
 
     def _fetch_metadata(self) -> BaseMetadata:
-        page = self._get_desktop_soup()
-        title = page.select_one('meta[property="og:title"]')["content"]
+        page = self._get_soup()
+        title = page.select_one('h2.title').text.strip()
+        print(page.select_one('meta[property="com-linewebtoon:webtoon:author"]'), self.webtoon_type)
         authors: list[str] = [
             s.strip()
-            for s in page.select_one('meta[property="com-linewebtoon:webtoon:author"]')[
+            for s in page.select_one('meta[property=":webtoon:author"]' if self.webtoon_type == "webtoon" else 'meta[property="com-linewebtoon:webtoon:author"]')[
                 "content"
-            ].split("/")
+            ].split("/")[:2] # up to 2 authors
         ]
-        description: str = page.select_one("#content .summary").text
-        cover_art_el = page.select_one("#content .detail_body.banner")
+        description: str = page.select_one("a.summary._summary").text.strip()
+        cover_art_el = page.select_one(".detail_info_wrap > .img_area img")
+        cover_art = cover_art_el["src"]
 
-        if cover_art_el is None:
-            # canvas challenge webtoons can have multiple genres
-            # and have different covers
-            cover_art_el = page.select_one("#content .detail_header.challenge img")
-
-            cover_art = cover_art_el["src"]
-        else:
-            art_start_idx = cover_art_el["style"].find("url('") + len("url('")
-            art_end_idx = cover_art_el["style"].find("')", art_start_idx)
-
-            cover_art = cover_art_el["style"][art_start_idx:art_end_idx]
-
-        genres_els = list(page.select(".info .genre"))
-
-        for el in genres_els:
-            span = el.find_all("span")
-            for s in span:
-                s.replace_with("")
-
-        genres = [el.text for el in page.select(".info .genre")]
+        genres = [el.text.strip("#") for el in page.select("ul.tag_box li.tag")]
 
         return BaseMetadata(
             title,
@@ -73,13 +57,18 @@ class WebtoonsSource(CommonSource):
         )
 
     def _fetch_chapter_list(self) -> list[BaseChapter]:
-        soup = self._get_soup()
-        titles = [str(e.next_element) for e in soup.select("p.sub_title > span.ellipsis")]
-
-        links: list[str] = [e["href"] for e in soup.select('a[class^="NPI=a:list"]')]
-
-        chapters = [BaseChapter(t, u) for t, u in zip(titles, links)]
-        chapters.reverse()
+        api_url = f"https://m.webtoons.com/api/v1/{self.webtoon_type}/{self._title_no}/episodes?pageSize=2000"
+        res = requests.get(api_url, headers=self.headers).json()["result"]
+        if res["nextCursor"]:
+            raise ValueError("Webtoon has more than 2000 episodes. This is definitely a bug. Please report it to the developer.")
+        
+        chapters = [
+            BaseChapter(
+                e["episodeTitle"],
+                f"https://www.webtoons.com{e['viewerLink']}"
+            )
+            for e in res["episodeList"]
+        ]
         return chapters
 
     def _fetch_chapter_image_list(self, chapter: BaseChapter) -> list[str]:
@@ -101,10 +90,6 @@ class WebtoonsSource(CommonSource):
             "lxml",
         )
         return self._soup
-
-    def _get_desktop_soup(self) -> BeautifulSoup:
-        desktop_url = f"https://www.webtoons.com/{self._title_path}/list?title_no={self._title_no}"
-        return BeautifulSoup(requests.get(desktop_url, headers=self.headers).text, "lxml")
 
     @staticmethod
     def check_url(url: str) -> bool:

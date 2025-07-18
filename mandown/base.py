@@ -82,7 +82,6 @@ class BaseChapter:
         """
         if sorted(chapters, key=lambda c: c.slug) == chapters:
             # already sorted, no need to prefix
-            print("sorted")
             return
         for i, chapter in enumerate(chapters, start=1):
             chapter.slug = f"{i:05}. {chapter.slug}"

@@ -33,7 +33,7 @@ def is_source_working(
     assert (
         comic.metadata.asdict() == expected_res
     ), f"Expected:\n{expected_res}\n\nGot:\n{comic.metadata.asdict()}"
-    assert comic.chapters
+    assert comic.chapters, "Comic should have chapters"
 
     first_chapter = comic.get_chapter_image_urls(comic.chapters[0])
-    assert first_chapter
+    assert first_chapter, "First chapter should have images"
