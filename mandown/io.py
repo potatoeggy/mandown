@@ -79,7 +79,7 @@ def download_images(
     map_pool: list[AsyncDownloadImageInput] = []
 
     if filestems is None:
-        filestems = [f"{i+1:FILE_PADDING}" for i in range(len(urls))]
+        filestems = [f"{i + 1:FILE_PADDING}" for i in range(len(urls))]
 
     for url, stem in zip(urls, filestems, strict=True):
         _, ext = os.path.splitext(urllib.parse.urlparse(url).path)

@@ -55,7 +55,7 @@ class ReadComicOnlineSource(CommonSource):
         )
 
         chapters: list[BaseChapter] = [
-            BaseChapter(e.text.strip(), f'{self.domains[0]}{e["href"]}')
+            BaseChapter(e.text.strip(), f"{self.domains[0]}{e['href']}")
             for e in soup.select("ul.list > li > div > a")
         ]
         return list(reversed(chapters))

@@ -64,8 +64,7 @@ class MangaDexSource(CommonSource):
             elif d["type"] == "cover_art":
                 # pylint: disable=line-too-long
                 cover_art = (
-                    "https://uploads.mangadex.org/covers/"
-                    f"{self.id}/{d['attributes']['fileName']}"
+                    f"https://uploads.mangadex.org/covers/{self.id}/{d['attributes']['fileName']}"
                 )
 
         genres: list[str] = []

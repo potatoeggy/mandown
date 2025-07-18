@@ -9,14 +9,7 @@ def test_punpun() -> None:
         "https://www.natomanga.com/manga/oyasumi-punpun",
         title="Oyasumi Punpun",
         authors=["Asano Inio"],
-        genres=[
-            "Action",
-            "Comedy",
-            "Drama",
-            "Psychological",
-            "Seinen",
-            "Slice of life",
-        ],
+        genres=["Comedy", "Drama", "Action", "Slice of life", "Seinen", "Psychological"],
         description=PUNPUN_DESCRIPTION,
         cover_art="https://imgs-2.2xstorage.com/thumb/oyasumi-punpun.webp",
     )
